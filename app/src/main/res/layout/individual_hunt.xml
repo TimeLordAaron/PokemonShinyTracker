@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/background"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="40dp"
+    android:background="@drawable/incomplete_hunt_gradient">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <!-- Back Button -->
+        <Button
+            android:id="@+id/backButton"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:text="Back"
+            android:textAllCaps="false" />
+
+        <!-- Spacer to push Save Button to the right -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:text="Save"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/pokemonImage"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:src="@drawable/default_sprite"/>
+
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center">
+        <TextView
+            android:id="@+id/pokemonSpinnerLabel"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:text="@string/pokemon"/>
+        <Spinner
+            android:id="@+id/pokemonSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center">
+        <TextView
+            android:id="@+id/startDateLabel"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:text="@string/started"/>
+        <TextView
+            android:id="@+id/startDate"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:text="@string/n_a" />
+        <Button
+            android:id="@+id/startDatePicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pick_date"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center">
+        <TextView
+            android:id="@+id/originGameSpinnerLabel"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:text="@string/originGame"/>
+        <Spinner
+            android:id="@+id/originGameSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center">
+        <TextView
+            android:id="@+id/methodLabel"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:text="@string/method"/>
+        <EditText
+            android:id="@+id/method"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textSize="20sp"
+            android:hint="@string/method_hint"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center">
+        <TextView
+            android:id="@+id/counterLabel"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:text="@string/counter"/>
+        <EditText
+            android:id="@+id/counter"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:textAlignment="center"
+            android:text="0"/>
+        <Button
+            android:id="@+id/decrementCounter"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="@string/decrement"/>
+        <Button
+            android:id="@+id/incrementCounter"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="@string/increment"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center">
+        <TextView
+            android:id="@+id/phaseLabel"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:text="@string/phase"/>
+        <EditText
+            android:id="@+id/phase"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:textAlignment="center"
+            android:text="0"/>
+        <Button
+            android:id="@+id/decrementPhase"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="@string/decrement"/>
+        <Button
+            android:id="@+id/incrementPhase"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="@string/increment"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center">
+        <TextView
+            android:id="@+id/huntCompleteLabel"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:text="@string/huntCompleteLabel"/>
+        <CheckBox
+            android:id="@+id/huntCompleteCheckbox"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/finishDateLayout"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:visibility="invisible">
+        <TextView
+            android:id="@+id/finishedDateLabel"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:text="@string/finished"/>
+        <TextView
+            android:id="@+id/finishDate"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:text="@string/n_a" />
+        <Button
+            android:id="@+id/finishDatePicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pick_date"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/currentGameLayout"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:visibility="invisible">
+        <TextView
+            android:id="@+id/currentGameSpinnerLabel"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:text="@string/currentGame"/>
+        <Spinner
+            android:id="@+id/currentGameSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"/>
+    </LinearLayout>
+
+</LinearLayout>

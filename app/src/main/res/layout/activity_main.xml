@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/background"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="60dp"
+    android:background="@drawable/main_background_gradient">
+
+    <!--Nav Bar-->
+    <LinearLayout
+        android:id="@+id/search_layout"
+        android:orientation="horizontal"
+        android:layout_width="400dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:paddingBottom="10dp">
+
+        <Button
+            android:id="@+id/new_hunt_button"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:text="@string/increment"/>
+
+        <EditText
+            android:id="@+id/searchbar"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:background="@drawable/textbox_view"
+            android:paddingLeft="15dp"
+            android:hint="Enter Pokemon Name"/>
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:text="@string/search"
+            android:textAllCaps="false"/>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/shiny_hunts_recycler_view"
+        android:clipToPadding="false"
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

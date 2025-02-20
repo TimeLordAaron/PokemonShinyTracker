@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="155dp">
+    <!--Hunt Example 1-->
+    <LinearLayout
+        android:id="@+id/background"
+        android:orientation="horizontal"
+        android:layout_width="400dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:background="@drawable/incomplete_hunt_view"
+        android:clickable="true"
+        android:focusable="true">
+
+        <!--Image-->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="175dp"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/pokemonImage"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center"
+                android:src="@drawable/default_sprite"/>
+
+        </LinearLayout>
+
+        <!--Counter-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!--Pokemon Name-->
+            <TextView
+                android:id="@+id/pokemonName"
+                android:layout_width="175dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:text="Name"
+                android:textAlignment="center"
+                android:textSize="25sp"
+                android:textColor="@color/black"/>
+
+            <!--Counter Text-->
+            <TextView
+                android:id="@+id/pokemonCounter"
+                android:layout_width="75dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:text="0"
+                android:textAlignment="center"
+                android:textSize="25sp"
+                android:textColor="@color/black"/>
+
+            <!--Buttons-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/decrementButton"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/decrement"
+                    android:textColor="@color/black"/>
+
+                <Button
+                    android:id="@+id/incrementButton"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/increment"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
