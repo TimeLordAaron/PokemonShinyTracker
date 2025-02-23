@@ -42,6 +42,17 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/no_hunts_message"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_hunts"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:padding="16dp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/shiny_hunts_recycler_view"
         android:clipToPadding="false"

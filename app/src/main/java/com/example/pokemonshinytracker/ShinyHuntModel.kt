@@ -1,3 +1,38 @@
 package com.example.pokemonshinytracker
 
-data class ShinyHunt(val huntID: Int, val name: String, val imageRes: Int, var counter: Int, var isComplete: Boolean)
+import android.content.ContentValues
+import android.database.sqlite.SQLiteDatabase
+import android.util.Log
+
+data class ShinyHunt(val huntID: Int, var pokemonID: Int, var originGameID: Int?, var method: String, var startDate: String?,
+                     var counter: Int, var phase: Int, var isComplete: Boolean, var finishDate: String?, var currentGameID: Int?)
+
+object ShinyHuntData {
+    fun insertShinyHuntData(db: SQLiteDatabase, SHINY_HUNT_TABLE: String, POKEMON_ID_COL: String, ORIGIN_GAME_ID_COL: String,
+                            METHOD_COL: String, START_DATE_COL: String, COUNTER_COL: String, PHASE_COL: String,
+                            IS_COMPLETE_COL: String, FINISH_DATE_COL: String, CURRENT_GAME_ID_COL: String) {
+        val shinyHunts = mutableListOf<List<Any?>>()
+
+        // Loop from 151 down to 1, adding each shiny hunt entry
+        for (pokemonID in 151 downTo 1) {
+            shinyHunts.add(listOf(pokemonID, 32, "Random Encounter", "4/20/2024", 0, 0, 0, null, null))
+        }
+
+        // Insert each shiny hunt into the database
+        for (hunt in shinyHunts) {
+            val values = ContentValues().apply {
+                put(POKEMON_ID_COL, hunt[0] as Int)
+                put(ORIGIN_GAME_ID_COL, hunt[1] as Int)
+                put(METHOD_COL, hunt[2] as String)
+                put(START_DATE_COL, hunt[3] as String)
+                put(COUNTER_COL, hunt[4] as Int)
+                put(PHASE_COL, hunt[5] as Int)
+                put(IS_COMPLETE_COL, hunt[6] as Int)
+                put(FINISH_DATE_COL, hunt[7] as String?)
+                put(CURRENT_GAME_ID_COL, hunt[8] as String?)
+            }
+            db.insert(SHINY_HUNT_TABLE, null, values)
+        }
+        Log.d("ShinyHuntData", "Shiny hunts inserted into the database")
+    }
+}

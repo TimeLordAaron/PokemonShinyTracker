@@ -3,6 +3,8 @@ package com.example.pokemonshinytracker
 import android.os.Bundle
 import android.widget.Spinner
 import android.app.DatePickerDialog
+import android.content.Intent
+import android.util.Log
 import androidx.activity.ComponentActivity
 import android.view.View
 import android.widget.*
@@ -36,12 +38,45 @@ class IndividualHunt : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.individual_hunt)
+        Log.d("IndividualHunt", "onCreate() started")
+
+        // Declare a selected hunt variable (in case a pre-existing hunt was selected)
+        var selectedHuntID = 0
+        var selectedHunt: List<ShinyHunt> = emptyList()
+
+        // Access the database
+        val db = DBHelper(this, null)
+        Log.d("IndividualHunt", "Database opened")
 
         // Get list of Pokemon
-        val pokemon = resources.getStringArray(R.array.Pokemon)
+        val pokemonList = db.getPokemon()
+        Log.d("IndividualHunt", "Pokemon List: $pokemonList")
+
+        // Extract the list of Pokemon names
+        val pokemonNames = pokemonList.map { it.pokemonName }.toMutableList()
+        Log.d("IndividualHunt", "Pokemon names extracted")
+
+        // Replace "Default" in pokemonNames with "Select a Pokemon:"
+        val defaultPokemonIndex = pokemonNames.indexOf("Default")
+        if (defaultPokemonIndex != -1) {
+            pokemonNames[defaultPokemonIndex] = "Select a Pokemon:"
+            Log.d("IndividualHunt", "Default Pokemon Option: ${pokemonNames[defaultPokemonIndex]}")
+        }
 
         // Get list of Games
-        val games = resources.getStringArray(R.array.Game)
+        val gameList = db.getGames()
+        Log.d("IndividualHunt", "Games List: $gameList")
+
+        // Extract the list of Game names
+        val gameNames = gameList.map { it.gameName }.toMutableList()
+        Log.d("IndividualHunt", "Game names extracted")
+
+        // Replace "Default" in gameNames with "Select a Game:"
+        val defaultGameIndex = gameNames.indexOf("Default")
+        if (defaultGameIndex != -1) {
+            gameNames[defaultGameIndex] = "Select a Game:"
+            Log.d("IndividualHunt", "Default Game Option: ${pokemonNames[defaultGameIndex]}")
+        }
 
         // Access all the UI elements
         val mainLayout = findViewById<LinearLayout>(R.id.background)                // main layout (i.e. the background gradient)
@@ -65,121 +100,158 @@ class IndividualHunt : ComponentActivity() {
         selectedFinishDate = findViewById(R.id.finishDate)                          // finish date text view
         val currentGameLayout = findViewById<LinearLayout>(R.id.currentGameLayout)  // current game layout
         val currentGameSpinner = findViewById<Spinner>(R.id.currentGameSpinner)     // current game spinner (i.e. selector)
+        Log.d("IndividualHunt", "Accessed all UI elements")
 
         // Retrieve data from the main window
         intent?.let {
-            val selectedHuntID = it.getIntExtra("hunt_id", 0)
-            val selectedHuntName = it.getStringExtra("pokemon_name") ?: "Unknown"
-            val selectedHuntCounter = it.getIntExtra("pokemon_counter", 0)
-            val selectedHuntStatus = it.getBooleanExtra("hunt_complete", false)
+            // Retrieve the selected hunt ID
+            selectedHuntID = it.getIntExtra("hunt_id", 0)
+            Log.d("IndividualHunt", "Received Hunt ID: $selectedHuntID")
 
-            // Set UI elements with received data
-            // Proof of concept (hardcoded the spinner selection)
-            if (selectedHuntName == "Darkrai") {
-                pokemonSpinner.setSelection(1)
-            }
-            else if (selectedHuntName == "Cresselia") {
-                pokemonSpinner.setSelection(2)
-            }
-            else if (selectedHuntName == "Celebi") {
-                pokemonSpinner.setSelection(3)
-            }
-            else if (selectedHuntName == "Dialga") {
-                pokemonSpinner.setSelection(4)
-            }
-            else if (selectedHuntName == "Palkia") {
-                pokemonSpinner.setSelection(5)
-            }
-            else if (selectedHuntName == "Giratina") {
-                pokemonSpinner.setSelection(6)
-            }
+            // Get the hunt from the database
+            selectedHunt = db.getHunts(selectedHuntID)
+            Log.d("IndividualHunt", "Hunt for ID $selectedHuntID: $selectedHunt")
 
-            // Update the counter text to the counter value of the received hunt
-            counter.setText(selectedHuntCounter.toString())
+            // Check if a hunt was received from the database (should be empty if huntID was 0)
+            if (selectedHunt.isNotEmpty()) {
+                val hunt = selectedHunt[0]  // Safe access
+                Log.d("IndividualHunt", "Received Hunt: $hunt")
 
-            // Change the background gradient if the received hunt was completed
-            completionCheckbox.isChecked = selectedHuntStatus
-            if (selectedHuntStatus) {
-                mainLayout.setBackgroundResource(R.drawable.complete_hunt_gradient)
-                finishDateLayout.visibility = View.VISIBLE
-                currentGameLayout.visibility = View.VISIBLE
+                // Update the start date text (if not null)
+                if (hunt.startDate != null) {
+                    selectedStartDate.text = hunt.startDate
+                }
+                Log.d("IndividualHunt", "Start Date: ${selectedStartDate.text}")
+
+                // Update the method text
+                method.setText(hunt.method)
+                Log.d("IndividualHunt", "Method: ${method.text}")
+
+                // Update counter
+                counter.setText(hunt.counter.toString())
+                Log.d("IndividualHunt", "Counter: ${counter.text}")
+
+                // Update phase
+                phase.setText(hunt.phase.toString())
+                Log.d("IndividualHunt", "Phase: ${phase.text}")
+
+                // Update the finish date text (if not null)
+                if (hunt.finishDate != null) {
+                    selectedFinishDate.text = hunt.finishDate
+                }
+                Log.d("IndividualHunt", "Finish Date: ${selectedFinishDate.text}")
+
+                // Update completion checkbox state
+                completionCheckbox.isChecked = hunt.isComplete
+                Log.d("IndividualHunt", "Completion Status: ${completionCheckbox.isChecked}")
+
+                if (hunt.isComplete) {
+                    mainLayout.setBackgroundResource(R.drawable.complete_hunt_gradient)
+                    finishDateLayout.visibility = View.VISIBLE
+                    currentGameLayout.visibility = View.VISIBLE
+                    Log.d("IndividualHunt", "Displaying complete hunt layout")
+                } else {
+                    mainLayout.setBackgroundResource(R.drawable.incomplete_hunt_gradient)
+                    finishDateLayout.visibility = View.INVISIBLE
+                    currentGameLayout.visibility = View.INVISIBLE
+                    Log.d("IndividualHunt", "Displaying incomplete hunt layout")
+                }
+
+            } else {
+                Log.e("IndividualHunt", "No hunt found for ID: $selectedHuntID")
             }
         }
 
         // Back button handling
         backBtn.setOnClickListener {
-            finish() // Goes back to the previous screen
+            Log.d("IndividualHunt", "Back button clicked. Returning to MainActivity window")
+
+            // Return to the MainActivity window
+            finish()
         }
 
         // Save button handling
         saveBtn.setOnClickListener {
-            // access the database
-            val db = DBHelper(this,null)
+            Log.d("IndividualHunt", "Save button clicked. Saving hunt to the database")
 
-            // insert the hunt into the database
+            // TODO: Implement the save hunt logic
+            // Call updateHunt with the values selected by the user
+            db.updateHunt(
+                selectedHuntID,
+                pokemonSpinner.selectedItemPosition,
+                originGameSpinner.selectedItemPosition,
+                method.text.toString(),
+                selectedStartDate.text.toString(),
+                counter.text.toString().toInt(),
+                phase.text.toString().toInt(),
+                completionCheckbox.isChecked,
+                selectedFinishDate.text.toString(),
+                currentGameSpinner.selectedItemPosition)
 
+            // Return to MainActivity
+            Log.d("IndividualActivity", "Returning to Main window")
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            finish() // Close IndividualHunt activity
         }
 
         // Populate the Pokemon spinner and handle selection
         if (pokemonSpinner != null) {
-            val adapter = ArrayAdapter(this,
-                android.R.layout.simple_spinner_item, pokemon)
-            pokemonSpinner.adapter = adapter
+            Log.d("IndividualHunt", "Beginning Pokemon Spinner population process")
 
-            pokemonSpinner.onItemSelectedListener = object :
-                AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>,
-                                            view: View, position: Int, id: Long) {
-                    // Update the image (proof of concept)
-                    if (pokemon[position] == "Select Pokemon:") {
-                        pokemonImage.setImageResource(R.drawable.default_sprite)
-                    }
-                    else if (pokemon[position] == "Darkrai") {
-                        pokemonImage.setImageResource(R.drawable.shiny_darkrai)
-                    }
-                    else if (pokemon[position] == "Cresselia") {
-                        pokemonImage.setImageResource(R.drawable.shiny_cresselia)
-                    }
-                    else if (pokemon[position] == "Celebi") {
-                        pokemonImage.setImageResource(R.drawable.shiny_celebi)
-                    }
-                    else if (pokemon[position] == "Dialga") {
-                        pokemonImage.setImageResource(R.drawable.shiny_dialga)
-                    }
-                    else if (pokemon[position] == "Palkia") {
-                        pokemonImage.setImageResource(R.drawable.shiny_palkia)
-                    }
-                    else if (pokemon[position] == "Giratina") {
-                        pokemonImage.setImageResource(R.drawable.shiny_giratina)
-                    }
+            // Create an adapter for the Pokemon Spinner
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, pokemonNames)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            pokemonSpinner.adapter = adapter
+            Log.d("IndividualHunt", "Pokemon Spinner adapter setup properly")
+
+            // Set spinner selection if a hunt is selected
+            if (selectedHunt.isNotEmpty()) {
+                // Get the correct index (+1 index offset)
+                val huntPokemonID = selectedHunt[0].pokemonID
+                val selectedIndex = pokemonList.indexOfFirst { it.pokemonID == huntPokemonID } + 1
+
+                if (selectedIndex != -1) {
+                    Log.d("IndividualHunt", "Setting spinner to index: $selectedIndex for Pokemon ID: $huntPokemonID")
+                    pokemonSpinner.setSelection(selectedIndex)
+                } else {
+                    Log.e("IndividualHunt", "Pokemon ID not found in list: $huntPokemonID")
+                }
+            }
+
+            // Handle Pokemon selection (update the image)
+            pokemonSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                    pokemonImage.setImageResource(pokemonList[position].pokemonImage)
+                    Log.d("IndividualHunt", "Pokemon Image updated")
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {
-                    // write code to perform some action
+                    // No action needed
                 }
             }
         }
 
         // Handle selection of the start date
         pickStartDateBtn.setOnClickListener {
-            // on below line we are getting
-            // the instance of our calendar.
-            val c = Calendar.getInstance()
+            Log.d("IndividualHunt", "Handling selection of the start date")
 
-            // on below line we are getting
-            // our day, month and year.
+            // Create a calendar instance
+            val c = Calendar.getInstance()
+            Log.d("IndividualHunt", "Calendar instance created")
+
+            // Get the day, month, and year from the calendar
             val year = c.get(Calendar.YEAR)
             val month = c.get(Calendar.MONTH)
             val day = c.get(Calendar.DAY_OF_MONTH)
 
-            // on below line we are creating a
-            // variable for date picker dialog.
+            // Create a dialog for the date picker
+            Log.d("IndividualHunt", "Creating date picker dialog")
             val datePickerDialog = DatePickerDialog(
-                // on below line we are passing context.
                 this,
                 { view, year, monthOfYear, dayOfMonth ->
-                    // on below line we are setting
-                    // date to our text view.
+                    // Format and set the text for the start date
                     selectedStartDate.text =
                         (buildString {
                             append(dayOfMonth.toString())
@@ -189,23 +261,42 @@ class IndividualHunt : ComponentActivity() {
                             append(year)
                         })
                 },
-                // on below line we are passing year, month
-                // and day for the selected date in our date picker.
+                // Pass the year, month, and day for the selected date
                 year,
                 month,
                 day
             )
-            // at last we are calling show
-            // to display our date picker dialog.
+            Log.d("IndividualHunt", "Selected Start Date: ${selectedStartDate.text}")
+
+            // Display the date picker dialog
             datePickerDialog.show()
         }
 
         // Populate the Origin Game spinner and handle selection
         if (originGameSpinner != null) {
-            val adapter = ArrayAdapter(this,
-                android.R.layout.simple_spinner_item, games)
-            originGameSpinner.adapter = adapter
+            Log.d("IndividualHunt", "Beginning Origin Game Spinner population process")
 
+            // Create an adapter for the Origin Game spinner
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, gameNames)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            originGameSpinner.adapter = adapter
+            Log.d("IndividualHunt", "Origin Game Spinner adapter setup properly")
+
+            // Set spinner selection if an origin game is selected
+            if (selectedHunt.isNotEmpty() && selectedHunt[0].originGameID != null) {
+                // Get the correct index (+1 index offset)
+                val huntOriginGameID = selectedHunt[0].originGameID
+                val selectedIndex = gameList.indexOfFirst { it.gameID == huntOriginGameID } + 1
+
+                if (selectedIndex != -1) {
+                    Log.d("IndividualHunt", "Setting spinner to index: $selectedIndex for Game ID: $huntOriginGameID")
+                    originGameSpinner.setSelection(selectedIndex)
+                } else {
+                    Log.e("IndividualHunt", "Game ID not found in list: $huntOriginGameID")
+                }
+            }
+
+            // TODO: Handle Origin Game selection
             originGameSpinner.onItemSelectedListener = object :
                 AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>,
@@ -314,14 +405,38 @@ class IndividualHunt : ComponentActivity() {
 
         // Populate the Current Game spinner and handle selection
         if (currentGameSpinner != null) {
-            val adapter = ArrayAdapter(this,
-                android.R.layout.simple_spinner_item, games)
-            currentGameSpinner.adapter = adapter
+            Log.d("IndividualHunt", "Beginning Current Game Spinner population process")
 
+            // Create an adapter for the Current Game spinner
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, gameNames)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            currentGameSpinner.adapter = adapter
+            Log.d("IndividualHunt", "Current Game Spinner adapter setup properly")
+
+            // Set spinner selection if a current game is selected
+            if (selectedHunt.isNotEmpty() && selectedHunt[0].currentGameID != null) {
+                // Get the correct index (+1 index offset)
+                val huntCurrentGameID = selectedHunt[0].currentGameID
+                val selectedIndex = gameList.indexOfFirst { it.gameID == huntCurrentGameID } + 1
+
+                if (selectedIndex != -1) {
+                    Log.d(
+                        "IndividualHunt",
+                        "Setting spinner to index: $selectedIndex for Game ID: $huntCurrentGameID"
+                    )
+                    currentGameSpinner.setSelection(selectedIndex)
+                } else {
+                    Log.e("IndividualHunt", "Game ID not found in list: $huntCurrentGameID")
+                }
+            }
+
+            // TODO: Handle Current Game selection
             currentGameSpinner.onItemSelectedListener = object :
                 AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>,
-                                            view: View, position: Int, id: Long) {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View, position: Int, id: Long
+                ) {
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {

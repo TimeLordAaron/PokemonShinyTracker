@@ -43,7 +43,7 @@
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_gravity="center"
-        android:src="@drawable/default_sprite"/>
+        android:src="@drawable/etc_default"/>
 
     <LinearLayout
         android:layout_width="350dp"
@@ -77,7 +77,7 @@
             android:text="@string/started"/>
         <TextView
             android:id="@+id/startDate"
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textAlignment="center"
@@ -223,7 +223,7 @@
             android:text="@string/finished"/>
         <TextView
             android:id="@+id/finishDate"
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textAlignment="center"
