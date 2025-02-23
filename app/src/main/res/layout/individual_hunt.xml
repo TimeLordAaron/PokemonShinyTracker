@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:text="@string/pokemon"/>
+            android:text="@string/pokemonLabel"/>
         <Spinner
             android:id="@+id/pokemonSpinner"
             android:layout_width="match_parent"
@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:text="@string/started"/>
+            android:text="@string/startDateLabel"/>
         <TextView
             android:id="@+id/startDate"
             android:layout_width="150dp"
@@ -82,12 +82,12 @@
             android:textColor="@color/black"
             android:textAlignment="center"
             android:textSize="20sp"
-            android:text="@string/n_a" />
+            android:text="@string/NA" />
         <Button
             android:id="@+id/startDatePicker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pick_date"
+            android:text="@string/datePickerLabel"
             android:textAllCaps="false" />
     </LinearLayout>
 
@@ -101,7 +101,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:text="@string/originGame"/>
+            android:text="@string/originGameLabel"/>
         <Spinner
             android:id="@+id/originGameSpinner"
             android:layout_width="match_parent"
@@ -120,13 +120,13 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:text="@string/method"/>
+            android:text="@string/methodLabel"/>
         <EditText
             android:id="@+id/method"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:textSize="20sp"
-            android:hint="@string/method_hint"/>
+            android:hint="@string/methodHint"/>
     </LinearLayout>
 
     <LinearLayout
@@ -139,7 +139,7 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textColor="@color/black"
-            android:text="@string/counter"/>
+            android:text="@string/counterLabel"/>
         <EditText
             android:id="@+id/counter"
             android:layout_width="100dp"
@@ -151,13 +151,13 @@
             android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="@string/decrement"/>
+            android:text="@string/decrementSymbol"/>
         <Button
             android:id="@+id/incrementCounter"
             android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="@string/increment"/>
+            android:text="@string/incrementSymbol"/>
     </LinearLayout>
 
     <LinearLayout
@@ -170,7 +170,7 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textColor="@color/black"
-            android:text="@string/phase"/>
+            android:text="@string/phaseLabel"/>
         <EditText
             android:id="@+id/phase"
             android:layout_width="100dp"
@@ -182,13 +182,13 @@
             android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="@string/decrement"/>
+            android:text="@string/decrementSymbol"/>
         <Button
             android:id="@+id/incrementPhase"
             android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="@string/increment"/>
+            android:text="@string/incrementSymbol"/>
     </LinearLayout>
 
     <LinearLayout
@@ -220,7 +220,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:text="@string/finished"/>
+            android:text="@string/finishDateLabel"/>
         <TextView
             android:id="@+id/finishDate"
             android:layout_width="150dp"
@@ -228,12 +228,12 @@
             android:textColor="@color/black"
             android:textAlignment="center"
             android:textSize="20sp"
-            android:text="@string/n_a" />
+            android:text="@string/NA" />
         <Button
             android:id="@+id/finishDatePicker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pick_date"
+            android:text="@string/datePickerLabel"
             android:textAllCaps="false" />
     </LinearLayout>
 
@@ -249,7 +249,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:text="@string/currentGame"/>
+            android:text="@string/currentGameLabel"/>
         <Spinner
             android:id="@+id/currentGameSpinner"
             android:layout_width="match_parent"

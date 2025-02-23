@@ -1,5 +1,6 @@
 package com.example.pokemonshinytracker
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -23,6 +25,9 @@ class MainActivity : ComponentActivity() {
 
     // Declare a variable for the new hunt button
     lateinit var newHuntBtn: Button
+
+    // Declare a variable for the search button
+    lateinit var searchBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -43,6 +48,9 @@ class MainActivity : ComponentActivity() {
         // get list of all pokemon
         val pokemonList = db.getPokemon()
 
+        // get list of all games
+        val gameList = db.getGames()
+
         // get all of the saved shiny hunts
         val hunts = db.getHunts()
 
@@ -51,7 +59,7 @@ class MainActivity : ComponentActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.shiny_hunts_recycler_view)
 
         // Instantiate a custom adapter for the recycler view
-        val customAdapter = CustomAdapter(this, hunts, pokemonList)
+        val customAdapter = CustomAdapter(this, hunts, pokemonList, gameList)
 
         // Handle visibility of the no hunts message and the recycler view
         if (hunts.isEmpty()) {
@@ -100,10 +108,19 @@ class MainActivity : ComponentActivity() {
             this.startActivity(intent)
         }
 
+        // Handle the Search button
+        searchBtn = findViewById(R.id.search_button)
+
+        searchBtn.setOnClickListener {
+            val testDialog = Dialog(this)
+            testDialog.setContentView(R.layout.individual_hunt)
+            testDialog.show()
+        }
+
     }
 }
 
-class CustomAdapter(private val context: Context, private val huntSet: List<ShinyHunt>, private val pokemonSet: List<Pokemon>) :
+class CustomAdapter(private val context: Context, private val huntSet: List<ShinyHunt>, private val pokemonSet: List<Pokemon>, private val gameSet: List<Game>) :
     RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
 
     /**
@@ -111,27 +128,35 @@ class CustomAdapter(private val context: Context, private val huntSet: List<Shin
      * (custom ViewHolder)
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val pokemonName: TextView
-        val pokemonImage: ImageView
-        val pokemonCounter: TextView
         val background: LinearLayout
-        val incrementButton: Button
-        val decrementButton: Button
+        val pokemonName: TextView
+        val originGameIconBorder: FrameLayout
+        val originGameIcon: ImageView
+        val currentGameIconBorder: FrameLayout
+        val currentGameIcon: ImageView
+        val pokemonImage: ImageView
+        val counterValue: TextView
+        val counterIncrementBtn: Button
+        val counterDecrementBtn: Button
 
         init {
             // Define click listener for the ViewHolder's View
-            pokemonName = view.findViewById(R.id.pokemonName)
-            pokemonImage = view.findViewById(R.id.pokemonImage)
-            pokemonCounter = view.findViewById(R.id.pokemonCounter)
             background = view.findViewById(R.id.background)
-            incrementButton = view.findViewById(R.id.incrementButton)
-            decrementButton = view.findViewById(R.id.decrementButton)
+            pokemonName = view.findViewById(R.id.pokemonName)
+            originGameIconBorder = view.findViewById(R.id.originGameIconBorder)
+            originGameIcon = view.findViewById(R.id.originGameIcon)
+            currentGameIconBorder = view.findViewById(R.id.currentGameIconBorder)
+            currentGameIcon = view.findViewById(R.id.currentGameIcon)
+            pokemonImage = view.findViewById(R.id.pokemonImage)
+            counterValue = view.findViewById(R.id.counterValue)
+            counterIncrementBtn = view.findViewById(R.id.counterIncrement)
+            counterDecrementBtn = view.findViewById(R.id.counterDecrement)
         }
     }
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        Log.d("MainActivity", "Creating View Holder for shiny hunts")
+        Log.d("MainActivity", "Creating shiny hunt View Holder")
 
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
@@ -146,17 +171,29 @@ class CustomAdapter(private val context: Context, private val huntSet: List<Shin
         val hunt = huntSet[position]
 
         Log.d("MainActivity", "Binding View Holder for shiny hunt: $hunt")
-        viewHolder.pokemonName.text = pokemonSet[hunt.pokemonID].pokemonName
-        viewHolder.pokemonImage.setImageResource(pokemonSet[hunt.pokemonID].pokemonImage)
-        viewHolder.pokemonCounter.text = hunt.counter.toString()
         viewHolder.background.setBackgroundResource( if (hunt.isComplete) R.drawable.complete_hunt_view else R.drawable.incomplete_hunt_view )
+        viewHolder.pokemonName.text = pokemonSet[hunt.pokemonID].pokemonName
+        if (hunt.originGameID != 0) {
+            viewHolder.originGameIcon.setImageResource(gameSet[hunt.originGameID!!].gameImage)
+            viewHolder.originGameIconBorder.visibility = View.VISIBLE
+        } else {
+            viewHolder.originGameIconBorder.visibility = View.GONE
+        }
+        if (hunt.currentGameID != 0) {
+            viewHolder.currentGameIcon.setImageResource(gameSet[hunt.currentGameID!!].gameImage)
+            viewHolder.currentGameIconBorder.visibility = View.VISIBLE
+        } else {
+            viewHolder.currentGameIconBorder.visibility = View.GONE
+        }
+        viewHolder.pokemonImage.setImageResource(pokemonSet[hunt.pokemonID].pokemonImage)
+        viewHolder.counterValue.text = hunt.counter.toString()
 
-        // Click listener for each hunt item's increment button
-        viewHolder.incrementButton.setOnClickListener {
-            Log.d("MainActivity", "Increment button clicked for shiny hunt: $hunt")
+        // Click listener for each hunt item's counter increment button
+        viewHolder.counterIncrementBtn.setOnClickListener {
+            Log.d("MainActivity", "Increment counter button clicked for shiny hunt: $hunt")
             // increment the counter
             hunt.counter++
-            viewHolder.pokemonCounter.text = hunt.counter.toString()
+            viewHolder.counterValue.text = hunt.counter.toString()
 
             // update the database
             val db = DBHelper(context, null)
@@ -164,13 +201,13 @@ class CustomAdapter(private val context: Context, private val huntSet: List<Shin
             hunt.counter, hunt.phase, hunt.isComplete, hunt.finishDate, hunt.currentGameID)
         }
 
-        // Click listener for each hunt item's decrement button
-        viewHolder.decrementButton.setOnClickListener {
-            Log.d("MainActivity", "Decrement button clicked for shiny hunt: $hunt")
+        // Click listener for each hunt item's counter decrement button
+        viewHolder.counterDecrementBtn.setOnClickListener {
+            Log.d("MainActivity", "Decrement counter button clicked for shiny hunt: $hunt")
             // decrement the counter (if greater than 0)
             if (hunt.counter > 0) {
                 hunt.counter--
-                viewHolder.pokemonCounter.text = hunt.counter.toString()
+                viewHolder.counterValue.text = hunt.counter.toString()
             }
 
             // update the database

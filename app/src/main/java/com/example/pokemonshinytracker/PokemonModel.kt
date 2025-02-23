@@ -92,7 +92,7 @@ object PokemonData {
             "Slowbro" to R.drawable.pokemon_80_slowbro,
             "Magnemite" to R.drawable.pokemon_81_magnemite,
             "Magneton" to R.drawable.pokemon_82_magneton,
-            "Farfetchd" to R.drawable.pokemon_83_farfetchd,
+            "Farfetch'd" to R.drawable.pokemon_83_farfetchd,
             "Doduo" to R.drawable.pokemon_84_doduo,
             "Dodrio" to R.drawable.pokemon_85_dodrio,
             "Seel" to R.drawable.pokemon_86_seel,

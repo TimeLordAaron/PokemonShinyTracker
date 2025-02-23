@@ -3,6 +3,7 @@ package com.example.pokemonshinytracker
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import kotlin.random.Random
 
 data class ShinyHunt(val huntID: Int, var pokemonID: Int, var originGameID: Int?, var method: String, var startDate: String?,
                      var counter: Int, var phase: Int, var isComplete: Boolean, var finishDate: String?, var currentGameID: Int?)
@@ -15,7 +16,38 @@ object ShinyHuntData {
 
         // Loop from 151 down to 1, adding each shiny hunt entry
         for (pokemonID in 151 downTo 1) {
-            shinyHunts.add(listOf(pokemonID, 32, "Random Encounter", "4/20/2024", 0, 0, 0, null, null))
+            val originGame = Random.nextInt(5, 25)
+            val counter = Random.nextInt(0, 10000)
+            if (pokemonID > 40) {
+                val currentGame = Random.nextInt(26, 42)
+                shinyHunts.add(
+                    listOf(
+                        pokemonID,
+                        originGame,
+                        "Random Encounter",
+                        "4/20/2024",
+                        counter,
+                        0,
+                        1,
+                        null,
+                        currentGame
+                    )
+                )
+            } else {
+                shinyHunts.add(
+                    listOf(
+                        pokemonID,
+                        originGame,
+                        "Random Encounter",
+                        "4/20/2024",
+                        counter,
+                        0,
+                        0,
+                        null,
+                        null
+                    )
+                )
+            }
         }
 
         // Insert each shiny hunt into the database
@@ -29,7 +61,7 @@ object ShinyHuntData {
                 put(PHASE_COL, hunt[5] as Int)
                 put(IS_COMPLETE_COL, hunt[6] as Int)
                 put(FINISH_DATE_COL, hunt[7] as String?)
-                put(CURRENT_GAME_ID_COL, hunt[8] as String?)
+                put(CURRENT_GAME_ID_COL, hunt[8] as Int?)
             }
             db.insert(SHINY_HUNT_TABLE, null, values)
         }

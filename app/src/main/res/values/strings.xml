@@ -1,41 +1,24 @@
 <resources>
-    <string name="app_name">PokemonShinyTracker</string>
-    <string name="pokemon">Pokemon:</string>
-    <string name="originGame">Hunting In:</string>
-    <string name="started">Started:</string>
-    <string name="n_a">N/A</string>
-    <string name="pick_date">Pick Date</string>
-    <string name="method">Method:</string>
-    <string name="method_hint">i.e. Soft Resets</string>
-    <string name="counter">Counter:</string>
-    <string name="increment">+</string>
-    <string name="decrement">-</string>
+    <string name="appName">Pokemon Shiny Tracker</string>
+    <string name="pokemonLabel">Pokemon:</string>
+    <string name="originGameLabel">Hunting In:</string>
+    <string name="startDateLabel">Started:</string>
+    <string name="NA">N/A</string>
+    <string name="datePickerLabel">Pick Date</string>
+    <string name="methodLabel">Method:</string>
+    <string name="methodHint">i.e. Soft Resets</string>
+    <string name="counterLabel">Counter:</string>
+    <string name="incrementSymbol">+</string>
+    <string name="decrementSymbol">-</string>
     <string name="huntCompleteLabel">Hunt Completed?</string>
-    <string name="finished">Finished:</string>
-    <string name="currentGame">Currently In:</string>
-    <string name="phase">Phase:</string>
+    <string name="finishDateLabel">Finished:</string>
+    <string name="currentGameLabel">Currently In:</string>
+    <string name="phaseLabel">Phase:</string>
     <string name="search">Search</string>
-    <string name="no_hunts">You have no saved shiny hunts!\n</string>
-
-    <string-array name="Pokemon">
-        <item>Select Pokemon:</item>
-        <item>Darkrai</item>
-        <item>Cresselia</item>
-        <item>Celebi</item>
-        <item>Dialga</item>
-        <item>Palkia</item>
-        <item>Giratina</item>
-        <item>Articuno</item>
-        <item>Landorus</item>
-    </string-array>
-
-    <string-array name="Game">
-        <item>Select Game:</item>
-        <item>Brilliant Diamond</item>
-        <item>Shining Pearl</item>
-        <item>Scarlet</item>
-        <item>Violet</item>
-        <item>Sword</item>
-        <item>Shield</item>
-    </string-array>
+    <string name="noHuntsMessage">You have no saved shiny hunts!\n</string>
+    <string name="namePlaceholder">Name</string>
+    <string name="originGameIconDesc">Origin Game Icon</string>
+    <string name="currentGameIconDesc">Current Game Icon</string>
+    <string name="defaultCounter">0</string>
+    <string name="pokemonSearchHint">Enter Pokemon Name</string>
 </resources>
