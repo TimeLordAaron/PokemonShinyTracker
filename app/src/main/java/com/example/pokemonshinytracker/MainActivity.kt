@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
         // get all of the saved shiny hunts
         val hunts = db.getHunts()
 
-        // Access the no hunts message and the shint hunts recycler view
+        // Access the no hunts message and the shiny hunts recycler view
         val noHuntsMessage = findViewById<TextView>(R.id.no_hunts_message)
         val recyclerView: RecyclerView = findViewById(R.id.shiny_hunts_recycler_view)
 

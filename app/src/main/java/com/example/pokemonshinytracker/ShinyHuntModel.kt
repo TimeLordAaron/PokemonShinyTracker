@@ -14,11 +14,11 @@ object ShinyHuntData {
                             IS_COMPLETE_COL: String, FINISH_DATE_COL: String, CURRENT_GAME_ID_COL: String) {
         val shinyHunts = mutableListOf<List<Any?>>()
 
-        // Loop from 151 down to 1, adding each shiny hunt entry
-        for (pokemonID in 151 downTo 1) {
+        // Loop from 649 down to 1, adding each shiny hunt entry
+        for (pokemonID in 649 downTo 1) {
             val originGame = Random.nextInt(5, 25)
             val counter = Random.nextInt(0, 10000)
-            if (pokemonID > 40) {
+            if (pokemonID > 493) {
                 val currentGame = Random.nextInt(26, 42)
                 shinyHunts.add(
                     listOf(
