@@ -36,7 +36,7 @@
             <!--Name + Game-->
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="125dp"
+                android:layout_width="110dp"
                 android:layout_height="match_parent"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
@@ -54,7 +54,7 @@
                     android:layout_marginEnd="5dp"
                     android:gravity="center"
                     android:text="@string/namePlaceholder"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textColor="@color/black"/>
 
                 <!--Games-->
@@ -67,8 +67,8 @@
                     <!--Origin Game-->
                     <FrameLayout
                         android:id="@+id/originGameIconBorder"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
                         android:layout_gravity="center"
@@ -77,8 +77,8 @@
 
                         <ImageView
                             android:id="@+id/originGameIcon"
-                            android:layout_width="45dp"
-                            android:layout_height="45dp"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:layout_gravity="center"
                             android:contentDescription="@string/originGameIconDesc"
                             android:background="@drawable/origin_game_icon_border"
@@ -90,8 +90,8 @@
                     <!--Current Game-->
                     <FrameLayout
                         android:id="@+id/currentGameIconBorder"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
                         android:layout_gravity="center"
@@ -100,8 +100,8 @@
 
                         <ImageView
                             android:id="@+id/currentGameIcon"
-                            android:layout_width="45dp"
-                            android:layout_height="45dp"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:layout_gravity="center"
                             android:contentDescription="@string/currentGameIconDesc"
                             android:background="@drawable/current_game_icon_border"
@@ -134,7 +134,7 @@
                     android:gravity="center"
                     android:text="@string/counterLabel"
                     android:textAlignment="center"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textColor="@color/black"/>
 
                 <!--Counter-->
@@ -142,11 +142,11 @@
                     android:id="@+id/counterValue"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:layout_marginTop="5dp"
+
                     android:gravity="center"
                     android:text="@string/defaultCounter"
                     android:textAlignment="center"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textColor="@color/black"/>
 
                 <!--Counter + Buttons-->
@@ -159,7 +159,7 @@
                     <!--Counter Decrement Button-->
                     <Button
                         android:id="@+id/counterDecrement"
-                        android:layout_width="60dp"
+                        android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:text="@string/decrementSymbol"
                         android:textColor="@color/black"/>
@@ -167,7 +167,7 @@
                     <!--Counter Increment Button-->
                     <Button
                         android:id="@+id/counterIncrement"
-                        android:layout_width="60dp"
+                        android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:text="@string/incrementSymbol"
                         android:textColor="@color/black"/>

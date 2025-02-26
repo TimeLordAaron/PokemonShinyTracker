@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/headerText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="@drawable/hunt_detail_view"
+    android:textSize="18sp"
+    android:textStyle="bold"
+    android:textAlignment="center"
+    android:textColor="@android:color/black"/>

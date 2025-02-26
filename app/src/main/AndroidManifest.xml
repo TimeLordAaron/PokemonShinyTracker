@@ -27,7 +27,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".IndividualHunt"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:configChanges="orientation|screenSize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />

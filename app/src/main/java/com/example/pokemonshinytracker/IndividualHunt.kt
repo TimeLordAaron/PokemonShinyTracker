@@ -1,13 +1,17 @@
 package com.example.pokemonshinytracker
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.Spinner
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.content.res.Configuration
 import android.util.Log
 import androidx.activity.ComponentActivity
 import android.view.View
 import android.widget.*
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
 class IndividualHunt : ComponentActivity() {
@@ -15,6 +19,11 @@ class IndividualHunt : ComponentActivity() {
     // Declare variables for the back and save buttons
     lateinit var backBtn: Button
     lateinit var saveBtn: Button
+
+    // Declare variables for the pokemon selection dialog
+    lateinit var detailLayout: LinearLayout
+    lateinit var pokemonRecyclerView: RecyclerView
+    lateinit var selectPokemonDialog: View
 
     // Declare variables for the start date button
     lateinit var pickStartDateBtn: Button
@@ -35,7 +44,11 @@ class IndividualHunt : ComponentActivity() {
     lateinit var pickFinishDateBtn: Button
     lateinit var selectedFinishDate: TextView
 
+    // Declare a variable for the pokemon select button
+    lateinit var selectPokemonBtn: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.individual_hunt)
         Log.d("IndividualHunt", "onCreate() started")
@@ -43,6 +56,7 @@ class IndividualHunt : ComponentActivity() {
         // Declare a selected hunt variable (in case a pre-existing hunt was selected)
         var selectedHuntID = 0
         var selectedHunt: List<ShinyHunt> = emptyList()
+        var selectedPokemonID = 0
 
         // Access the database
         val db = DBHelper(this, null)
@@ -82,8 +96,9 @@ class IndividualHunt : ComponentActivity() {
         val mainLayout = findViewById<LinearLayout>(R.id.background)                // main layout (i.e. the background gradient)
         backBtn = findViewById(R.id.backButton)                                     // back button
         saveBtn = findViewById(R.id.saveButton)                                     // save button
+        detailLayout = findViewById(R.id.individual_hunt_layout)  // detail layout
         val pokemonImage = findViewById<ImageView>(R.id.pokemonImage)               // pokemon image
-        val pokemonSpinner = findViewById<Spinner>(R.id.pokemonSpinner)             // pokemon spinner (i.e. selector)
+        selectPokemonBtn = findViewById(R.id.pokemon_selection_button)              // pokemon select button
         pickStartDateBtn = findViewById(R.id.startDatePicker)                       // start date button
         selectedStartDate = findViewById(R.id.startDate)                            // start date text view
         val originGameSpinner = findViewById<Spinner>(R.id.originGameSpinner)       // origin game spinner (i.e. selector)
@@ -115,7 +130,11 @@ class IndividualHunt : ComponentActivity() {
             // Check if a hunt was received from the database (should be empty if huntID was 0)
             if (selectedHunt.isNotEmpty()) {
                 val hunt = selectedHunt[0]  // Safe access
+                selectedPokemonID = hunt.pokemonID
                 Log.d("IndividualHunt", "Received Hunt: $hunt")
+
+                // Update the pokemon image
+                pokemonImage.setImageResource(pokemonList[hunt.pokemonID].pokemonImage)
 
                 // Update the start date text (if not null)
                 if (hunt.startDate != null) {
@@ -162,6 +181,13 @@ class IndividualHunt : ComponentActivity() {
             }
         }
 
+        // Handle the UI layout based on orientation
+        detailLayout.orientation =
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) LinearLayout.HORIZONTAL else LinearLayout.VERTICAL
+
+        selectPokemonDialog = layoutInflater.inflate(R.layout.pokemon_selection, null)
+        pokemonRecyclerView = selectPokemonDialog.findViewById(R.id.pokemon_recycler_view)
+
         // Back button handling
         backBtn.setOnClickListener {
             Log.d("IndividualHunt", "Back button clicked. Returning to MainActivity window")
@@ -178,7 +204,7 @@ class IndividualHunt : ComponentActivity() {
             // Call updateHunt with the values selected by the user
             db.updateHunt(
                 selectedHuntID,
-                pokemonSpinner.selectedItemPosition,
+                selectedPokemonID,
                 originGameSpinner.selectedItemPosition,
                 method.text.toString(),
                 selectedStartDate.text.toString(),
@@ -196,40 +222,38 @@ class IndividualHunt : ComponentActivity() {
             finish() // Close IndividualHunt activity
         }
 
-        // Populate the Pokemon spinner and handle selection
-        if (pokemonSpinner != null) {
-            Log.d("IndividualHunt", "Beginning Pokemon Spinner population process")
+        // Handle the pokemon select button
+        selectPokemonBtn.setOnClickListener {
+            val selectPokemonDialog = layoutInflater.inflate(R.layout.pokemon_selection, null)
+            pokemonRecyclerView = selectPokemonDialog.findViewById(R.id.pokemon_recycler_view)
 
-            // Create an adapter for the Pokemon Spinner
-            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, pokemonNames)
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            pokemonSpinner.adapter = adapter
-            Log.d("IndividualHunt", "Pokemon Spinner adapter setup properly")
+            val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
+            pokemonRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
 
-            // Set spinner selection if a hunt is selected
-            if (selectedHunt.isNotEmpty()) {
-                // Get the correct index (+1 index offset)
-                val huntPokemonID = selectedHunt[0].pokemonID
-                val selectedIndex = pokemonList.indexOfFirst { it.pokemonID == huntPokemonID } + 1
+            // Prepare dataset with headers
+            val groupedPokemonList = preparePokemonListWithHeaders(pokemonList)
 
-                if (selectedIndex != -1) {
-                    Log.d("IndividualHunt", "Setting spinner to index: $selectedIndex for Pokemon ID: $huntPokemonID")
-                    pokemonSpinner.setSelection(selectedIndex)
-                } else {
-                    Log.e("IndividualHunt", "Pokemon ID not found in list: $huntPokemonID")
+            // Custom span size logic to make headers span full width
+            (pokemonRecyclerView.layoutManager as GridLayoutManager).spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return when (groupedPokemonList[position]) {
+                        is PokemonListItem.HeaderItem -> spanCount  // Header takes full row
+                        is PokemonListItem.PokemonItem -> 1        // Pokémon takes 1 column
+                    }
                 }
             }
 
-            // Handle Pokemon selection (update the image)
-            pokemonSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                    pokemonImage.setImageResource(pokemonList[position].pokemonImage)
-                    Log.d("IndividualHunt", "Pokemon Image updated")
-                }
+            // Create and show the dialog
+            val dialog = AlertDialog.Builder(this)
+                .setTitle("Select a Pokémon")
+                .setView(selectPokemonDialog)
+                .setPositiveButton("Close") { dialog, _ -> dialog.dismiss() }
+                .show()
 
-                override fun onNothingSelected(parent: AdapterView<*>) {
-                    // No action needed
-                }
+            pokemonRecyclerView.adapter = PokemonSelectionAdapter(this, groupedPokemonList) { selectedPokemon ->
+                pokemonImage.setImageResource(selectedPokemon.pokemonImage)
+                selectedPokemonID = selectedPokemon.pokemonID - 1
+                dialog.dismiss()
             }
         }
 
@@ -444,5 +468,24 @@ class IndividualHunt : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        // Update layout orientation dynamically
+        detailLayout.orientation =
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                LinearLayout.HORIZONTAL
+            else
+                LinearLayout.VERTICAL
+
+        // determine the number of columns based on orientation
+        val spanCount =
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
+
+
+        pokemonRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
+
     }
 }

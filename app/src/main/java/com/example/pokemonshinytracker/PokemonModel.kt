@@ -7,9 +7,9 @@ import android.util.Log
 data class Pokemon(val pokemonID: Int, val pokemonName: String, val pokemonImage: Int)
 
 object PokemonData {
+
     fun insertPokemonData(db: SQLiteDatabase, POKEMON_TABLE: String, POKEMON_NAME_COL: String, POKEMON_IMAGE_COL: String) {
         val pokemonList = listOf(
-            "Default" to R.drawable.etc_default,
             "Bulbasaur" to R.drawable.pokemon_0001_bulbasaur,
             "Ivysaur" to R.drawable.pokemon_0002_ivysaur,
             "Venusaur" to R.drawable.pokemon_0003_venusaur,
@@ -671,4 +671,38 @@ object PokemonData {
         }
         Log.d("PokemonData", "All Pokemon have been inserted into the database")
     }
+}
+
+sealed class PokemonListItem {
+    data class PokemonItem(val pokemon: Pokemon) : PokemonListItem()
+    data class HeaderItem(val generation: String) : PokemonListItem()
+}
+
+fun preparePokemonListWithHeaders(pokemonList: List<Pokemon>): List<PokemonListItem> {
+    val groupedList = mutableListOf<PokemonListItem>()
+
+    val generations = listOf(
+        "Generation 1" to 151,  // Assuming first 151 are Gen 1
+        "Generation 2" to 251,  // Next up to 251 are Gen 2
+        "Generation 3" to 386,  // And so on...
+        "Generation 4" to 493,
+        "Generation 5" to 649,
+        "Generation 6" to 721,
+        "Generation 7" to 809,
+        "Generation 8" to 905
+    )
+
+    var lastGen = ""
+    for (pokemon in pokemonList) {
+        val gen = generations.find { pokemon.pokemonID <= it.second }?.first ?: "Unknown Generation"
+
+        if (gen != lastGen) {
+            groupedList.add(PokemonListItem.HeaderItem(gen))
+            lastGen = gen
+        }
+
+        groupedList.add(PokemonListItem.PokemonItem(pokemon))
+    }
+
+    return groupedList
 }

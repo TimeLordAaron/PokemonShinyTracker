@@ -21,4 +21,13 @@
     <string name="currentGameIconDesc">Current Game Icon</string>
     <string name="defaultCounter">0</string>
     <string name="pokemonSearchHint">Enter Pokemon Name</string>
+    <string name="pokemon_name_placeholder">Please select a Pokemon.</string>
+    <string name="confirm_selection">Confirm Selection</string>
+    <string name="select_a_pokemon">Select a Pokemon</string>
+    <string name="pokemon_item_template">Pokemon Item Template</string>
+    <string name="generation_1_label">Generation 1</string>
+    <string name="generation_2_label">Generation 2</string>
+    <string name="generation_3_label">Generation 3</string>
+    <string name="generation_4_label">Generation 4</string>
+    <string name="generation_5_label">Generation 5</string>
 </resources>
