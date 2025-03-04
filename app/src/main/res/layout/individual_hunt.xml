@@ -7,29 +7,47 @@
     android:paddingTop="40dp"
     android:background="@drawable/incomplete_hunt_gradient">
 
-    <!--Back/Start Buttons-->
+    <!--Back/Save/Delete Buttons-->
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="horizontal"
-        android:padding="10dp">
+        android:layout_margin="20dp"
+        android:background="@drawable/hunt_detail_view">
 
-        <!-- Back Button -->
+        <!--Back Button-->
         <Button
             android:id="@+id/backButton"
-            android:layout_width="60dp"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:text="Back"
+            android:text="@string/back_button_text"
+            android:textColor="@color/black"
             android:textAllCaps="false" />
 
-        <!-- Save Button -->
+        <!--Save Button-->
         <Button
             android:id="@+id/saveButton"
-            android:layout_width="60dp"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:text="Save"
+            android:text="@string/save_button_text"
+            android:textColor="#008800"
             android:textAllCaps="false" />
+
+        <!--Delete Button-->
+        <Button
+            android:id="@+id/deleteButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="@string/delete_button_text"
+            android:textColor="#CC0000"
+            android:textAllCaps="false"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
     <!--Everything Else-->
@@ -93,35 +111,38 @@
                     android:orientation="horizontal"
                     android:layout_width="350dp"
                     android:layout_height="50dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_margin="10dp"
                     android:layout_gravity="center">
 
                     <TextView
                         android:id="@+id/startDateLabel"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:textColor="@color/black"
                         android:textSize="20sp"
                         android:text="@string/startDateLabel"/>
 
                     <TextView
                         android:id="@+id/startDate"
-                        android:layout_width="150dp"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:textColor="@color/black"
                         android:textAlignment="center"
                         android:textSize="20sp"
-                        android:text="@string/NA" />
+                        android:text="@string/NA"
+                        android:layout_weight="1" />  <!-- Pushes the Button to the right -->
 
                     <Button
                         android:id="@+id/startDatePicker"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/datePickerLabel"
                         android:textAllCaps="false" />
 
                 </LinearLayout>
+
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -162,6 +183,16 @@
                             android:clipToOutline="true" />
 
                     </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/originGameName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textAlignment="center"
+                        android:layout_weight="1"/>
 
                     <Button
                         android:id="@+id/originGameButton"
@@ -306,25 +337,28 @@
                     android:visibility="gone">
 
                     <TextView
-                        android:id="@+id/finishedDateLabel"
+                        android:id="@+id/finishDateLabel"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:textColor="@color/black"
                         android:textSize="20sp"
                         android:text="@string/finishDateLabel"/>
 
                     <TextView
                         android:id="@+id/finishDate"
-                        android:layout_width="150dp"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:textColor="@color/black"
                         android:textAlignment="center"
                         android:textSize="20sp"
-                        android:text="@string/NA" />
+                        android:text="@string/NA"
+                        android:layout_weight="1" />  <!-- Pushes the Button to the right -->
 
                     <Button
                         android:id="@+id/finishDatePicker"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/datePickerLabel"
                         android:textAllCaps="false" />
@@ -341,8 +375,8 @@
                     android:visibility="gone">
 
                     <TextView
-                        android:id="@+id/currentGameSpinnerLabel"
-                        android:layout_width="110dp"
+                        android:id="@+id/currentGameLabel"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:textColor="@color/black"
@@ -372,6 +406,16 @@
                             android:clipToOutline="true" />
 
                     </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/currentGameName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="20sp"
+                        android:layout_weight="1"/>
 
                     <Button
                         android:id="@+id/currentGameButton"

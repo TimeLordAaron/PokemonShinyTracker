@@ -32,4 +32,7 @@
     <string name="generation_5_label">Generation 5</string>
     <string name="select_a_game">Select a Game</string>
     <string name="game_item_template">Game Item Template\n</string>
+    <string name="back_button_text">Back</string>
+    <string name="save_button_text">Save</string>
+    <string name="delete_button_text">Delete</string>
 </resources>

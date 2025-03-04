@@ -18,6 +18,7 @@ class IndividualHunt : ComponentActivity() {
     // Declare variables for the back and save buttons
     lateinit var backBtn: Button
     lateinit var saveBtn: Button
+    lateinit var deleteBtn: Button
 
     lateinit var detailLayout: LinearLayout
 
@@ -97,6 +98,7 @@ class IndividualHunt : ComponentActivity() {
         val mainLayout = findViewById<LinearLayout>(R.id.background)                // main layout (i.e. the background gradient)
         backBtn = findViewById(R.id.backButton)                                     // back button
         saveBtn = findViewById(R.id.saveButton)                                     // save button
+        deleteBtn = findViewById(R.id.deleteButton)                                 // delete button
         detailLayout = findViewById(R.id.individual_hunt_layout)                    // detail layout
         val selectedPokemonName = findViewById<TextView>(R.id.selected_pokemon_name)    // selected pokemon name
         val pokemonImage = findViewById<ImageView>(R.id.pokemonImage)               // pokemon image
@@ -105,6 +107,7 @@ class IndividualHunt : ComponentActivity() {
         selectedStartDate = findViewById(R.id.startDate)                            // start date text view
         val originGameIconBorder = findViewById<FrameLayout>(R.id.originGameIconBorder) // origin game icon border
         val originGameIcon = findViewById<ImageView>(R.id.originGameIcon)           // origin game icon
+        val originGameName = findViewById<TextView>(R.id.originGameName)            // origin game name
         selectOriginGameBtn = findViewById(R.id.originGameButton)                   // origin game select button
         val method = findViewById<EditText>(R.id.method)                            // method edit text
         val counter = findViewById<EditText>(R.id.counter)                          // counter edit text
@@ -120,6 +123,7 @@ class IndividualHunt : ComponentActivity() {
         val currentGameLayout = findViewById<LinearLayout>(R.id.currentGameLayout)  // current game layout
         val currentGameIconBorder = findViewById<FrameLayout>(R.id.currentGameIconBorder) // current game icon border
         val currentGameIcon = findViewById<ImageView>(R.id.currentGameIcon)         // current game icon
+        val currentGameName = findViewById<TextView>(R.id.currentGameName)          // current game name
         selectCurrentGameBtn = findViewById(R.id.currentGameButton)                 // current game select button
         Log.d("IndividualHunt", "Accessed all UI elements")
 
@@ -141,6 +145,9 @@ class IndividualHunt : ComponentActivity() {
                 selectedOriginGameID = hunt.originGameID
                 selectedCurrentGameID = hunt.currentGameID
 
+                // Enable the delete button
+                deleteBtn.visibility = View.VISIBLE
+
                 // Update the pokemon name and image
                 selectedPokemonName.text = pokemonList[hunt.pokemonID].pokemonName
                 pokemonImage.setImageResource(pokemonList[hunt.pokemonID].pokemonImage)
@@ -151,10 +158,11 @@ class IndividualHunt : ComponentActivity() {
                 }
                 Log.d("IndividualHunt", "Start Date: ${selectedStartDate.text}")
 
-                // Update the origin game icon
+                // Update the origin game icon and name
                 if (hunt.originGameID != null) {
                     originGameIcon.setImageResource(gameList[hunt.originGameID!!].gameImage)
                     originGameIconBorder.visibility = View.VISIBLE
+                    originGameName.text = gameList[hunt.originGameID!!].gameName
                 }
 
                 // Update the method text
@@ -175,10 +183,11 @@ class IndividualHunt : ComponentActivity() {
                 }
                 Log.d("IndividualHunt", "Finish Date: ${selectedFinishDate.text}")
 
-                // Update the current game icon
+                // Update the current game icon and name
                 if (hunt.currentGameID != null) {
                     currentGameIcon.setImageResource(gameList[hunt.currentGameID!!].gameImage)
                     currentGameIconBorder.visibility = View.VISIBLE
+                    currentGameName.text = gameList[hunt.currentGameID!!].gameName
                 }
 
                 // Update completion checkbox state
@@ -244,6 +253,36 @@ class IndividualHunt : ComponentActivity() {
             startActivity(intent)
             finish() // Close IndividualHunt activity
         }
+
+        // Delete button handling
+        deleteBtn.setOnClickListener {
+            Log.d("IndividualHunt", "Delete button clicked. Showing confirmation dialog")
+
+            AlertDialog.Builder(this)
+                .setTitle("Confirm Deletion")
+                .setMessage("Are you sure you want to delete this shiny hunt? This action cannot be undone.")
+                .setPositiveButton("Yes") { _, _ ->
+                    // User confirmed deletion
+                    Log.d("IndividualHunt", "User confirmed deletion. Deleting hunt from the database")
+
+                    // Call deleteHunt with the selectedHuntID as the parameter
+                    db.deleteHunt(selectedHuntID)
+
+                    // Return to MainActivity
+                    Log.d("IndividualActivity", "Returning to Main window")
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
+                    finish() // Close IndividualHunt activity
+                }
+                .setNegativeButton("No") { dialog, _ ->
+                    // User canceled deletion
+                    Log.d("IndividualHunt", "User canceled deletion")
+                    dialog.dismiss()
+                }
+                .show()
+        }
+
 
         // Handle the pokemon select button
         selectPokemonBtn.setOnClickListener {
@@ -323,6 +362,7 @@ class IndividualHunt : ComponentActivity() {
         // Handle clicking the origin game icon (i.e. de-select the origin game)
         originGameIcon.setOnClickListener {
             originGameIconBorder.visibility = View.INVISIBLE
+            originGameName.text = ""
             selectedOriginGameID = null
         }
 
@@ -357,6 +397,7 @@ class IndividualHunt : ComponentActivity() {
             gameRecyclerView.adapter = GameSelectionAdapter(this, 0, groupedGameList) { selectedGame ->
                 originGameIcon.setImageResource(selectedGame.gameImage)
                 originGameIconBorder.visibility = View.VISIBLE
+                originGameName.text = selectedGame.gameName
                 selectedOriginGameID = selectedGame.gameID - 1
                 dialog.dismiss()
             }
@@ -459,6 +500,7 @@ class IndividualHunt : ComponentActivity() {
         // Handle clicking the current game icon (i.e. de-select the current game)
         currentGameIcon.setOnClickListener {
             currentGameIconBorder.visibility = View.INVISIBLE
+            currentGameName.text = ""
             selectedCurrentGameID = null
         }
 
@@ -493,6 +535,7 @@ class IndividualHunt : ComponentActivity() {
             gameRecyclerView.adapter = GameSelectionAdapter(this, 1, groupedGameList) { selectedGame ->
                 currentGameIcon.setImageResource(selectedGame.gameImage)
                 currentGameIconBorder.visibility = View.VISIBLE
+                currentGameName.text = selectedGame.gameName
                 selectedCurrentGameID = selectedGame.gameID - 1
                 dialog.dismiss()
             }

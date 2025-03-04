@@ -55,7 +55,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         // STEP 6: Insert mock shiny hunts into the database (for test purposes)
         ShinyHuntData.insertShinyHuntData(db, SHINY_HUNT_TABLE, POKEMON_ID_COL, ORIGIN_GAME_ID_COL, METHOD_COL, START_DATE_COL,
             COUNTER_COL, PHASE_COL, IS_COMPLETE_COL, FINISH_DATE_COL, CURRENT_GAME_ID_COL)
-
     }
 
     // Method to upgrade the database when the version changes
@@ -80,6 +79,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     // Method to force update the database (for debug purposes)
     fun forceUpgrade() {
+
         val db = writableDatabase
         Log.d("DBHelper", "Forcing database upgrade")
 
