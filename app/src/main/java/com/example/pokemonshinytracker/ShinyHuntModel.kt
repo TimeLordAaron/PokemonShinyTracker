@@ -16,10 +16,10 @@ object ShinyHuntData {
 
         // Loop from 648 down to 0, adding each shiny hunt entry
         for (pokemonID in 648 downTo 0) {
-            val originGame = Random.nextInt(5, 25)
+            val originGame = Random.nextInt(1, 21)
             val counter = Random.nextInt(0, 10000)
             if (pokemonID > 492) {
-                val currentGame = Random.nextInt(26, 42)
+                val currentGame = Random.nextInt(22, 38)
                 shinyHunts.add(
                     listOf(
                         pokemonID,
@@ -52,9 +52,10 @@ object ShinyHuntData {
 
         // Insert each shiny hunt into the database
         for (hunt in shinyHunts) {
+            Log.d("ShinyHuntData", "currentGameID: ${hunt[8]}")
             val values = ContentValues().apply {
                 put(POKEMON_ID_COL, hunt[0] as Int)
-                put(ORIGIN_GAME_ID_COL, hunt[1] as Int)
+                put(ORIGIN_GAME_ID_COL, hunt[1] as Int?)
                 put(METHOD_COL, hunt[2] as String)
                 put(START_DATE_COL, hunt[3] as String)
                 put(COUNTER_COL, hunt[4] as Int)

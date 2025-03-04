@@ -44,7 +44,9 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp">
 
             <TextView
                 android:id="@+id/selected_pokemon_name"
@@ -73,276 +75,318 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:orientation="vertical"
+        <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="350dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center">
-
-                <TextView
-                    android:id="@+id/startDateLabel"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:text="@string/startDateLabel"/>
-
-                <TextView
-                    android:id="@+id/startDate"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:textAlignment="center"
-                    android:textSize="20sp"
-                    android:text="@string/NA" />
-
-                <Button
-                    android:id="@+id/startDatePicker"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/datePickerLabel"
-                    android:textAllCaps="false" />
-
-            </LinearLayout>
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="50dp"
+            android:fillViewport="true">
 
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="350dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center">
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/hunt_detail_view">
 
-                <TextView
-                    android:id="@+id/originGameLabel"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:text="@string/originGameLabel"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="350dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_gravity="center">
 
-                <FrameLayout
-                    android:id="@+id/originGameIconBorder"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/origin_game_icon_border"
-                    android:visibility="invisible">
+                    <TextView
+                        android:id="@+id/startDateLabel"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:text="@string/startDateLabel"/>
 
-                    <ImageView
-                        android:id="@+id/originGameIcon"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+                    <TextView
+                        android:id="@+id/startDate"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="20sp"
+                        android:text="@string/NA" />
+
+                    <Button
+                        android:id="@+id/startDatePicker"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/datePickerLabel"
+                        android:textAllCaps="false" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="350dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:id="@+id/originGameLabel"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:contentDescription="@string/originGameIconDesc"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:text="@string/originGameLabel"/>
+
+                    <FrameLayout
+                        android:id="@+id/originGameIconBorder"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_gravity="center"
                         android:background="@drawable/origin_game_icon_border"
-                        android:src="@drawable/etc_default"
-                        android:clipToOutline="true" />
+                        android:visibility="invisible">
 
-                </FrameLayout>
+                        <ImageView
+                            android:id="@+id/originGameIcon"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/originGameIconDesc"
+                            android:background="@drawable/origin_game_icon_border"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:src="@drawable/etc_default"
+                            android:clipToOutline="true" />
 
-                <Button
-                    android:id="@+id/originGameButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    </FrameLayout>
+
+                    <Button
+                        android:id="@+id/originGameButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/select_a_game"
+                        android:textColor="@color/black"
+                        android:textAllCaps="false"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="350dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:id="@+id/methodLabel"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:text="@string/methodLabel"/>
+
+                    <EditText
+                        android:id="@+id/method"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:textSize="20sp"
+                        android:hint="@string/methodHint"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="350dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:id="@+id/counterLabel"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textColor="@color/black"
+                        android:text="@string/counterLabel"/>
+
+                    <EditText
+                        android:id="@+id/counter"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:textAlignment="center"
+                        android:text="0"/>
+
+                    <Button
+                        android:id="@+id/decrementCounter"
+                        android:layout_width="75dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="@string/decrementSymbol"/>
+
+                    <Button
+                        android:id="@+id/incrementCounter"
+                        android:layout_width="75dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="@string/incrementSymbol"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="350dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:id="@+id/phaseLabel"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textColor="@color/black"
+                        android:text="@string/phaseLabel"/>
+
+                    <EditText
+                        android:id="@+id/phase"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:textAlignment="center"
+                        android:text="0"/>
+
+                    <Button
+                        android:id="@+id/decrementPhase"
+                        android:layout_width="75dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="@string/decrementSymbol"/>
+
+                    <Button
+                        android:id="@+id/incrementPhase"
+                        android:layout_width="75dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="@string/incrementSymbol"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="350dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:id="@+id/huntCompleteLabel"
+                        android:layout_width="170dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:text="@string/huntCompleteLabel"/>
+
+                    <CheckBox
+                        android:id="@+id/huntCompleteCheckbox"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/finishDateLayout"
+                    android:orientation="horizontal"
+                    android:layout_width="350dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="10dp"
                     android:layout_gravity="center"
-                    android:text="@string/select_a_game"
-                    android:textColor="@color/black"
-                    android:textAllCaps="false"/>
+                    android:visibility="gone">
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/finishedDateLabel"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:text="@string/finishDateLabel"/>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="350dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center">
+                    <TextView
+                        android:id="@+id/finishDate"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="20sp"
+                        android:text="@string/NA" />
 
-                <TextView
-                    android:id="@+id/methodLabel"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:text="@string/methodLabel"/>
+                    <Button
+                        android:id="@+id/finishDatePicker"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/datePickerLabel"
+                        android:textAllCaps="false" />
 
-                <EditText
-                    android:id="@+id/method"
-                    android:layout_width="match_parent"
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/currentGameLayout"
+                    android:orientation="horizontal"
+                    android:layout_width="350dp"
                     android:layout_height="50dp"
-                    android:textSize="20sp"
-                    android:hint="@string/methodHint"/>
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/currentGameSpinnerLabel"
+                        android:layout_width="110dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:text="@string/currentGameLabel"/>
+
+                    <FrameLayout
+                        android:id="@+id/currentGameIconBorder"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/current_game_icon_border"
+                        android:visibility="invisible">
+
+                        <ImageView
+                            android:id="@+id/currentGameIcon"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/currentGameIconDesc"
+                            android:background="@drawable/current_game_icon_border"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:src="@drawable/etc_default"
+                            android:clipToOutline="true" />
+
+                    </FrameLayout>
+
+                    <Button
+                        android:id="@+id/currentGameButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/select_a_game"
+                        android:textColor="@color/black"
+                        android:textAllCaps="false"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="350dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center">
-
-                <TextView
-                    android:id="@+id/counterLabel"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:textColor="@color/black"
-                    android:text="@string/counterLabel"/>
-
-                <EditText
-                    android:id="@+id/counter"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:textAlignment="center"
-                    android:text="0"/>
-
-                <Button
-                    android:id="@+id/decrementCounter"
-                    android:layout_width="75dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:text="@string/decrementSymbol"/>
-
-                <Button
-                    android:id="@+id/incrementCounter"
-                    android:layout_width="75dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:text="@string/incrementSymbol"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="350dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center">
-
-                <TextView
-                    android:id="@+id/phaseLabel"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:textColor="@color/black"
-                    android:text="@string/phaseLabel"/>
-
-                <EditText
-                    android:id="@+id/phase"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:textAlignment="center"
-                    android:text="0"/>
-
-                <Button
-                    android:id="@+id/decrementPhase"
-                    android:layout_width="75dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:text="@string/decrementSymbol"/>
-
-                <Button
-                    android:id="@+id/incrementPhase"
-                    android:layout_width="75dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:text="@string/incrementSymbol"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="350dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center">
-
-                <TextView
-                    android:id="@+id/huntCompleteLabel"
-                    android:layout_width="170dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:text="@string/huntCompleteLabel"/>
-
-                <CheckBox
-                    android:id="@+id/huntCompleteCheckbox"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/finishDateLayout"
-                android:orientation="horizontal"
-                android:layout_width="350dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-                android:visibility="visible">
-
-                <TextView
-                    android:id="@+id/finishedDateLabel"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:text="@string/finishDateLabel"/>
-
-                <TextView
-                    android:id="@+id/finishDate"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:textAlignment="center"
-                    android:textSize="20sp"
-                    android:text="@string/NA" />
-
-                <Button
-                    android:id="@+id/finishDatePicker"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/datePickerLabel"
-                    android:textAllCaps="false" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/currentGameLayout"
-                android:orientation="horizontal"
-                android:layout_width="350dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-                android:visibility="visible">
-
-                <TextView
-                    android:id="@+id/currentGameSpinnerLabel"
-                    android:layout_width="110dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:text="@string/currentGameLabel"/>
-
-                <Spinner
-                    android:id="@+id/currentGameSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:drawable/btn_dropdown"
-                    android:spinnerMode="dropdown"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 

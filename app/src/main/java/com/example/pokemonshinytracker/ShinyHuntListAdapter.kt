@@ -66,13 +66,13 @@ class ShinyHuntListAdapter(private val context: Context, private val huntSet: Li
         Log.d("MainActivity", "Binding View Holder for shiny hunt: $hunt")
         viewHolder.background.setBackgroundResource( if (hunt.isComplete) R.drawable.complete_hunt_view else R.drawable.incomplete_hunt_view )
         viewHolder.pokemonName.text = pokemonSet[hunt.pokemonID].pokemonName
-        if (hunt.originGameID != 0) {
+        if (hunt.originGameID != null) {
             viewHolder.originGameIcon.setImageResource(gameSet[hunt.originGameID!!].gameImage)
             viewHolder.originGameIconBorder.visibility = View.VISIBLE
         } else {
             viewHolder.originGameIconBorder.visibility = View.GONE
         }
-        if (hunt.currentGameID != 0) {
+        if (hunt.currentGameID != null) {
             viewHolder.currentGameIcon.setImageResource(gameSet[hunt.currentGameID!!].gameImage)
             viewHolder.currentGameIconBorder.visibility = View.VISIBLE
         } else {

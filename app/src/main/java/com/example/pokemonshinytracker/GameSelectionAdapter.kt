@@ -4,12 +4,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class GameSelectionAdapter(
     private val context: Context,
+    private val mode: Int,
     private val gameListItems: List<GameListItem>,
     private val onGameSelected: (Game) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -20,10 +22,21 @@ class GameSelectionAdapter(
     }
 
     inner class GameViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val gameIconBorder: FrameLayout = view.findViewById(R.id.gameIconBorder)
         val gameImage: ImageView = view.findViewById(R.id.gameImage)
         val gameName: TextView = view.findViewById(R.id.gameName)
 
         fun bind(game: Game) {
+            // mode 0 = selecting origin game
+            if (mode == 0) {
+                gameIconBorder.setBackgroundResource(R.drawable.origin_game_icon_border)
+                gameImage.setBackgroundResource(R.drawable.origin_game_icon_border)
+            }
+            // mode 1 = selecting current game
+            else {
+                gameIconBorder.setBackgroundResource(R.drawable.current_game_icon_border)
+                gameImage.setBackgroundResource(R.drawable.current_game_icon_border)
+            }
             gameImage.setImageResource(game.gameImage)
             gameImage.setOnClickListener { onGameSelected(game) }
             gameName.text = game.gameName

@@ -75,6 +75,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
         // STEP 4: Recreate the database
         onCreate(db)
+
     }
 
     // Method to force update the database (for debug purposes)
@@ -224,16 +225,16 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 // Insert the current row into the hunt list
                 huntList.add(
                     ShinyHunt(
-                        huntData.getInt(0),                                // huntID
-                        huntData.getInt(1),                                // pokemonID
-                        huntData.getInt(2),                                // originGameID
-                        huntData.getString(3),                             // method
-                        huntData.getString(4),                             // startDate
-                        huntData.getInt(5),                                // counter
-                        huntData.getInt(6),                                // phase
-                        if ((huntData.getInt(7)) == 0 ) false else true,   // isComplete
-                        huntData.getString(8),                             // finishDate
-                        huntData.getInt(9)                                 // currentGameID
+                        huntData.getInt(0),                                                 // huntID
+                        huntData.getInt(1),                                                 // pokemonID
+                        if ((huntData.isNull(2))) null else huntData.getInt(2),  // originGameID
+                        huntData.getString(3),                                              // method
+                        huntData.getString(4),                                              // startDate
+                        huntData.getInt(5),                                                 // counter
+                        huntData.getInt(6),                                                 // phase
+                        if ((huntData.getInt(7)) == 0 ) false else true,                    // isComplete
+                        huntData.getString(8),                                              // finishDate
+                        if ((huntData.isNull(9))) null else huntData.getInt(9)   // currentGameID
                     )
                 )
             } while (huntData.moveToNext())

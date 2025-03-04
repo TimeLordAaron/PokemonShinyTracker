@@ -2,7 +2,6 @@ package com.example.pokemonshinytracker
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.widget.Spinner
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.Configuration
@@ -31,7 +30,7 @@ class IndividualHunt : ComponentActivity() {
     lateinit var pickStartDateBtn: Button
     lateinit var selectedStartDate: TextView
 
-    // Declare variables for the origin game selection dialog
+    // Declare variables for the origin game selection button/dialog
     lateinit var selectOriginGameBtn: Button
     lateinit var gameRecyclerView: RecyclerView
     lateinit var selectGameDialog: View
@@ -51,6 +50,9 @@ class IndividualHunt : ComponentActivity() {
     lateinit var pickFinishDateBtn: Button
     lateinit var selectedFinishDate: TextView
 
+    // Declare variable for the current game selection button
+    lateinit var selectCurrentGameBtn: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -61,7 +63,8 @@ class IndividualHunt : ComponentActivity() {
         var selectedHuntID = 0
         var selectedHunt: List<ShinyHunt> = emptyList()
         var selectedPokemonID = 0
-        var selectedOriginGameID: Int? = 0
+        var selectedOriginGameID: Int? = null
+        var selectedCurrentGameID: Int? = null
 
         // Access the database
         val db = DBHelper(this, null)
@@ -90,13 +93,6 @@ class IndividualHunt : ComponentActivity() {
         val gameNames = gameList.map { it.gameName }.toMutableList()
         Log.d("IndividualHunt", "Game names extracted")
 
-        // Replace "Default" in gameNames with "Select a Game:"
-        val defaultGameIndex = gameNames.indexOf("Default")
-        if (defaultGameIndex != -1) {
-            gameNames[defaultGameIndex] = "Select a Game:"
-            Log.d("IndividualHunt", "Default Game Option: ${pokemonNames[defaultGameIndex]}")
-        }
-
         // Access all the UI elements
         val mainLayout = findViewById<LinearLayout>(R.id.background)                // main layout (i.e. the background gradient)
         backBtn = findViewById(R.id.backButton)                                     // back button
@@ -122,7 +118,9 @@ class IndividualHunt : ComponentActivity() {
         pickFinishDateBtn = findViewById(R.id.finishDatePicker)                     // finish date button
         selectedFinishDate = findViewById(R.id.finishDate)                          // finish date text view
         val currentGameLayout = findViewById<LinearLayout>(R.id.currentGameLayout)  // current game layout
-        val currentGameSpinner = findViewById<Spinner>(R.id.currentGameSpinner)     // current game spinner (i.e. selector)
+        val currentGameIconBorder = findViewById<FrameLayout>(R.id.currentGameIconBorder) // current game icon border
+        val currentGameIcon = findViewById<ImageView>(R.id.currentGameIcon)         // current game icon
+        selectCurrentGameBtn = findViewById(R.id.currentGameButton)                 // current game select button
         Log.d("IndividualHunt", "Accessed all UI elements")
 
         // Retrieve data from the main window
@@ -141,6 +139,7 @@ class IndividualHunt : ComponentActivity() {
                 Log.d("IndividualHunt", "Received Hunt: $hunt")
                 selectedPokemonID = hunt.pokemonID
                 selectedOriginGameID = hunt.originGameID
+                selectedCurrentGameID = hunt.currentGameID
 
                 // Update the pokemon name and image
                 selectedPokemonName.text = pokemonList[hunt.pokemonID].pokemonName
@@ -153,8 +152,10 @@ class IndividualHunt : ComponentActivity() {
                 Log.d("IndividualHunt", "Start Date: ${selectedStartDate.text}")
 
                 // Update the origin game icon
-                originGameIcon.setImageResource(gameList[hunt.originGameID!!].gameImage)
-                originGameIconBorder.visibility = View.VISIBLE
+                if (hunt.originGameID != null) {
+                    originGameIcon.setImageResource(gameList[hunt.originGameID!!].gameImage)
+                    originGameIconBorder.visibility = View.VISIBLE
+                }
 
                 // Update the method text
                 method.setText(hunt.method)
@@ -174,6 +175,12 @@ class IndividualHunt : ComponentActivity() {
                 }
                 Log.d("IndividualHunt", "Finish Date: ${selectedFinishDate.text}")
 
+                // Update the current game icon
+                if (hunt.currentGameID != null) {
+                    currentGameIcon.setImageResource(gameList[hunt.currentGameID!!].gameImage)
+                    currentGameIconBorder.visibility = View.VISIBLE
+                }
+
                 // Update completion checkbox state
                 completionCheckbox.isChecked = hunt.isComplete
                 Log.d("IndividualHunt", "Completion Status: ${completionCheckbox.isChecked}")
@@ -185,8 +192,8 @@ class IndividualHunt : ComponentActivity() {
                     Log.d("IndividualHunt", "Displaying complete hunt layout")
                 } else {
                     mainLayout.setBackgroundResource(R.drawable.incomplete_hunt_gradient)
-                    finishDateLayout.visibility = View.INVISIBLE
-                    currentGameLayout.visibility = View.INVISIBLE
+                    finishDateLayout.visibility = View.GONE
+                    currentGameLayout.visibility = View.GONE
                     Log.d("IndividualHunt", "Displaying incomplete hunt layout")
                 }
 
@@ -201,6 +208,8 @@ class IndividualHunt : ComponentActivity() {
 
         selectPokemonDialog = layoutInflater.inflate(R.layout.pokemon_selection, null)
         pokemonRecyclerView = selectPokemonDialog.findViewById(R.id.pokemon_recycler_view)
+        selectGameDialog = layoutInflater.inflate(R.layout.game_selection, null)
+        gameRecyclerView = selectGameDialog.findViewById(R.id.game_recycler_view)
 
         // Back button handling
         backBtn.setOnClickListener {
@@ -214,7 +223,6 @@ class IndividualHunt : ComponentActivity() {
         saveBtn.setOnClickListener {
             Log.d("IndividualHunt", "Save button clicked. Saving hunt to the database")
 
-            // TODO: Implement the save hunt logic
             // Call updateHunt with the values selected by the user
             db.updateHunt(
                 selectedHuntID,
@@ -225,8 +233,9 @@ class IndividualHunt : ComponentActivity() {
                 counter.text.toString().toInt(),
                 phase.text.toString().toInt(),
                 completionCheckbox.isChecked,
-                selectedFinishDate.text.toString(),
-                currentGameSpinner.selectedItemPosition)
+                if (completionCheckbox.isChecked) selectedFinishDate.text.toString() else null,
+                if (completionCheckbox.isChecked) selectedCurrentGameID else null
+            )
 
             // Return to MainActivity
             Log.d("IndividualActivity", "Returning to Main window")
@@ -311,6 +320,12 @@ class IndividualHunt : ComponentActivity() {
             datePickerDialog.show()
         }
 
+        // Handle clicking the origin game icon (i.e. de-select the origin game)
+        originGameIcon.setOnClickListener {
+            originGameIconBorder.visibility = View.INVISIBLE
+            selectedOriginGameID = null
+        }
+
         // Handle the origin game select button
         selectOriginGameBtn.setOnClickListener {
             val selectGameDialog = layoutInflater.inflate(R.layout.game_selection, null)
@@ -334,12 +349,12 @@ class IndividualHunt : ComponentActivity() {
 
             // Create and show the dialog
             val dialog = AlertDialog.Builder(this)
-                .setTitle("Select an Origin Game")
+                .setTitle("Select the Origin Game")
                 .setView(selectGameDialog)
                 .setPositiveButton("Close") { dialog, _ -> dialog.dismiss() }
                 .show()
 
-            gameRecyclerView.adapter = GameSelectionAdapter(this, groupedGameList) { selectedGame ->
+            gameRecyclerView.adapter = GameSelectionAdapter(this, 0, groupedGameList) { selectedGame ->
                 originGameIcon.setImageResource(selectedGame.gameImage)
                 originGameIconBorder.visibility = View.VISIBLE
                 selectedOriginGameID = selectedGame.gameID - 1
@@ -390,8 +405,8 @@ class IndividualHunt : ComponentActivity() {
             // If checkboxState is false, change background to gray gradient, and make layouts invisible
             if (!checkboxState) {
                 mainLayout.setBackgroundResource(R.drawable.incomplete_hunt_gradient)
-                finishDateLayout.visibility = View.INVISIBLE
-                currentGameLayout.visibility = View.INVISIBLE
+                finishDateLayout.visibility = View.GONE
+                currentGameLayout.visibility = View.GONE
             }
             // If checkboxState is true, change background to green gradient, and make layouts visible
             else {
@@ -401,7 +416,7 @@ class IndividualHunt : ComponentActivity() {
             }
         }
 
-        // Handle selection of the start date
+        // Handle selection of the finish date
         pickFinishDateBtn.setOnClickListener {
             // on below line we are getting
             // the instance of our calendar.
@@ -441,45 +456,45 @@ class IndividualHunt : ComponentActivity() {
             datePickerDialog.show()
         }
 
-        // Populate the Current Game spinner and handle selection
-        if (currentGameSpinner != null) {
-            Log.d("IndividualHunt", "Beginning Current Game Spinner population process")
+        // Handle clicking the current game icon (i.e. de-select the current game)
+        currentGameIcon.setOnClickListener {
+            currentGameIconBorder.visibility = View.INVISIBLE
+            selectedCurrentGameID = null
+        }
 
-            // Create an adapter for the Current Game spinner
-            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, gameNames)
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            currentGameSpinner.adapter = adapter
-            Log.d("IndividualHunt", "Current Game Spinner adapter setup properly")
+        // Handle the current game select button
+        selectCurrentGameBtn.setOnClickListener {
+            val selectGameDialog = layoutInflater.inflate(R.layout.game_selection, null)
+            gameRecyclerView = selectGameDialog.findViewById(R.id.game_recycler_view)
 
-            // Set spinner selection if a current game is selected
-            if (selectedHunt.isNotEmpty() && selectedHunt[0].currentGameID != null) {
-                // Get the correct index (+1 index offset)
-                val huntCurrentGameID = selectedHunt[0].currentGameID
-                val selectedIndex = gameList.indexOfFirst { it.gameID == huntCurrentGameID } + 1
+            val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
+            gameRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
 
-                if (selectedIndex != -1) {
-                    Log.d(
-                        "IndividualHunt",
-                        "Setting spinner to index: $selectedIndex for Game ID: $huntCurrentGameID"
-                    )
-                    currentGameSpinner.setSelection(selectedIndex)
-                } else {
-                    Log.e("IndividualHunt", "Game ID not found in list: $huntCurrentGameID")
+            // Prepare dataset with headers
+            val groupedGameList = prepareGameListWithHeaders(gameList)
+
+            // Custom span size logic to make headers span full width
+            (gameRecyclerView.layoutManager as GridLayoutManager).spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return when (groupedGameList[position]) {
+                        is GameListItem.HeaderItem -> spanCount  // Header takes full row
+                        is GameListItem.GameItem -> 1        // Game takes 1 column
+                    }
                 }
             }
 
-            // TODO: Handle Current Game selection
-            currentGameSpinner.onItemSelectedListener = object :
-                AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View, position: Int, id: Long
-                ) {
-                }
+            // Create and show the dialog
+            val dialog = AlertDialog.Builder(this)
+                .setTitle("Select the Current Game")
+                .setView(selectGameDialog)
+                .setPositiveButton("Close") { dialog, _ -> dialog.dismiss() }
+                .show()
 
-                override fun onNothingSelected(parent: AdapterView<*>) {
-                    // write code to perform some action
-                }
+            gameRecyclerView.adapter = GameSelectionAdapter(this, 1, groupedGameList) { selectedGame ->
+                currentGameIcon.setImageResource(selectedGame.gameImage)
+                currentGameIconBorder.visibility = View.VISIBLE
+                selectedCurrentGameID = selectedGame.gameID - 1
+                dialog.dismiss()
             }
         }
     }
@@ -496,24 +511,37 @@ class IndividualHunt : ComponentActivity() {
 
 
         // Determine the number of columns based on orientation
-        val spanCount = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
+        val pokemonSpanCount = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
+        val gameSpanCount = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
 
-        // Reinitialize GridLayoutManager with updated span count
-        val gridLayoutManager = GridLayoutManager(this, spanCount)
+        // Reinitialize GridLayoutManagers with updated span counts
+        val pokemonGridLayoutManager = GridLayoutManager(this, pokemonSpanCount)
+        val gameGridLayoutManager = GridLayoutManager(this, gameSpanCount)
 
         // Reset spanSizeLookup to ensure headers take up the full row
-        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+        pokemonGridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 return when ((pokemonRecyclerView.adapter as? PokemonSelectionAdapter)?.getItemViewType(position)) {
-                    PokemonSelectionAdapter.VIEW_TYPE_HEADER -> spanCount // Header spans full row
+                    PokemonSelectionAdapter.VIEW_TYPE_HEADER -> pokemonSpanCount // Header spans full row
                     PokemonSelectionAdapter.VIEW_TYPE_POKEMON -> 1        // Pokémon takes 1 column
                     else -> 1 // Default fallback
                 }
             }
         }
 
-        // Apply the updated layout manager
-        pokemonRecyclerView.layoutManager = gridLayoutManager
+        gameGridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when ((gameRecyclerView.adapter as? GameSelectionAdapter)?.getItemViewType(position)) {
+                    GameSelectionAdapter.VIEW_TYPE_HEADER -> gameSpanCount // Header spans full row
+                    GameSelectionAdapter.VIEW_TYPE_GAME -> 1        // Game takes 1 column
+                    else -> 1 // Default fallback
+                }
+            }
+        }
+
+        // Apply the updated layout managers
+        pokemonRecyclerView.layoutManager = pokemonGridLayoutManager
+        gameRecyclerView.layoutManager = gameGridLayoutManager
     }
 
 }

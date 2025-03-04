@@ -10,10 +10,6 @@ object GameData {
 
     fun insertGameData(db: SQLiteDatabase, GAME_TABLE: String, GAME_NAME_COL: String, GAME_IMAGE_COL: String, GENERATION_COL: String) {
         val gameList = listOf(
-            Triple("Default", R.drawable.etc_default, 0),
-            Triple("Bank", R.drawable.game_0_bank, 0),
-            Triple("Home", R.drawable.game_0_home, 0),
-            Triple("GO", R.drawable.game_0_go, 0),
             Triple("Red", R.drawable.game_1_red, 1),
             Triple("Blue", R.drawable.game_1_blue, 1),
             Triple("Green", R.drawable.game_1_green, 1),
@@ -51,7 +47,10 @@ object GameData {
             Triple("Shining Pearl", R.drawable.game_8_shining_pearl, 8),
             Triple("Legends: Arceus", R.drawable.game_8_legends_arceus, 8),
             Triple("Scarlet", R.drawable.game_9_scarlet, 9),
-            Triple("Violet", R.drawable.game_9_violet, 9)
+            Triple("Violet", R.drawable.game_9_violet, 9),
+            Triple("Bank", R.drawable.game_0_bank, 100),
+            Triple("Home", R.drawable.game_0_home, 100),
+            Triple("GO", R.drawable.game_0_go, 100)
         )
 
         for ((name, image, generation) in gameList) {
@@ -85,7 +84,7 @@ fun prepareGameListWithHeaders(gameList: List<Game>): List<GameListItem> {
         "Generation 7" to 7,
         "Generation 8" to 8,
         "Generation 9" to 9,
-        "Miscellaneous" to 0
+        "Miscellaneous" to 100
     )
 
     var lastGen = ""

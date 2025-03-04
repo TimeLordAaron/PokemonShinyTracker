@@ -4,15 +4,26 @@
     android:layout_width="80dp"
     android:layout_height="wrap_content"
     android:layout_margin="20dp">
-    <ImageView
-        android:id="@+id/gameImage"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+    <FrameLayout
+        android:id="@+id/gameIconBorder"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:layout_gravity="center"
-        android:contentDescription="@string/game_item_template"
-        android:src="@drawable/etc_default"
-        android:clickable="true"
-        android:focusable="true"/>
+        android:background="@drawable/origin_game_icon_border">
+        <ImageView
+            android:id="@+id/gameImage"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/game_item_template"
+            android:background="@drawable/origin_game_icon_border"
+            android:src="@drawable/etc_default"
+            android:clipToOutline="true"
+            android:clickable="true"
+            android:focusable="true"/>
+    </FrameLayout>
     <TextView
         android:id="@+id/gameName"
         android:layout_width="match_parent"
