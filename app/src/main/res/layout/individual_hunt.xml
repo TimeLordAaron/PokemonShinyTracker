@@ -77,7 +77,7 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:layout_gravity="center_horizontal">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="350dp"
@@ -117,19 +117,44 @@
                 android:layout_gravity="center">
 
                 <TextView
-                    android:id="@+id/originGameSpinnerLabel"
+                    android:id="@+id/originGameLabel"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:text="@string/originGameLabel"/>
 
-                <Spinner
-                    android:id="@+id/originGameSpinner"
-                    android:layout_width="match_parent"
+                <FrameLayout
+                    android:id="@+id/originGameIconBorder"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/origin_game_icon_border"
+                    android:visibility="invisible">
+
+                    <ImageView
+                        android:id="@+id/originGameIcon"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/originGameIconDesc"
+                        android:background="@drawable/origin_game_icon_border"
+                        android:src="@drawable/etc_default"
+                        android:clipToOutline="true" />
+
+                </FrameLayout>
+
+                <Button
+                    android:id="@+id/originGameButton"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@android:drawable/btn_dropdown"
-                    android:spinnerMode="dropdown"/>
+                    android:layout_gravity="center"
+                    android:text="@string/select_a_game"
+                    android:textColor="@color/black"
+                    android:textAllCaps="false"/>
 
             </LinearLayout>
 
@@ -236,7 +261,7 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:layout_gravity="center_horizontal">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="350dp"

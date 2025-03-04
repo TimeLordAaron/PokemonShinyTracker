@@ -30,4 +30,6 @@
     <string name="generation_3_label">Generation 3</string>
     <string name="generation_4_label">Generation 4</string>
     <string name="generation_5_label">Generation 5</string>
+    <string name="select_a_game">Select a Game</string>
+    <string name="game_item_template">Game Item Template\n</string>
 </resources>

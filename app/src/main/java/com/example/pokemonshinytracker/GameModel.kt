@@ -7,6 +7,7 @@ import android.util.Log
 data class Game(val gameID: Int, val gameName: String, val gameImage: Int, val generation: Int)
 
 object GameData {
+
     fun insertGameData(db: SQLiteDatabase, GAME_TABLE: String, GAME_NAME_COL: String, GAME_IMAGE_COL: String, GENERATION_COL: String) {
         val gameList = listOf(
             Triple("Default", R.drawable.etc_default, 0),
@@ -64,4 +65,40 @@ object GameData {
         }
         Log.d("GameModel", "All games have been inserted into the database")
     }
+}
+
+sealed class GameListItem {
+    data class GameItem(val game: Game) : GameListItem()
+    data class HeaderItem(val generation: String) : GameListItem()
+}
+
+fun prepareGameListWithHeaders(gameList: List<Game>): List<GameListItem> {
+    val groupedList = mutableListOf<GameListItem>()
+
+    val generations = listOf(
+        "Generation 1" to 1,
+        "Generation 2" to 2,
+        "Generation 3" to 3,
+        "Generation 4" to 4,
+        "Generation 5" to 5,
+        "Generation 6" to 6,
+        "Generation 7" to 7,
+        "Generation 8" to 8,
+        "Generation 9" to 9,
+        "Miscellaneous" to 0
+    )
+
+    var lastGen = ""
+    for (game in gameList) {
+        val gen = generations.find { game.generation == it.second }?.first ?: "Unknown Generation"
+
+        if (gen != lastGen) {
+            groupedList.add(GameListItem.HeaderItem(gen))
+            lastGen = gen
+        }
+
+        groupedList.add(GameListItem.GameItem(game))
+    }
+
+    return groupedList
 }
