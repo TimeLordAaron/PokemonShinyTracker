@@ -18,8 +18,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/appName"
-            android:theme="@style/Theme.PokemonShinyTracker">
+            android:theme="@style/Theme.PokemonShinyTracker"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +28,8 @@
         </activity>
         <activity android:name=".IndividualHunt"
             android:parentActivityName=".MainActivity"
-            android:configChanges="orientation|screenSize">
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
