@@ -16,19 +16,15 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : ComponentActivity() {
 
-    // Declare a variable for the new hunt button
-    lateinit var newHuntBtn: Button
-
-    // Declare a variable for the search button
-    lateinit var searchBtn: Button
+    // Lateinit UI declarations
+    private lateinit var newHuntBtn: Button     // new hunt button
+    private lateinit var searchBtn: Button      // search button
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        Log.d("MainActivity", "onCreate() started")
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        Log.d("MainActivity", "onCreate() started")
 
         // Access the database
         val db = DBHelper(this, null)
@@ -38,20 +34,24 @@ class MainActivity : ComponentActivity() {
         //db.forceUpgrade()
         //Log.d("MainActivity","Force updating the database")
 
-        // get list of all pokemon
-        val pokemonList = db.getPokemon()
+        // Retrieve relevant data from database
+        val pokemonList = db.getPokemon()   // list of all pokemon
+        if (pokemonList.isEmpty()) {
+            Log.d("MainActivity", "Failed to retrieve pokemon from database")
+        }
+        val gameList = db.getGames()        // list of all games
+        if (gameList.isEmpty()) {
+            Log.d("MainActivity", "Failed to retrieve games from database")
+        }
+        val hunts = db.getHunts()           // list of all saved hunts
 
-        // get list of all games
-        val gameList = db.getGames()
+        // Access the UI elements
+        val noHuntsMessage = findViewById<TextView>(R.id.no_hunts_message)                      // message for when user has no saved hunts
+        val shinyHuntRecyclerView: RecyclerView = findViewById(R.id.shiny_hunts_recycler_view)  // recycler view that displays the user's saved hunts
+        newHuntBtn = findViewById(R.id.new_hunt_button)                                         // new hunt button
+        searchBtn = findViewById(R.id.search_button)                                            // search button
 
-        // get all of the saved shiny hunts
-        val hunts = db.getHunts()
-
-        // Access the no hunts message and the shiny hunts recycler view
-        val noHuntsMessage = findViewById<TextView>(R.id.no_hunts_message)
-        val shinyHuntRecyclerView: RecyclerView = findViewById(R.id.shiny_hunts_recycler_view)
-
-        // Instantiate adapter for the shiny hunt recycler view
+        // Instantiate an adapter for the shiny hunt recycler view
         val shinyHuntListAdapter = ShinyHuntListAdapter(this, hunts, pokemonList, gameList)
 
         // Handle visibility of the no hunts message and the recycler view
@@ -59,11 +59,11 @@ class MainActivity : ComponentActivity() {
             noHuntsMessage.visibility = View.VISIBLE
             shinyHuntRecyclerView.visibility = View.GONE
         } else {
-
-            // determine the number of columns based on orientation
+            // Determine the number of columns based on orientation
             val spanCount =
                 if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
 
+            // Apply the layout and adapter to the shiny hunt recycler view
             shinyHuntRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
             shinyHuntRecyclerView.adapter = shinyHuntListAdapter
 
@@ -73,9 +73,6 @@ class MainActivity : ComponentActivity() {
                 val innerPadding = insets.getInsets(
                     WindowInsetsCompat.Type.systemBars()
                             or WindowInsetsCompat.Type.displayCutout()
-                    // If using EditText, also add
-                    // "or WindowInsetsCompat.Type.ime()" to
-                    // maintain focus when opening the IME
                 )
                 v.setPadding(
                     innerPadding.left,
@@ -87,23 +84,21 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Handle the New Hunt button
-        newHuntBtn = findViewById(R.id.new_hunt_button)
-
+        // Handle clicking the new hunt button
         newHuntBtn.setOnClickListener {
             Log.d("MainActivity", "New Hunt button clicked. Preparing to start a new hunt")
 
-            // Set up an intent (with 0 for the hunt ID)
+            // Set up an intent (using 0 as a placeholder for the hunt ID)
             val intent = Intent(this, IndividualHunt::class.java).apply {
                 putExtra("hunt_id", 0)
             }
-            Log.d("MainActivity", "Created intent for new hunt. Switching to Individual Hunt window")
+            Log.d("MainActivity", "Created intent for a new hunt. Switching to IndividualHunt")
+
+            // Switch to IndividualHunt
             this.startActivity(intent)
         }
 
         // Handle the Search button
-        searchBtn = findViewById(R.id.search_button)
-
         searchBtn.setOnClickListener {
 
         }

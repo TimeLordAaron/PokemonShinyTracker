@@ -29,13 +29,13 @@ class GameSelectionAdapter(
         fun bind(game: Game) {
             // mode 0 = selecting origin game
             if (mode == 0) {
-                gameIconBorder.setBackgroundResource(R.drawable.origin_game_icon_border)
-                gameImage.setBackgroundResource(R.drawable.origin_game_icon_border)
+                gameIconBorder.setBackgroundResource(R.drawable.ui_game_icon_border_origin)
+                gameImage.setBackgroundResource(R.drawable.ui_game_icon_border_origin)
             }
             // mode 1 = selecting current game
             else {
-                gameIconBorder.setBackgroundResource(R.drawable.current_game_icon_border)
-                gameImage.setBackgroundResource(R.drawable.current_game_icon_border)
+                gameIconBorder.setBackgroundResource(R.drawable.ui_game_icon_border_current)
+                gameImage.setBackgroundResource(R.drawable.ui_game_icon_border_current)
             }
             gameImage.setImageResource(game.gameImage)
             gameImage.setOnClickListener { onGameSelected(game) }

@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/background"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/individual_hunt_background"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="40dp"
-    android:background="@drawable/incomplete_hunt_gradient">
+    android:background="@drawable/ui_gradient_incomplete_hunt">
 
     <!--Back/Save/Delete Buttons-->
     <LinearLayout
         style="?android:attr/buttonBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="20dp"
         android:layout_gravity="center"
         android:orientation="horizontal"
-        android:layout_margin="20dp"
-        android:background="@drawable/hunt_detail_view">
+        android:background="@drawable/ui_container_transparent">
 
         <!--Back Button-->
         <Button
-            android:id="@+id/backButton"
+            android:id="@+id/back_button"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
@@ -29,7 +30,7 @@
 
         <!--Save Button-->
         <Button
-            android:id="@+id/saveButton"
+            android:id="@+id/save_button"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
@@ -39,32 +40,33 @@
 
         <!--Delete Button-->
         <Button
-            android:id="@+id/deleteButton"
+            android:id="@+id/delete_button"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:text="@string/delete_button_text"
             android:textColor="#CC0000"
             android:textAllCaps="false"
-            android:visibility="gone"/>
-
+            android:visibility="gone" />
     </LinearLayout>
 
-    <!--Everything Else-->
+    <!--Individual Hunt Details-->
     <LinearLayout
-        android:id="@+id/individual_hunt_layout"
+        android:id="@+id/individual_hunt_details"
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center">
 
+        <!--Pokemon Section-->
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="50dp"
-            android:layout_marginEnd="50dp">
+            android:layout_marginEnd="50dp"
+            android:background="@drawable/ui_container_transparent">
 
             <TextView
                 android:id="@+id/selected_pokemon_name"
@@ -72,15 +74,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/select_a_pokemon"
-                android:textColor="@color/black"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:textColor="@color/black" />
 
             <ImageView
-                android:id="@+id/pokemonImage"
+                android:id="@+id/pokemon_image"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_gravity="center"
-                android:src="@drawable/etc_default"/>
+                android:contentDescription="@string/pokemon_image_description"
+                android:src="@drawable/etc_default" />
 
             <Button
                 android:id="@+id/pokemon_selection_button"
@@ -89,24 +92,25 @@
                 android:layout_gravity="center"
                 android:text="@string/select_a_pokemon"
                 android:textColor="@color/black"
-                android:textAllCaps="false"/>
-
+                android:textAllCaps="false" />
         </LinearLayout>
 
+        <!--Other Hunt Details-->
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="50dp"
-            android:fillViewport="true">
+            android:fillViewport="true"
+            android:background="@drawable/ui_container_transparent">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/hunt_detail_view">
+                android:layout_gravity="center_horizontal">
 
+                <!--Start Date Section-->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="350dp"
@@ -115,35 +119,34 @@
                     android:layout_gravity="center">
 
                     <TextView
-                        android:id="@+id/startDateLabel"
+                        android:id="@+id/start_date_label"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textColor="@color/black"
+                        android:text="@string/startDateLabel"
                         android:textSize="20sp"
-                        android:text="@string/startDateLabel"/>
+                        android:textColor="@color/black" />
 
                     <TextView
-                        android:id="@+id/startDate"
+                        android:id="@+id/start_date"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:textSize="20sp"
                         android:textColor="@color/black"
                         android:textAlignment="center"
-                        android:textSize="20sp"
-                        android:text="@string/NA"
-                        android:layout_weight="1" />  <!-- Pushes the Button to the right -->
+                        android:text="@string/NA" />
 
                     <Button
-                        android:id="@+id/startDatePicker"
+                        android:id="@+id/start_date_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/datePickerLabel"
                         android:textAllCaps="false" />
-
                 </LinearLayout>
 
-
+                <!--Origin Game Section-->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="350dp"
@@ -152,59 +155,59 @@
                     android:layout_gravity="center">
 
                     <TextView
-                        android:id="@+id/originGameLabel"
+                        android:id="@+id/origin_game_label"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textColor="@color/black"
+                        android:text="@string/originGameLabel"
                         android:textSize="20sp"
-                        android:text="@string/originGameLabel"/>
+                        android:textColor="@color/black" />
 
                     <FrameLayout
-                        android:id="@+id/originGameIconBorder"
+                        android:id="@+id/origin_game_icon_border"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/origin_game_icon_border"
+                        android:background="@drawable/ui_game_icon_border_origin"
                         android:visibility="invisible">
 
                         <ImageView
-                            android:id="@+id/originGameIcon"
+                            android:id="@+id/origin_game_icon"
                             android:layout_width="35dp"
                             android:layout_height="35dp"
                             android:layout_gravity="center"
                             android:contentDescription="@string/originGameIconDesc"
-                            android:background="@drawable/origin_game_icon_border"
+                            android:background="@drawable/ui_game_icon_border_origin"
                             android:clickable="true"
                             android:focusable="true"
                             android:src="@drawable/etc_default"
-                            android:clipToOutline="true" />
-
+                            android:clipToOutline="true"
+                            tools:ignore="UnusedAttribute" />
                     </FrameLayout>
 
                     <TextView
-                        android:id="@+id/originGameName"
+                        android:id="@+id/origin_game_name"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textColor="@color/black"
                         android:textSize="20sp"
+                        android:textColor="@color/black"
                         android:textAlignment="center"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1" />
 
                     <Button
-                        android:id="@+id/originGameButton"
+                        android:id="@+id/origin_game_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/select_a_game"
                         android:textColor="@color/black"
                         android:textAllCaps="false"/>
-
                 </LinearLayout>
 
+                <!--Method Section-->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="350dp"
@@ -213,7 +216,7 @@
                     android:layout_gravity="center">
 
                     <TextView
-                        android:id="@+id/methodLabel"
+                        android:id="@+id/method_label"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
@@ -222,6 +225,7 @@
 
                     <EditText
                         android:id="@+id/method"
+                        android:importantForAutofill="no"
                         android:inputType="text"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
@@ -230,6 +234,7 @@
 
                 </LinearLayout>
 
+                <!--Counter Section-->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="350dp"
@@ -238,37 +243,38 @@
                     android:layout_gravity="center">
 
                     <TextView
-                        android:id="@+id/counterLabel"
+                        android:id="@+id/counter_label"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
+                        android:text="@string/counterLabel"
                         android:textSize="20sp"
-                        android:textColor="@color/black"
-                        android:text="@string/counterLabel"/>
+                        android:textColor="@color/black" />
 
                     <EditText
                         android:id="@+id/counter"
+                        android:importantForAutofill="no"
                         android:inputType="number"
                         android:layout_width="100dp"
                         android:layout_height="50dp"
-                        android:textAlignment="center"
-                        android:text="0"/>
+                        android:text="@string/zero"
+                        android:textAlignment="center" />
 
                     <Button
-                        android:id="@+id/decrementCounter"
+                        android:id="@+id/decrement_counter_button"
                         android:layout_width="75dp"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:text="@string/decrementSymbol"/>
+                        android:text="@string/decrementSymbol"
+                        android:textColor="@color/black" />
 
                     <Button
-                        android:id="@+id/incrementCounter"
+                        android:id="@+id/increment_counter_button"
                         android:layout_width="75dp"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:text="@string/incrementSymbol"/>
-
+                        android:text="@string/incrementSymbol"
+                        android:textColor="@color/black" />
                 </LinearLayout>
 
+                <!--Phase Section-->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="350dp"
@@ -277,37 +283,38 @@
                     android:layout_gravity="center">
 
                     <TextView
-                        android:id="@+id/phaseLabel"
+                        android:id="@+id/phase_label"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
+                        android:text="@string/phaseLabel"
                         android:textSize="20sp"
-                        android:textColor="@color/black"
-                        android:text="@string/phaseLabel"/>
+                        android:textColor="@color/black" />
 
                     <EditText
                         android:id="@+id/phase"
+                        android:importantForAutofill="no"
                         android:inputType="number"
                         android:layout_width="100dp"
                         android:layout_height="50dp"
-                        android:textAlignment="center"
-                        android:text="0"/>
+                        android:text="@string/zero"
+                        android:textAlignment="center" />
 
                     <Button
-                        android:id="@+id/decrementPhase"
+                        android:id="@+id/decrement_phase_button"
                         android:layout_width="75dp"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:text="@string/decrementSymbol"/>
+                        android:text="@string/decrementSymbol"
+                        android:textColor="@color/black" />
 
                     <Button
-                        android:id="@+id/incrementPhase"
+                        android:id="@+id/increment_phase_button"
                         android:layout_width="75dp"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:text="@string/incrementSymbol"/>
-
+                        android:text="@string/incrementSymbol"
+                        android:textColor="@color/black" />
                 </LinearLayout>
 
+                <!--Hunt Completion Section-->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="350dp"
@@ -316,22 +323,22 @@
                     android:layout_gravity="center">
 
                     <TextView
-                        android:id="@+id/huntCompleteLabel"
+                        android:id="@+id/hunt_complete_label"
                         android:layout_width="170dp"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/black"
+                        android:text="@string/huntCompleteLabel"
                         android:textSize="20sp"
-                        android:text="@string/huntCompleteLabel"/>
+                        android:textColor="@color/black" />
 
                     <CheckBox
-                        android:id="@+id/huntCompleteCheckbox"
+                        android:id="@+id/hunt_complete_checkbox"
                         android:layout_width="50dp"
                         android:layout_height="50dp"/>
-
                 </LinearLayout>
 
+                <!--Finish Date Section-->
                 <LinearLayout
-                    android:id="@+id/finishDateLayout"
+                    android:id="@+id/finish_date_layout"
                     android:orientation="horizontal"
                     android:layout_width="350dp"
                     android:layout_height="50dp"
@@ -340,36 +347,36 @@
                     android:visibility="gone">
 
                     <TextView
-                        android:id="@+id/finishDateLabel"
+                        android:id="@+id/finish_date_label"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textColor="@color/black"
+                        android:text="@string/finishDateLabel"
                         android:textSize="20sp"
-                        android:text="@string/finishDateLabel"/>
+                        android:textColor="@color/black" />
 
                     <TextView
-                        android:id="@+id/finishDate"
+                        android:id="@+id/finish_date"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textColor="@color/black"
-                        android:textAlignment="center"
-                        android:textSize="20sp"
+                        android:layout_weight="1"
                         android:text="@string/NA"
-                        android:layout_weight="1" />  <!-- Pushes the Button to the right -->
+                        android:textSize="20sp"
+                        android:textColor="@color/black"
+                        android:textAlignment="center" />
 
                     <Button
-                        android:id="@+id/finishDatePicker"
+                        android:id="@+id/finish_date_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/datePickerLabel"
                         android:textAllCaps="false" />
-
                 </LinearLayout>
 
+                <!--Current Game Section-->
                 <LinearLayout
-                    android:id="@+id/currentGameLayout"
+                    android:id="@+id/current_game_layout"
                     android:orientation="horizontal"
                     android:layout_width="350dp"
                     android:layout_height="50dp"
@@ -378,63 +385,58 @@
                     android:visibility="gone">
 
                     <TextView
-                        android:id="@+id/currentGameLabel"
+                        android:id="@+id/current_game_label"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textColor="@color/black"
+                        android:text="@string/currentGameLabel"
                         android:textSize="20sp"
-                        android:text="@string/currentGameLabel"/>
+                        android:textColor="@color/black" />
 
                     <FrameLayout
-                        android:id="@+id/currentGameIconBorder"
+                        android:id="@+id/current_game_icon_border"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/current_game_icon_border"
+                        android:background="@drawable/ui_game_icon_border_current"
                         android:visibility="invisible">
 
                         <ImageView
-                            android:id="@+id/currentGameIcon"
+                            android:id="@+id/current_game_icon"
                             android:layout_width="35dp"
                             android:layout_height="35dp"
                             android:layout_gravity="center"
                             android:contentDescription="@string/currentGameIconDesc"
-                            android:background="@drawable/current_game_icon_border"
+                            android:background="@drawable/ui_game_icon_border_current"
                             android:clickable="true"
                             android:focusable="true"
                             android:src="@drawable/etc_default"
-                            android:clipToOutline="true" />
-
+                            android:clipToOutline="true"
+                            tools:ignore="UnusedAttribute" />
                     </FrameLayout>
 
                     <TextView
-                        android:id="@+id/currentGameName"
+                        android:id="@+id/current_game_name"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textColor="@color/black"
-                        android:textAlignment="center"
+                        android:layout_weight="1"
                         android:textSize="20sp"
-                        android:layout_weight="1"/>
+                        android:textColor="@color/black"
+                        android:textAlignment="center" />
 
                     <Button
-                        android:id="@+id/currentGameButton"
+                        android:id="@+id/current_game_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/select_a_game"
                         android:textColor="@color/black"
                         android:textAllCaps="false"/>
-
                 </LinearLayout>
-
             </LinearLayout>
-
         </ScrollView>
-
     </LinearLayout>
-
 </LinearLayout>

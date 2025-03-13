@@ -1,5 +1,6 @@
 package com.example.pokemonshinytracker
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.app.DatePickerDialog
@@ -15,54 +16,37 @@ import java.util.*
 
 class IndividualHunt : ComponentActivity() {
 
-    // Declare variables for the back and save buttons
-    lateinit var backBtn: Button
-    lateinit var saveBtn: Button
-    lateinit var deleteBtn: Button
+    // Lateinit UI declarations
+    private lateinit var backBtn: Button                    // back button
+    private lateinit var saveBtn: Button                    // save button
+    private lateinit var deleteBtn: Button                  // delete button
+    private lateinit var detailLayout: LinearLayout         // detail layout
+    private lateinit var selectPokemonBtn: Button           // pokemon selection button
+    private lateinit var pokemonRecyclerView: RecyclerView  // pokemon recycler view
+    private lateinit var selectPokemonDialog: View          // pokemon selection dialog
+    private lateinit var pickStartDateBtn: Button           // start date button
+    private lateinit var selectedStartDate: TextView        // start date text
+    private lateinit var selectOriginGameBtn: Button        // origin game button
+    private lateinit var gameRecyclerView: RecyclerView     // game recycler view (used for origin game and current game)
+    private lateinit var selectGameDialog: View             // game dialog (used for origin game and current game)
+    private lateinit var decrementCounterBtn: Button        // decrement counter button
+    private lateinit var incrementCounterBtn: Button        // increment counter button
+    private lateinit var decrementPhaseBtn: Button          // decrement phase button
+    private lateinit var incrementPhaseBtn: Button          // increment phase button
+    private lateinit var completionCheckbox: CheckBox       // completion checkbox
+    private lateinit var pickFinishDateBtn: Button          // finish date button
+    private lateinit var selectedFinishDate: TextView       // finish date text
+    private lateinit var selectCurrentGameBtn: Button       // current game button
 
-    lateinit var detailLayout: LinearLayout
-
-    // Declare variables for the pokemon selection dialog
-    lateinit var selectPokemonBtn: Button
-    lateinit var pokemonRecyclerView: RecyclerView
-    lateinit var selectPokemonDialog: View
-
-    // Declare variables for the start date button
-    lateinit var pickStartDateBtn: Button
-    lateinit var selectedStartDate: TextView
-
-    // Declare variables for the origin game selection button/dialog
-    lateinit var selectOriginGameBtn: Button
-    lateinit var gameRecyclerView: RecyclerView
-    lateinit var selectGameDialog: View
-
-    // Declare variables for the counter buttons
-    lateinit var decrementCounterBtn: Button
-    lateinit var incrementCounterBtn: Button
-
-    // Declare variables for the phase buttons
-    lateinit var decrementPhaseBtn: Button
-    lateinit var incrementPhaseBtn: Button
-
-    // Declare variable for the hunt complete checkbox
-    lateinit var completionCheckbox: CheckBox
-
-    // Declare variables for the finish date button
-    lateinit var pickFinishDateBtn: Button
-    lateinit var selectedFinishDate: TextView
-
-    // Declare variable for the current game selection button
-    lateinit var selectCurrentGameBtn: Button
-
+    @SuppressLint("SetTextI18n", "InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        Log.d("IndividualHunt", "onCreate() started")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.individual_hunt)
-        Log.d("IndividualHunt", "onCreate() started")
 
-        // Declare a selected hunt variable (in case a pre-existing hunt was selected)
+        // Declare variables for the selected hunt (in case the user opened a saved hunt)
         var selectedHuntID = 0
-        var selectedHunt: List<ShinyHunt> = emptyList()
+        var selectedHunt: List<ShinyHunt>
         var selectedPokemonID = 0
         var selectedOriginGameID: Int? = null
         var selectedCurrentGameID: Int? = null
@@ -71,69 +55,55 @@ class IndividualHunt : ComponentActivity() {
         val db = DBHelper(this, null)
         Log.d("IndividualHunt", "Database opened")
 
-        // Get list of Pokemon
-        val pokemonList = db.getPokemon()
-        Log.d("IndividualHunt", "Pokemon List: $pokemonList")
-
-        // Extract the list of Pokemon names
-        val pokemonNames = pokemonList.map { it.pokemonName }.toMutableList()
-        Log.d("IndividualHunt", "Pokemon names extracted")
-
-        // Replace "Default" in pokemonNames with "Select a Pokemon:"
-        val defaultPokemonIndex = pokemonNames.indexOf("Default")
-        if (defaultPokemonIndex != -1) {
-            pokemonNames[defaultPokemonIndex] = "Select a Pokemon:"
-            Log.d("IndividualHunt", "Default Pokemon Option: ${pokemonNames[defaultPokemonIndex]}")
+        // Retrieve relevant data from database
+        val pokemonList = db.getPokemon()   // list of all pokemon
+        if (pokemonList.isEmpty()) {
+            Log.d("IndividualHunt", "Failed to retrieve pokemon from database")
+        }
+        val gameList = db.getGames()        // list of all games
+        if (gameList.isEmpty()) {
+            Log.d("IndividualHunt", "Failed to retrieve games from database")
         }
 
-        // Get list of Games
-        val gameList = db.getGames()
-        Log.d("IndividualHunt", "Games List: $gameList")
-
-        // Extract the list of Game names
-        val gameNames = gameList.map { it.gameName }.toMutableList()
-        Log.d("IndividualHunt", "Game names extracted")
-
         // Access all the UI elements
-        val mainLayout = findViewById<LinearLayout>(R.id.background)                // main layout (i.e. the background gradient)
-        backBtn = findViewById(R.id.backButton)                                     // back button
-        saveBtn = findViewById(R.id.saveButton)                                     // save button
-        deleteBtn = findViewById(R.id.deleteButton)                                 // delete button
-        detailLayout = findViewById(R.id.individual_hunt_layout)                    // detail layout
-        val selectedPokemonName = findViewById<TextView>(R.id.selected_pokemon_name)    // selected pokemon name
-        val pokemonImage = findViewById<ImageView>(R.id.pokemonImage)               // pokemon image
-        selectPokemonBtn = findViewById(R.id.pokemon_selection_button)              // pokemon select button
-        pickStartDateBtn = findViewById(R.id.startDatePicker)                       // start date button
-        selectedStartDate = findViewById(R.id.startDate)                            // start date text view
-        val originGameIconBorder = findViewById<FrameLayout>(R.id.originGameIconBorder) // origin game icon border
-        val originGameIcon = findViewById<ImageView>(R.id.originGameIcon)           // origin game icon
-        val originGameName = findViewById<TextView>(R.id.originGameName)            // origin game name
-        selectOriginGameBtn = findViewById(R.id.originGameButton)                   // origin game select button
-        val method = findViewById<EditText>(R.id.method)                            // method edit text
-        val counter = findViewById<EditText>(R.id.counter)                          // counter edit text
-        decrementCounterBtn = findViewById(R.id.decrementCounter)                   // counter decrement button
-        incrementCounterBtn = findViewById(R.id.incrementCounter)                   // counter increment button
-        val phase = findViewById<EditText>(R.id.phase)                              // phase edit text
-        decrementPhaseBtn = findViewById(R.id.decrementPhase)                       // phase decrement button
-        incrementPhaseBtn = findViewById(R.id.incrementPhase)                       // phase increment button
-        completionCheckbox = findViewById(R.id.huntCompleteCheckbox)                // hunt completion checkbox
-        val finishDateLayout = findViewById<LinearLayout>(R.id.finishDateLayout)    // finish date layout
-        pickFinishDateBtn = findViewById(R.id.finishDatePicker)                     // finish date button
-        selectedFinishDate = findViewById(R.id.finishDate)                          // finish date text view
-        val currentGameLayout = findViewById<LinearLayout>(R.id.currentGameLayout)  // current game layout
-        val currentGameIconBorder = findViewById<FrameLayout>(R.id.currentGameIconBorder) // current game icon border
-        val currentGameIcon = findViewById<ImageView>(R.id.currentGameIcon)         // current game icon
-        val currentGameName = findViewById<TextView>(R.id.currentGameName)          // current game name
-        selectCurrentGameBtn = findViewById(R.id.currentGameButton)                 // current game select button
+        val mainLayout = findViewById<LinearLayout>(R.id.individual_hunt_background)        // background of the entire window
+        backBtn = findViewById(R.id.back_button)                                            // back button
+        saveBtn = findViewById(R.id.save_button)                                            // save button
+        deleteBtn = findViewById(R.id.delete_button)                                        // delete button
+        detailLayout = findViewById(R.id.individual_hunt_details)                           // detail layout
+        val selectedPokemonName = findViewById<TextView>(R.id.selected_pokemon_name)        // selected pokemon name
+        val pokemonImage = findViewById<ImageView>(R.id.pokemon_image)                      // pokemon image
+        selectPokemonBtn = findViewById(R.id.pokemon_selection_button)                      // pokemon select button
+        selectedStartDate = findViewById(R.id.start_date)                                   // start date text view
+        pickStartDateBtn = findViewById(R.id.start_date_button)                             // start date button
+        val originGameIconBorder = findViewById<FrameLayout>(R.id.origin_game_icon_border)  // origin game icon border
+        val originGameIcon = findViewById<ImageView>(R.id.origin_game_icon)                 // origin game icon
+        val originGameName = findViewById<TextView>(R.id.origin_game_name)                  // origin game name
+        selectOriginGameBtn = findViewById(R.id.origin_game_button)                         // origin game select button
+        val method = findViewById<EditText>(R.id.method)                                    // method edit text
+        val counter = findViewById<EditText>(R.id.counter)                                  // counter edit text
+        decrementCounterBtn = findViewById(R.id.decrement_counter_button)                   // counter decrement button
+        incrementCounterBtn = findViewById(R.id.increment_counter_button)                   // counter increment button
+        val phase = findViewById<EditText>(R.id.phase)                                      // phase edit text
+        decrementPhaseBtn = findViewById(R.id.decrement_phase_button)                       // phase decrement button
+        incrementPhaseBtn = findViewById(R.id.increment_phase_button)                       // phase increment button
+        completionCheckbox = findViewById(R.id.hunt_complete_checkbox)                      // hunt completion checkbox
+        val finishDateLayout = findViewById<LinearLayout>(R.id.finish_date_layout)          // finish date layout
+        pickFinishDateBtn = findViewById(R.id.finish_date_button)                           // finish date button
+        selectedFinishDate = findViewById(R.id.finish_date)                                 // finish date text view
+        val currentGameLayout = findViewById<LinearLayout>(R.id.current_game_layout)        // current game layout
+        val currentGameIconBorder = findViewById<FrameLayout>(R.id.current_game_icon_border)// current game icon border
+        val currentGameIcon = findViewById<ImageView>(R.id.current_game_icon)               // current game icon
+        val currentGameName = findViewById<TextView>(R.id.current_game_name)                // current game name
+        selectCurrentGameBtn = findViewById(R.id.current_game_button)                       // current game select button
         Log.d("IndividualHunt", "Accessed all UI elements")
 
         // Retrieve data from the main window
         intent?.let {
-            // Retrieve the selected hunt ID
-            selectedHuntID = it.getIntExtra("hunt_id", 0)
+            selectedHuntID = it.getIntExtra("hunt_id", 0)           // hunt ID of the retrieved hunt (or 0 if new hunt)
             Log.d("IndividualHunt", "Received Hunt ID: $selectedHuntID")
 
-            // Get the hunt from the database
+            // Retrieve the hunt from the database using the hunt ID
             selectedHunt = db.getHunts(selectedHuntID)
             Log.d("IndividualHunt", "Hunt for ID $selectedHuntID: $selectedHunt")
 
@@ -195,12 +165,12 @@ class IndividualHunt : ComponentActivity() {
                 Log.d("IndividualHunt", "Completion Status: ${completionCheckbox.isChecked}")
 
                 if (hunt.isComplete) {
-                    mainLayout.setBackgroundResource(R.drawable.complete_hunt_gradient)
+                    mainLayout.setBackgroundResource(R.drawable.ui_gradient_complete_hunt)
                     finishDateLayout.visibility = View.VISIBLE
                     currentGameLayout.visibility = View.VISIBLE
                     Log.d("IndividualHunt", "Displaying complete hunt layout")
                 } else {
-                    mainLayout.setBackgroundResource(R.drawable.incomplete_hunt_gradient)
+                    mainLayout.setBackgroundResource(R.drawable.ui_gradient_incomplete_hunt)
                     finishDateLayout.visibility = View.GONE
                     currentGameLayout.visibility = View.GONE
                     Log.d("IndividualHunt", "Displaying incomplete hunt layout")
@@ -337,15 +307,15 @@ class IndividualHunt : ComponentActivity() {
             Log.d("IndividualHunt", "Creating date picker dialog")
             val datePickerDialog = DatePickerDialog(
                 this,
-                { view, year, monthOfYear, dayOfMonth ->
+                { _, selectedYear, selectedMonth, selectedDay ->
                     // Format and set the text for the start date
                     selectedStartDate.text =
                         (buildString {
-                            append(dayOfMonth.toString())
+                            append(selectedDay.toString())
                             append("/")
-                            append((monthOfYear + 1))
+                            append((selectedMonth + 1))
                             append("/")
-                            append(year)
+                            append(selectedYear)
                         })
                 },
                 // Pass the year, month, and day for the selected date
@@ -405,7 +375,7 @@ class IndividualHunt : ComponentActivity() {
 
         // Handle the decrement counter button
         decrementCounterBtn.setOnClickListener {
-            var counterValue = counter.text.toString().toIntOrNull()
+            val counterValue = counter.text.toString().toIntOrNull()
             // Decrement if value is greater than 0 and not null
             if (counterValue != null && counterValue > 0) {
                 counter.setText(String.format((counterValue - 1).toString()))
@@ -414,7 +384,7 @@ class IndividualHunt : ComponentActivity() {
 
         // Handle the increment counter button
         incrementCounterBtn.setOnClickListener {
-            var counterValue = counter.text.toString().toIntOrNull()
+            val counterValue = counter.text.toString().toIntOrNull()
             // Increment if value is not null
             if (counterValue != null) {
                 counter.setText(String.format((counterValue + 1).toString()))
@@ -423,7 +393,7 @@ class IndividualHunt : ComponentActivity() {
 
         // Handle the decrement phase button
         decrementPhaseBtn.setOnClickListener {
-            var phaseValue = phase.text.toString().toIntOrNull()
+            val phaseValue = phase.text.toString().toIntOrNull()
             // Decrement if value is greater than 0 and not null
             if (phaseValue != null && phaseValue > 0) {
                 phase.setText(String.format((phaseValue - 1).toString()))
@@ -432,7 +402,7 @@ class IndividualHunt : ComponentActivity() {
 
         // Handle the increment phase button
         incrementPhaseBtn.setOnClickListener {
-            var phaseValue = phase.text.toString().toIntOrNull()
+            val phaseValue = phase.text.toString().toIntOrNull()
             // Increment if value is not null
             if (phaseValue != null) {
                 phase.setText(String.format((phaseValue + 1).toString()))
@@ -445,13 +415,13 @@ class IndividualHunt : ComponentActivity() {
             val checkboxState = completionCheckbox.isChecked
             // If checkboxState is false, change background to gray gradient, and make layouts invisible
             if (!checkboxState) {
-                mainLayout.setBackgroundResource(R.drawable.incomplete_hunt_gradient)
+                mainLayout.setBackgroundResource(R.drawable.ui_gradient_incomplete_hunt)
                 finishDateLayout.visibility = View.GONE
                 currentGameLayout.visibility = View.GONE
             }
             // If checkboxState is true, change background to green gradient, and make layouts visible
             else {
-                mainLayout.setBackgroundResource(R.drawable.complete_hunt_gradient)
+                mainLayout.setBackgroundResource(R.drawable.ui_gradient_complete_hunt)
                 finishDateLayout.visibility = View.VISIBLE
                 currentGameLayout.visibility = View.VISIBLE
             }
@@ -474,16 +444,16 @@ class IndividualHunt : ComponentActivity() {
             val datePickerDialog = DatePickerDialog(
                 // on below line we are passing context.
                 this,
-                { view, year, monthOfYear, dayOfMonth ->
+                { _, selectedYear, selectedMonth, selectedDay ->
                     // on below line we are setting
                     // date to our text view.
                     selectedFinishDate.text =
                         (buildString {
-                            append(dayOfMonth.toString())
+                            append(selectedDay.toString())
                             append("/")
-                            append((monthOfYear + 1))
+                            append((selectedMonth + 1))
                             append("/")
-                            append(year)
+                            append(selectedYear)
                         })
                 },
                 // on below line we are passing year, month

@@ -35,4 +35,6 @@
     <string name="back_button_text">Back</string>
     <string name="save_button_text">Save</string>
     <string name="delete_button_text">Delete</string>
+    <string name="zero">0</string>
+    <string name="pokemon_image_description">Image of the selected Pokemon</string>
 </resources>

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp"
-    android:background="@drawable/hunt_detail_view"
+    android:background="@drawable/ui_container_transparent"
     android:textSize="18sp"
     android:textStyle="bold"
     android:textAlignment="center"

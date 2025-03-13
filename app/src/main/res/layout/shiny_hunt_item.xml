@@ -10,7 +10,7 @@
         android:layout_width="400dp"
         android:layout_height="130dp"
         android:layout_gravity="center"
-        android:background="@drawable/incomplete_hunt_view"
+        android:background="@drawable/ui_container_incomplete_hunt"
         android:clickable="true"
         android:focusable="true">
 
@@ -31,7 +31,7 @@
             android:layout_marginEnd="5dp"
             android:orientation="horizontal"
             android:layout_gravity="center"
-            android:background="@drawable/hunt_detail_view">
+            android:background="@drawable/ui_container_transparent">
 
             <!--Name + Game-->
             <LinearLayout
@@ -42,7 +42,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
-                android:background="@drawable/hunt_detail_view">
+                android:background="@drawable/ui_container_transparent">
 
                 <!--Pokemon Name-->
                 <TextView
@@ -72,7 +72,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/origin_game_icon_border"
+                        android:background="@drawable/ui_game_icon_border_origin"
                         android:visibility="gone">
 
                         <ImageView
@@ -81,7 +81,7 @@
                             android:layout_height="35dp"
                             android:layout_gravity="center"
                             android:contentDescription="@string/originGameIconDesc"
-                            android:background="@drawable/origin_game_icon_border"
+                            android:background="@drawable/ui_game_icon_border_origin"
                             android:src="@drawable/etc_default"
                             android:clipToOutline="true" />
 
@@ -95,7 +95,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/current_game_icon_border"
+                        android:background="@drawable/ui_game_icon_border_current"
                         android:visibility="gone">
 
                         <ImageView
@@ -104,7 +104,7 @@
                             android:layout_height="35dp"
                             android:layout_gravity="center"
                             android:contentDescription="@string/currentGameIconDesc"
-                            android:background="@drawable/current_game_icon_border"
+                            android:background="@drawable/ui_game_icon_border_current"
                             android:src="@drawable/etc_default"
                             android:clipToOutline="true" />
 

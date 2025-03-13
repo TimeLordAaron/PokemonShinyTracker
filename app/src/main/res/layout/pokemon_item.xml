@@ -6,6 +6,6 @@
     android:layout_margin="3dp"
     android:contentDescription="@string/pokemon_item_template"
     android:src="@drawable/etc_default"
-    android:background="@drawable/pokemon_unselected_item_border"
+    android:background="@drawable/ui_pokemon_unselected_item_border"
     android:clickable="true"
     android:focusable="true"/>
