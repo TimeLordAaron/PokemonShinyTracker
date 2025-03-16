@@ -65,7 +65,8 @@ class ShinyHuntListAdapter(private val context: Context, private val huntSet: Li
 
         Log.d("MainActivity", "Binding View Holder for shiny hunt: $hunt")
         viewHolder.background.setBackgroundResource( if (hunt.isComplete) R.drawable.ui_container_complete_hunt else R.drawable.ui_container_incomplete_hunt )
-        viewHolder.pokemonName.text = pokemonSet[hunt.pokemonID].pokemonName
+        val pokemon = pokemonSet.find { p -> p.forms.any { it.formID == hunt.formID } }
+        viewHolder.pokemonName.text = pokemon?.pokemonName ?: "N/A"
         if (hunt.originGameID != null) {
             viewHolder.originGameIcon.setImageResource(gameSet[hunt.originGameID!!].gameImage)
             viewHolder.originGameIconBorder.visibility = View.VISIBLE
@@ -78,7 +79,7 @@ class ShinyHuntListAdapter(private val context: Context, private val huntSet: Li
         } else {
             viewHolder.currentGameIconBorder.visibility = View.GONE
         }
-        viewHolder.pokemonImage.setImageResource(pokemonSet[hunt.pokemonID].pokemonImage)
+        viewHolder.pokemonImage.setImageResource(if (hunt.formID == null) R.drawable.etc_default else pokemon!!.forms.find { it.formID == hunt.formID }!!.formImage)
         viewHolder.counterValue.text = hunt.counter.toString()
 
         // Click listener for each hunt item's counter increment button
@@ -90,7 +91,7 @@ class ShinyHuntListAdapter(private val context: Context, private val huntSet: Li
 
             // update the database
             val db = DBHelper(context, null)
-            db.updateHunt(hunt.huntID, hunt.pokemonID, hunt.originGameID, hunt.method, hunt.startDate,
+            db.updateHunt(hunt.huntID, hunt.formID, hunt.originGameID, hunt.method, hunt.startDate,
                 hunt.counter, hunt.phase, hunt.isComplete, hunt.finishDate, hunt.currentGameID)
         }
 
@@ -105,7 +106,7 @@ class ShinyHuntListAdapter(private val context: Context, private val huntSet: Li
 
             // update the database
             val db = DBHelper(context, null)
-            db.updateHunt(hunt.huntID, hunt.pokemonID, hunt.originGameID, hunt.method, hunt.startDate,
+            db.updateHunt(hunt.huntID, hunt.formID, hunt.originGameID, hunt.method, hunt.startDate,
                 hunt.counter, hunt.phase, hunt.isComplete, hunt.finishDate, hunt.currentGameID)
         }
 

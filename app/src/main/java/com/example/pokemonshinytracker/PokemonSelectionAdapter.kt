@@ -23,7 +23,7 @@ class PokemonSelectionAdapter(
         val pokemonImage: ImageView = view.findViewById(R.id.pokemonImage)
 
         fun bind(pokemon: Pokemon) {
-            pokemonImage.setImageResource(pokemon.pokemonImage)
+            pokemonImage.setImageResource(pokemon.forms.find { it.isDefaultForm }!!.formImage)
             pokemonImage.setOnClickListener { onPokemonSelected(pokemon) }
         }
     }

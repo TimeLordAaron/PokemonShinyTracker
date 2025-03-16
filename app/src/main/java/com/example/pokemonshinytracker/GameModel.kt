@@ -9,6 +9,7 @@ data class Game(val gameID: Int, val gameName: String, val gameImage: Int, val g
 object GameData {
 
     fun insertGameData(db: SQLiteDatabase, GAME_TABLE: String, GAME_NAME_COL: String, GAME_IMAGE_COL: String, GENERATION_COL: String) {
+
         val gameList = listOf(
             Triple("Red", R.drawable.game_1_red, 1),
             Triple("Blue", R.drawable.game_1_blue, 1),

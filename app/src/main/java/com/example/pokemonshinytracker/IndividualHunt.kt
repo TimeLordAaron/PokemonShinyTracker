@@ -47,7 +47,8 @@ class IndividualHunt : ComponentActivity() {
         // Declare variables for the selected hunt (in case the user opened a saved hunt)
         var selectedHuntID = 0
         var selectedHunt: List<ShinyHunt>
-        var selectedPokemonID = 0
+        var selectedPokemonID: Int? = null
+        var selectedFormID: Int? = null
         var selectedOriginGameID: Int? = null
         var selectedCurrentGameID: Int? = null
 
@@ -111,16 +112,27 @@ class IndividualHunt : ComponentActivity() {
             if (selectedHunt.isNotEmpty()) {
                 val hunt = selectedHunt[0]  // Safe access
                 Log.d("IndividualHunt", "Received Hunt: $hunt")
-                selectedPokemonID = hunt.pokemonID
+                selectedFormID = hunt.formID
+                Log.d("IndividualHunt", "Form ID: $selectedFormID")
+                val pokemon = pokemonList.find { p -> p.forms.any { it.formID == selectedFormID } }
+                Log.d("IndividualHunt", "Received Pokemon: $pokemon")
+                if (selectedFormID != null) {
+                    selectedPokemonID = pokemon!!.pokemonID
+                }
+                Log.d("IndividualHunt", "Pokemon ID: $selectedPokemonID")
                 selectedOriginGameID = hunt.originGameID
+                Log.d("IndividualHunt", "Origin Game ID: $selectedOriginGameID")
                 selectedCurrentGameID = hunt.currentGameID
+                Log.d("IndividualHunt", "Current Game ID: $selectedCurrentGameID")
 
                 // Enable the delete button
                 deleteBtn.visibility = View.VISIBLE
 
                 // Update the pokemon name and image
-                selectedPokemonName.text = pokemonList[hunt.pokemonID].pokemonName
-                pokemonImage.setImageResource(pokemonList[hunt.pokemonID].pokemonImage)
+                if (selectedFormID != null) {
+                    selectedPokemonName.text = pokemon!!.pokemonName
+                    pokemonImage.setImageResource(pokemon.forms.find { it.formID == hunt.formID }!!.formImage)
+                }
 
                 // Update the start date text (if not null)
                 if (hunt.startDate != null) {
@@ -205,7 +217,7 @@ class IndividualHunt : ComponentActivity() {
             // Call updateHunt with the values selected by the user
             db.updateHunt(
                 selectedHuntID,
-                selectedPokemonID,
+                selectedFormID,
                 selectedOriginGameID,
                 method.text.toString(),
                 selectedStartDate.text.toString(),
@@ -283,7 +295,7 @@ class IndividualHunt : ComponentActivity() {
                 .show()
 
             pokemonRecyclerView.adapter = PokemonSelectionAdapter(this, groupedPokemonList) { selectedPokemon ->
-                pokemonImage.setImageResource(selectedPokemon.pokemonImage)
+                pokemonImage.setImageResource(selectedPokemon.forms.find { it.isDefaultForm }!!.formImage)
                 selectedPokemonName.text = selectedPokemon.pokemonName
                 selectedPokemonID = selectedPokemon.pokemonID - 1
                 dialog.dismiss()
