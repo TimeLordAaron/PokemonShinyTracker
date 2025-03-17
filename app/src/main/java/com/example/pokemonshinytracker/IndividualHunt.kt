@@ -21,6 +21,8 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var saveBtn: Button                    // save button
     private lateinit var deleteBtn: Button                  // delete button
     private lateinit var detailLayout: LinearLayout         // detail layout
+    private lateinit var previousFormBtn: Button            // previous form button
+    private lateinit var nextFormBtn: Button                // next form button
     private lateinit var selectPokemonBtn: Button           // pokemon selection button
     private lateinit var pokemonRecyclerView: RecyclerView  // pokemon recycler view
     private lateinit var selectPokemonDialog: View          // pokemon selection dialog
@@ -72,6 +74,8 @@ class IndividualHunt : ComponentActivity() {
         saveBtn = findViewById(R.id.save_button)                                            // save button
         deleteBtn = findViewById(R.id.delete_button)                                        // delete button
         detailLayout = findViewById(R.id.individual_hunt_details)                           // detail layout
+        previousFormBtn = findViewById(R.id.previous_form_button)                           // previous form button
+        nextFormBtn = findViewById(R.id.next_form_button)                                   // next form button
         val selectedPokemonName = findViewById<TextView>(R.id.selected_pokemon_name)        // selected pokemon name
         val pokemonImage = findViewById<ImageView>(R.id.pokemon_image)                      // pokemon image
         selectPokemonBtn = findViewById(R.id.pokemon_selection_button)                      // pokemon select button
@@ -100,7 +104,7 @@ class IndividualHunt : ComponentActivity() {
         Log.d("IndividualHunt", "Accessed all UI elements")
 
         // Retrieve data from the main window
-        intent?.let {
+        intent?.let { it ->
             selectedHuntID = it.getIntExtra("hunt_id", 0)           // hunt ID of the retrieved hunt (or 0 if new hunt)
             Log.d("IndividualHunt", "Received Hunt ID: $selectedHuntID")
 
@@ -114,10 +118,16 @@ class IndividualHunt : ComponentActivity() {
                 Log.d("IndividualHunt", "Received Hunt: $hunt")
                 selectedFormID = hunt.formID
                 Log.d("IndividualHunt", "Form ID: $selectedFormID")
-                val pokemon = pokemonList.find { p -> p.forms.any { it.formID == selectedFormID } }
+                val pokemon = pokemonList.find { p -> p.forms.any { it.formID == selectedFormID } }!!
+                val formName = pokemon.forms.find { it.formID == hunt.formID }!!.formName
+                val formImage = pokemon.forms.find { it.formID == hunt.formID }!!.formImage
                 Log.d("IndividualHunt", "Received Pokemon: $pokemon")
                 if (selectedFormID != null) {
-                    selectedPokemonID = pokemon!!.pokemonID
+                    selectedPokemonID = pokemon.pokemonID
+                    if (pokemon.forms.size > 1) {
+                        previousFormBtn.visibility = View.VISIBLE
+                        nextFormBtn.visibility = View.VISIBLE
+                    }
                 }
                 Log.d("IndividualHunt", "Pokemon ID: $selectedPokemonID")
                 selectedOriginGameID = hunt.originGameID
@@ -130,8 +140,12 @@ class IndividualHunt : ComponentActivity() {
 
                 // Update the pokemon name and image
                 if (selectedFormID != null) {
-                    selectedPokemonName.text = pokemon!!.pokemonName
-                    pokemonImage.setImageResource(pokemon.forms.find { it.formID == hunt.formID }!!.formImage)
+                    if (formName != null) {
+                        selectedPokemonName.text = pokemon.pokemonName + " ($formName)"
+                    } else {
+                        selectedPokemonName.text = pokemon.pokemonName
+                    }
+                    pokemonImage.setImageResource(formImage)
                 }
 
                 // Update the start date text (if not null)
@@ -265,6 +279,46 @@ class IndividualHunt : ComponentActivity() {
                 .show()
         }
 
+        // Handle the previous form button
+        previousFormBtn.setOnClickListener {
+            Log.d("IndividualHunt", "Selected Pokemon ID: $selectedPokemonID Selected Form ID: $selectedFormID")
+            val pokemon = pokemonList.find { it.pokemonID == selectedPokemonID }!!
+            val sortedForms = pokemon.forms.sortedBy { it.formID }
+            if (selectedFormID!! != sortedForms.first().formID) {
+                selectedFormID = selectedFormID!! - 1
+            } else {
+                selectedFormID = sortedForms.last().formID
+            }
+            val formName = pokemon.forms.find { it.formID == selectedFormID }!!.formName
+            val formImage = pokemon.forms.find { it.formID == selectedFormID }!!.formImage
+            if (formName != null) {
+                selectedPokemonName.text = pokemon.pokemonName + " ($formName)"
+            } else {
+                selectedPokemonName.text = pokemon.pokemonName
+            }
+            pokemonImage.setImageResource(formImage)
+
+        }
+
+        // Handle the next form button
+        nextFormBtn.setOnClickListener {
+            Log.d("IndividualHunt", "Selected Pokemon ID: $selectedPokemonID Selected Form ID: $selectedFormID")
+            val pokemon = pokemonList.find { it.pokemonID == selectedPokemonID }!!
+            val sortedForms = pokemon.forms.sortedBy { it.formID }
+            if (selectedFormID!! != sortedForms.last().formID) {
+                selectedFormID = selectedFormID!! + 1
+            } else {
+                selectedFormID = sortedForms.first().formID
+            }
+            val formName = pokemon.forms.find { it.formID == selectedFormID }!!.formName
+            val formImage = pokemon.forms.find { it.formID == selectedFormID }!!.formImage
+            if (formName != null) {
+                selectedPokemonName.text = pokemon.pokemonName + " ($formName)"
+            } else {
+                selectedPokemonName.text = pokemon.pokemonName
+            }
+            pokemonImage.setImageResource(formImage)
+        }
 
         // Handle the pokemon select button
         selectPokemonBtn.setOnClickListener {
@@ -295,9 +349,18 @@ class IndividualHunt : ComponentActivity() {
                 .show()
 
             pokemonRecyclerView.adapter = PokemonSelectionAdapter(this, groupedPokemonList) { selectedPokemon ->
-                pokemonImage.setImageResource(selectedPokemon.forms.find { it.isDefaultForm }!!.formImage)
-                selectedPokemonName.text = selectedPokemon.pokemonName
-                selectedPokemonID = selectedPokemon.pokemonID - 1
+                val formName = selectedPokemon.forms.find { it.isDefaultForm }?.formName
+                val formImage = selectedPokemon.forms.find { it.isDefaultForm }!!.formImage
+                if (formName != null) {
+                    selectedPokemonName.text = selectedPokemon.pokemonName + " ($formName)"
+                } else {
+                    selectedPokemonName.text = selectedPokemon.pokemonName
+                }
+                pokemonImage.setImageResource(formImage)
+                selectedPokemonID = selectedPokemon.pokemonID
+                selectedFormID = selectedPokemon.forms.find { it.isDefaultForm }!!.formID
+                previousFormBtn.visibility = if (selectedPokemon.forms.size > 1) View.VISIBLE else View.INVISIBLE
+                nextFormBtn.visibility = if (selectedPokemon.forms.size > 1) View.VISIBLE else View.INVISIBLE
                 dialog.dismiss()
             }
         }

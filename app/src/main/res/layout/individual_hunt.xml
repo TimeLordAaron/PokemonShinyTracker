@@ -13,7 +13,7 @@
         style="?android:attr/buttonBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_margin="10dp"
         android:layout_gravity="center"
         android:orientation="horizontal"
         android:background="@drawable/ui_container_transparent">
@@ -63,9 +63,8 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="20dp"
             android:layout_gravity="center"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="50dp"
             android:background="@drawable/ui_container_transparent">
 
             <TextView
@@ -77,13 +76,40 @@
                 android:textSize="20sp"
                 android:textColor="@color/black" />
 
-            <ImageView
-                android:id="@+id/pokemon_image"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_gravity="center"
-                android:contentDescription="@string/pokemon_image_description"
-                android:src="@drawable/etc_default" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/previous_form_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:text="@string/left_button_text"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:id="@+id/pokemon_image"
+                    android:layout_width="175dp"
+                    android:layout_height="175dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/pokemon_image_description"
+                    android:src="@drawable/etc_default" />
+
+                <Button
+                    android:id="@+id/next_form_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:text="@string/right_button_text"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:visibility="invisible" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/pokemon_selection_button"
@@ -99,16 +125,16 @@
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="50dp"
             android:layout_marginBottom="50dp"
+            android:layout_gravity="center"
             android:fillViewport="true"
             android:background="@drawable/ui_container_transparent">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal">
+                android:layout_height="wrap_content">
 
                 <!--Start Date Section-->
                 <LinearLayout
