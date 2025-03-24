@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.Configuration
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.activity.ComponentActivity
 import android.view.View
@@ -325,14 +327,18 @@ class IndividualHunt : ComponentActivity() {
             val selectPokemonDialog = layoutInflater.inflate(R.layout.pokemon_selection, null)
             pokemonRecyclerView = selectPokemonDialog.findViewById(R.id.pokemon_recycler_view)
 
+            val searchBar = selectPokemonDialog.findViewById<EditText>(R.id.search_pokemon)
+
             val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
             pokemonRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
+
+            val layoutManager = GridLayoutManager(this, spanCount)
 
             // Prepare dataset with headers
             val groupedPokemonList = preparePokemonListWithHeaders(pokemonList)
 
             // Custom span size logic to make headers span full width
-            (pokemonRecyclerView.layoutManager as GridLayoutManager).spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
                     return when (groupedPokemonList[position]) {
                         is PokemonListItem.HeaderItem -> spanCount  // Header takes full row
@@ -340,6 +346,8 @@ class IndividualHunt : ComponentActivity() {
                     }
                 }
             }
+
+            pokemonRecyclerView.layoutManager = layoutManager
 
             // Create and show the dialog
             val dialog = AlertDialog.Builder(this)
@@ -363,6 +371,36 @@ class IndividualHunt : ComponentActivity() {
                 nextFormBtn.visibility = if (selectedPokemon.forms.size > 1) View.VISIBLE else View.INVISIBLE
                 dialog.dismiss()
             }
+
+            // Filter Pokémon as the user types
+            searchBar.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {}
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    val filteredList = groupedPokemonList
+                        .filterIsInstance<PokemonListItem.PokemonItem>()
+                        .filter { it.pokemon.pokemonName.contains(s.toString(), ignoreCase = true) }
+
+                    // Keep headers and merge them back into the list
+                    val updatedList = preparePokemonListWithHeaders(filteredList.map { it.pokemon })
+
+                    // Update adapter
+                    (pokemonRecyclerView.adapter as PokemonSelectionAdapter).updateList(updatedList)
+
+                    layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                        override fun getSpanSize(position: Int): Int {
+                            return when (updatedList[position]) {
+                                is PokemonListItem.HeaderItem -> spanCount
+                                is PokemonListItem.PokemonItem -> 1
+                            }
+                        }
+                    }
+
+
+                }
+            })
         }
 
         // Handle selection of the start date

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class PokemonSelectionAdapter(
     private val context: Context,
-    private val pokemonListItems: List<PokemonListItem>,
+    private var pokemonListItems: List<PokemonListItem>,
     private val onPokemonSelected: (Pokemon) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -63,4 +63,10 @@ class PokemonSelectionAdapter(
     }
 
     override fun getItemCount() = pokemonListItems.size
+
+    fun updateList(newList: List<PokemonListItem>) {
+        pokemonListItems = newList
+        notifyDataSetChanged()
+    }
+
 }

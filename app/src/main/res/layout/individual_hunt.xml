@@ -150,7 +150,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/startDateLabel"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textColor="@color/black" />
 
                     <TextView
@@ -159,7 +159,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textColor="@color/black"
                         android:textAlignment="center"
                         android:text="@string/NA" />
@@ -186,7 +186,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/originGameLabel"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textColor="@color/black" />
 
                     <FrameLayout
@@ -218,7 +218,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textColor="@color/black"
                         android:textAlignment="center"
                         android:layout_weight="1" />
@@ -246,7 +246,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:text="@string/methodLabel"/>
 
                     <EditText
@@ -255,7 +255,7 @@
                         android:inputType="text"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:hint="@string/methodHint"/>
 
                 </LinearLayout>
@@ -273,7 +273,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:text="@string/counterLabel"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textColor="@color/black" />
 
                     <EditText
@@ -313,7 +313,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:text="@string/phaseLabel"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textColor="@color/black" />
 
                     <EditText
@@ -353,7 +353,7 @@
                         android:layout_width="170dp"
                         android:layout_height="wrap_content"
                         android:text="@string/huntCompleteLabel"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textColor="@color/black" />
 
                     <CheckBox
@@ -378,7 +378,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/finishDateLabel"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textColor="@color/black" />
 
                     <TextView
@@ -388,7 +388,7 @@
                         android:layout_gravity="center"
                         android:layout_weight="1"
                         android:text="@string/NA"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textColor="@color/black"
                         android:textAlignment="center" />
 
@@ -416,7 +416,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/currentGameLabel"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textColor="@color/black" />
 
                     <FrameLayout
@@ -449,7 +449,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textColor="@color/black"
                         android:textAlignment="center" />
 

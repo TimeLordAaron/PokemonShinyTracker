@@ -15,7 +15,10 @@ object ShinyHuntData {
                             IS_COMPLETE_COL: String, FINISH_DATE_COL: String, CURRENT_GAME_ID_COL: String) {
         val shinyHunts = mutableListOf<List<Any?>>()
 
-        // Loop from 1199 down to 0, adding each shiny hunt entry
+        Log.d("ShinyHuntModel", "Creating mock shiny hunts")
+
+        /*
+        // Mock Data Set #1: One hunt for every pokemon form
         for (formID in 1199 downTo 1) {
             val originGame = Random.nextInt(1, 21)
             val counter = Random.nextInt(0, 10000)
@@ -50,6 +53,24 @@ object ShinyHuntData {
                 )
             }
         }
+        */
+
+        // Mock Data Set #2: Some of my personal shiny hunts
+        shinyHunts.add(listOf(740, 33, "Soft Resets", "9/20/2024", 3111, 0, 1, "1/6/2025", 37)) // Darkrai
+        shinyHunts.add(listOf(341, 37, "Masuda Method", "", 319, 0, 1, "1/17/2025", 37))      // Gligar
+        shinyHunts.add(listOf(734, 28, "Soft Resets", "", 1768, 0, 1, "", 38))              // Regigigas
+        shinyHunts.add(listOf(733, 27, "Soft Resets", "", 1381, 0, 1, "", 38))              // Heatran
+        shinyHunts.add(listOf(233, 28, "Soft Resets", "", 559, 0, 1, "", 38))               // Zapdos
+        shinyHunts.add(listOf(738, 37, "Masuda Method", "", 296, 0, 1, "", 37))             // Phione
+        shinyHunts.add(listOf(932, 27, "Soft Resets", "", 952, 0, 1, "", 38))               // Tornadus
+        shinyHunts.add(listOf(235, 28, "Soft Resets", "", 493, 0, 1, "", 38))               // Moltres
+        shinyHunts.add(listOf(934, 28, "Soft Resets", "", 4, 0, 1, "", 38))                 // Thundurus
+        shinyHunts.add(listOf(231, 27, "Soft Resets", "", 1704, 0, 1, "", 38))              // Articuno
+        shinyHunts.add(listOf(938, 28, "Soft Resets", "", 2058, 0, 1, "", 38))              // Landorus (Ultra Moon)
+        shinyHunts.add(listOf(938, 27, "Soft Resets", "", 563, 0, 1, "", 38))               // Landorus (Ultra Sun)
+        shinyHunts.add(listOf(737, 28, "Soft Resets", "", 835, 0, 1, "", 38))               // Cresselia
+        shinyHunts.add(listOf(729, 27, "Soft Resets", "", 1250, 0, 0, "", null))            // Dialga (ongoing)
+        shinyHunts.add(listOf(937, 28, "Soft Resets", "", 650, 0, 0, "", null))             // Zekrom (ongoing)
 
         // Insert each shiny hunt into the database
         for (hunt in shinyHunts) {
@@ -65,7 +86,9 @@ object ShinyHuntData {
                 put(CURRENT_GAME_ID_COL, hunt[8] as Int?)
             }
             db.insert(SHINY_HUNT_TABLE, null, values)
+            Log.d("ShinyHuntModel", "Inserted shiny hunt: $hunt")
         }
+
         Log.d("ShinyHuntData", "Shiny hunts inserted into the database")
     }
 }
