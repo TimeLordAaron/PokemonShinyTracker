@@ -69,8 +69,8 @@ object ShinyHuntData {
         shinyHunts.add(listOf(938, 28, "Soft Resets", "", 2058, 0, 1, "", 38))              // Landorus (Ultra Moon)
         shinyHunts.add(listOf(938, 27, "Soft Resets", "", 563, 0, 1, "", 38))               // Landorus (Ultra Sun)
         shinyHunts.add(listOf(737, 28, "Soft Resets", "", 835, 0, 1, "", 38))               // Cresselia
-        shinyHunts.add(listOf(729, 27, "Soft Resets", "", 1250, 0, 0, "", null))            // Dialga (ongoing)
-        shinyHunts.add(listOf(937, 28, "Soft Resets", "", 650, 0, 0, "", null))             // Zekrom (ongoing)
+        shinyHunts.add(listOf(729, 27, "Soft Resets", "", 1700, 0, 0, "", null))            // Dialga (ongoing)
+        shinyHunts.add(listOf(937, 28, "Soft Resets", "", 1100, 0, 0, "", null))             // Zekrom (ongoing)
 
         // Insert each shiny hunt into the database
         for (hunt in shinyHunts) {

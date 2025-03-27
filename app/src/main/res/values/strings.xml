@@ -40,4 +40,7 @@
     <string name="left_button_text">◀</string>
     <string name="right_button_text">▶</string>
     <string name="search_pokemon">Search Pokémon</string>
+    <string name="move_up">Button to move shiny hunt up</string>
+    <string name="move_down">Button to move shiny hunt down</string>
+    <string name="edit">Button to edit shiny hunt</string>
 </resources>
