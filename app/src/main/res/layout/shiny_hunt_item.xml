@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--Shiny Hunt Item Layout (for display in the Main Page)-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="5dp">
-    <!--Shiny Hunt Template-->
+
+    <!--Shiny Hunt Layout-->
     <LinearLayout
         android:id="@+id/background"
         android:orientation="vertical"
@@ -14,31 +16,32 @@
         android:background="@drawable/ui_container_incomplete_hunt"
         android:longClickable="true">
 
+        <!--Default Layout-->
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!--Image-->
+            <!--Pokemon Image-->
             <ImageView
-                android:id="@+id/pokemonImage"
+                android:id="@+id/pokemon_image"
                 android:layout_width="125dp"
                 android:layout_height="125dp"
                 android:layout_gravity="center"
                 android:src="@drawable/etc_default"/>
 
-            <!--Details-->
+            <!--Hunt Details Layout-->
             <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginEnd="5dp"
-                android:orientation="horizontal"
                 android:layout_gravity="center"
                 android:background="@drawable/ui_container_transparent">
 
-                <!--Name + Game-->
+                <!--Name + Game Layout-->
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="110dp"
@@ -51,27 +54,27 @@
 
                     <!--Pokemon Name-->
                     <TextView
-                        android:id="@+id/pokemonName"
+                        android:id="@+id/pokemon_name"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
                         android:gravity="center"
-                        android:text="@string/namePlaceholder"
+                        android:text="@string/name_placeholder"
                         android:textSize="18sp"
                         android:textColor="@color/black"/>
 
-                    <!--Games-->
+                    <!--Games Layout-->
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center">
 
-                        <!--Origin Game-->
+                        <!--Origin Game Icon Layout-->
                         <FrameLayout
-                            android:id="@+id/originGameIconBorder"
+                            android:id="@+id/origin_game_icon_border"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:layout_marginStart="5dp"
@@ -80,21 +83,22 @@
                             android:background="@drawable/ui_game_icon_border_origin"
                             android:visibility="gone">
 
+                            <!--Origin Game Icon-->
                             <ImageView
-                                android:id="@+id/originGameIcon"
+                                android:id="@+id/origin_game_icon"
                                 android:layout_width="35dp"
                                 android:layout_height="35dp"
                                 android:layout_gravity="center"
-                                android:contentDescription="@string/originGameIconDesc"
                                 android:background="@drawable/ui_game_icon_border_origin"
                                 android:src="@drawable/etc_default"
+                                android:contentDescription="@string/origin_game_icon_desc"
                                 android:clipToOutline="true" />
 
                         </FrameLayout>
 
-                        <!--Current Game-->
+                        <!--Current Game Icon Layout-->
                         <FrameLayout
-                            android:id="@+id/currentGameIconBorder"
+                            android:id="@+id/current_game_icon_border"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:layout_marginStart="5dp"
@@ -103,18 +107,18 @@
                             android:background="@drawable/ui_game_icon_border_current"
                             android:visibility="gone">
 
+                            <!--Current Game Icon-->
                             <ImageView
-                                android:id="@+id/currentGameIcon"
+                                android:id="@+id/current_game_icon"
                                 android:layout_width="35dp"
                                 android:layout_height="35dp"
                                 android:layout_gravity="center"
-                                android:contentDescription="@string/currentGameIconDesc"
                                 android:background="@drawable/ui_game_icon_border_current"
                                 android:src="@drawable/etc_default"
+                                android:contentDescription="@string/current_game_icon_desc"
                                 android:clipToOutline="true" />
 
                         </FrameLayout>
-
 
                     </LinearLayout>
 
@@ -125,56 +129,52 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp">
+                    android:layout_margin="5dp">
 
-                    <!--Method-->
+                    <!--Counter Label-->
                     <TextView
-                        android:id="@+id/method"
+                        android:id="@+id/counter_label"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:layout_marginTop="5dp"
                         android:gravity="center"
-                        android:text="@string/counterLabel"
-                        android:textAlignment="center"
+                        android:text="@string/counter_label"
                         android:textSize="18sp"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textAlignment="center" />
 
-                    <!--Counter-->
+                    <!--Counter Value-->
                     <TextView
-                        android:id="@+id/counterValue"
+                        android:id="@+id/counter_value"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
-
                         android:gravity="center"
-                        android:text="@string/defaultCounter"
-                        android:textAlignment="center"
+                        android:text="@string/default_counter"
                         android:textSize="18sp"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textAlignment="center" />
 
-                    <!--Counter + Buttons-->
+                    <!--Counter Buttons Layout-->
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center">
 
-                        <!--Counter Decrement Button-->
+                        <!--Decrement Counter Button-->
                         <Button
-                            android:id="@+id/counterDecrement"
+                            android:id="@+id/decrement_counter_button"
                             android:layout_width="70dp"
                             android:layout_height="48dp"
-                            android:text="@string/decrementSymbol"
+                            android:text="@string/decrement_symbol"
                             android:textColor="@color/black"/>
 
-                        <!--Counter Increment Button-->
+                        <!--Increment Counter Button-->
                         <Button
-                            android:id="@+id/counterIncrement"
+                            android:id="@+id/increment_counter_button"
                             android:layout_width="70dp"
                             android:layout_height="48dp"
-                            android:text="@string/incrementSymbol"
+                            android:text="@string/increment_symbol"
                             android:textColor="@color/black"/>
 
                     </LinearLayout>
@@ -187,16 +187,16 @@
 
         <!-- Long Click Menu (Initially Hidden) -->
         <LinearLayout
-            android:id="@+id/longClickMenu"
+            android:id="@+id/long_click_menu"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="end"
             android:visibility="gone">
 
             <!--Move Up Button-->
             <ImageButton
-                android:id="@+id/moveUpButton"
+                android:id="@+id/move_up_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@null"
@@ -206,7 +206,7 @@
 
             <!--Move Down Button-->
             <ImageButton
-                android:id="@+id/moveDownButton"
+                android:id="@+id/move_down_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@null"
@@ -216,7 +216,7 @@
 
             <!--Edit Button-->
             <ImageButton
-                android:id="@+id/editButton"
+                android:id="@+id/edit_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@null"

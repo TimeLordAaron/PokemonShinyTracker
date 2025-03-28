@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--Pokemon Selection Layout-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -10,15 +11,16 @@
             android:id="@+id/search_pokemon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/search_pokemon"
-            android:drawableStart="@android:drawable/ic_menu_search"
-            android:importantForAutofill="no"
-            android:inputType="text"
             android:padding="8dp"
             android:background="@android:drawable/edit_text"
             android:textColor="@android:color/black"
-            android:textColorHint="@android:color/darker_gray" />
+            android:textColorHint="@android:color/darker_gray"
+            android:hint="@string/search_pokemon"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:inputType="text"
+            android:importantForAutofill="no" />
 
+        <!--Pokemon Recycler View-->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/pokemon_recycler_view"
             android:clipToPadding="false"
@@ -26,4 +28,5 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal" />
+
 </LinearLayout>

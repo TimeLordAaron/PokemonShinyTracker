@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--Pokemon Item (for displaying a Pokemon as a clickable icon-->
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/pokemonImage"
+    android:id="@+id/pokemon_image"
     android:layout_width="60dp"
     android:layout_height="60dp"
     android:layout_margin="3dp"
-    android:contentDescription="@string/pokemon_item_template"
-    android:src="@drawable/etc_default"
     android:background="@drawable/ui_pokemon_unselected_item_border"
+    android:src="@drawable/etc_default"
+    android:contentDescription="@string/pokemon_item_image_description"
     android:clickable="true"
     android:focusable="true"/>

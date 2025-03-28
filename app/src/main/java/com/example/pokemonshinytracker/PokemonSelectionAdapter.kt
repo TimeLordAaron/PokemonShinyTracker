@@ -1,6 +1,5 @@
 package com.example.pokemonshinytracker
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class PokemonSelectionAdapter(
-    private val context: Context,
     private var pokemonListItems: List<PokemonListItem>,
     private val onPokemonSelected: (Pokemon) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -20,7 +18,7 @@ class PokemonSelectionAdapter(
     }
 
     inner class PokemonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val pokemonImage: ImageView = view.findViewById(R.id.pokemonImage)
+        val pokemonImage: ImageView = view.findViewById(R.id.pokemon_image)
 
         fun bind(pokemon: Pokemon) {
             pokemonImage.setImageResource(pokemon.forms.find { it.isDefaultForm }!!.formImage)
@@ -29,7 +27,7 @@ class PokemonSelectionAdapter(
     }
 
     inner class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val headerText: TextView = view.findViewById(R.id.headerText)
+        val headerText: TextView = view.findViewById(R.id.generation_header_text)
 
         fun bind(header: String) {
             headerText.text = header

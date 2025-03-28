@@ -1,6 +1,5 @@
 package com.example.pokemonshinytracker
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class GameSelectionAdapter(
-    private val context: Context,
     private val mode: Int,
     private val gameListItems: List<GameListItem>,
     private val onGameSelected: (Game) -> Unit
@@ -22,9 +20,9 @@ class GameSelectionAdapter(
     }
 
     inner class GameViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val gameIconBorder: FrameLayout = view.findViewById(R.id.gameIconBorder)
-        val gameImage: ImageView = view.findViewById(R.id.gameImage)
-        val gameName: TextView = view.findViewById(R.id.gameName)
+        val gameIconBorder: FrameLayout = view.findViewById(R.id.game_icon_border)
+        val gameImage: ImageView = view.findViewById(R.id.game_image)
+        val gameName: TextView = view.findViewById(R.id.game_name)
 
         fun bind(game: Game) {
             // mode 0 = selecting origin game
@@ -44,7 +42,7 @@ class GameSelectionAdapter(
     }
 
     inner class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val headerText: TextView = view.findViewById(R.id.headerText)
+        val headerText: TextView = view.findViewById(R.id.generation_header_text)
 
         fun bind(header: String) {
             headerText.text = header

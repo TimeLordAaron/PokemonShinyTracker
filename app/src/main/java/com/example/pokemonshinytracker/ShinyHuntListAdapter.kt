@@ -40,19 +40,19 @@ class ShinyHuntListAdapter(private val context: Context, private var huntSet: Li
         init {
             // Define click listener for the ViewHolder's View
             background = view.findViewById(R.id.background)
-            pokemonName = view.findViewById(R.id.pokemonName)
-            originGameIconBorder = view.findViewById(R.id.originGameIconBorder)
-            originGameIcon = view.findViewById(R.id.originGameIcon)
-            currentGameIconBorder = view.findViewById(R.id.currentGameIconBorder)
-            currentGameIcon = view.findViewById(R.id.currentGameIcon)
-            pokemonImage = view.findViewById(R.id.pokemonImage)
-            counterValue = view.findViewById(R.id.counterValue)
-            counterIncrementBtn = view.findViewById(R.id.counterIncrement)
-            counterDecrementBtn = view.findViewById(R.id.counterDecrement)
-            longClickMenu = view.findViewById(R.id.longClickMenu)
-            moveUpButton = view.findViewById(R.id.moveUpButton)
-            moveDownButton = view.findViewById(R.id.moveDownButton)
-            editButton = view.findViewById(R.id.editButton)
+            pokemonName = view.findViewById(R.id.pokemon_name)
+            originGameIconBorder = view.findViewById(R.id.origin_game_icon_border)
+            originGameIcon = view.findViewById(R.id.origin_game_icon)
+            currentGameIconBorder = view.findViewById(R.id.current_game_icon_border)
+            currentGameIcon = view.findViewById(R.id.current_game_icon)
+            pokemonImage = view.findViewById(R.id.pokemon_image)
+            counterValue = view.findViewById(R.id.counter_value)
+            counterIncrementBtn = view.findViewById(R.id.increment_counter_button)
+            counterDecrementBtn = view.findViewById(R.id.decrement_counter_button)
+            longClickMenu = view.findViewById(R.id.long_click_menu)
+            moveUpButton = view.findViewById(R.id.move_up_button)
+            moveDownButton = view.findViewById(R.id.move_down_button)
+            editButton = view.findViewById(R.id.edit_button)
             longClickMenuOpened = false
         }
     }

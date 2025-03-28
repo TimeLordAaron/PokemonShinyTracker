@@ -356,7 +356,7 @@ class IndividualHunt : ComponentActivity() {
                 .setPositiveButton("Close") { dialog, _ -> dialog.dismiss() }
                 .show()
 
-            pokemonRecyclerView.adapter = PokemonSelectionAdapter(this, groupedPokemonList) { selectedPokemon ->
+            pokemonRecyclerView.adapter = PokemonSelectionAdapter(groupedPokemonList) { selectedPokemon ->
                 val formName = selectedPokemon.forms.find { it.isDefaultForm }?.formName
                 val formImage = selectedPokemon.forms.find { it.isDefaultForm }!!.formImage
                 if (formName != null) {
@@ -477,7 +477,7 @@ class IndividualHunt : ComponentActivity() {
                 .setPositiveButton("Close") { dialog, _ -> dialog.dismiss() }
                 .show()
 
-            gameRecyclerView.adapter = GameSelectionAdapter(this, 0, groupedGameList) { selectedGame ->
+            gameRecyclerView.adapter = GameSelectionAdapter(0, groupedGameList) { selectedGame ->
                 originGameIcon.setImageResource(selectedGame.gameImage)
                 originGameIconBorder.visibility = View.VISIBLE
                 originGameName.text = selectedGame.gameName
@@ -615,7 +615,7 @@ class IndividualHunt : ComponentActivity() {
                 .setPositiveButton("Close") { dialog, _ -> dialog.dismiss() }
                 .show()
 
-            gameRecyclerView.adapter = GameSelectionAdapter(this, 1, groupedGameList) { selectedGame ->
+            gameRecyclerView.adapter = GameSelectionAdapter(1, groupedGameList) { selectedGame ->
                 currentGameIcon.setImageResource(selectedGame.gameImage)
                 currentGameIconBorder.visibility = View.VISIBLE
                 currentGameName.text = selectedGame.gameName
