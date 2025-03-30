@@ -62,7 +62,7 @@
         <!--Pokemon Section-->
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:layout_gravity="center"
@@ -73,8 +73,22 @@
                 android:id="@+id/selected_pokemon_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_gravity="center"
                 android:text="@string/select_a_pokemon"
+                android:textSize="20sp"
+                android:textColor="@color/black" />
+
+            <!--Pokemon Form-->
+            <TextView
+                android:id="@+id/selected_pokemon_form"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="center"
+                android:text=""
                 android:textSize="20sp"
                 android:textColor="@color/black" />
 
@@ -83,13 +97,14 @@
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center">
+                android:layout_gravity="center">
 
                 <!--Previous Form Button-->
                 <Button
                     android:id="@+id/previous_form_button"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
                     android:background="?android:attr/selectableItemBackground"
                     android:visibility="invisible"
                     android:text="@string/left_button_text"
@@ -100,8 +115,8 @@
                 <!--Pokemon Image-->
                 <ImageView
                     android:id="@+id/pokemon_image"
-                    android:layout_width="175dp"
-                    android:layout_height="175dp"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
                     android:layout_gravity="center"
                     android:src="@drawable/etc_default"
                     android:contentDescription="@string/pokemon_image_description" />
@@ -111,6 +126,7 @@
                     android:id="@+id/next_form_button"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
                     android:background="?android:attr/selectableItemBackground"
                     android:visibility="invisible"
                     android:text="@string/right_button_text"

@@ -79,6 +79,7 @@ class IndividualHunt : ComponentActivity() {
         previousFormBtn = findViewById(R.id.previous_form_button)                           // previous form button
         nextFormBtn = findViewById(R.id.next_form_button)                                   // next form button
         val selectedPokemonName = findViewById<TextView>(R.id.selected_pokemon_name)        // selected pokemon name
+        val selectedPokemonForm = findViewById<TextView>(R.id.selected_pokemon_form)        // selected pokemon form
         val pokemonImage = findViewById<ImageView>(R.id.pokemon_image)                      // pokemon image
         selectPokemonBtn = findViewById(R.id.pokemon_selection_button)                      // pokemon select button
         selectedStartDate = findViewById(R.id.start_date)                                   // start date text view
@@ -140,12 +141,13 @@ class IndividualHunt : ComponentActivity() {
                 // Enable the delete button
                 deleteBtn.visibility = View.VISIBLE
 
-                // Update the pokemon name and image
+                // Update the pokemon name, form, and image
                 if (selectedFormID != null) {
+                    selectedPokemonName.text = pokemon.pokemonName
                     if (formName != null) {
-                        selectedPokemonName.text = pokemon.pokemonName + " ($formName)"
+                        selectedPokemonForm.text = "($formName)"
                     } else {
-                        selectedPokemonName.text = pokemon.pokemonName
+                        selectedPokemonForm.text = ""
                     }
                     pokemonImage.setImageResource(formImage)
                 }
@@ -293,13 +295,13 @@ class IndividualHunt : ComponentActivity() {
             }
             val formName = pokemon.forms.find { it.formID == selectedFormID }!!.formName
             val formImage = pokemon.forms.find { it.formID == selectedFormID }!!.formImage
+            selectedPokemonName.text = pokemon.pokemonName
             if (formName != null) {
-                selectedPokemonName.text = pokemon.pokemonName + " ($formName)"
+                selectedPokemonForm.text = "($formName)"
             } else {
-                selectedPokemonName.text = pokemon.pokemonName
+                selectedPokemonForm.text = ""
             }
             pokemonImage.setImageResource(formImage)
-
         }
 
         // Handle the next form button
@@ -314,10 +316,11 @@ class IndividualHunt : ComponentActivity() {
             }
             val formName = pokemon.forms.find { it.formID == selectedFormID }!!.formName
             val formImage = pokemon.forms.find { it.formID == selectedFormID }!!.formImage
+            selectedPokemonName.text = pokemon.pokemonName
             if (formName != null) {
-                selectedPokemonName.text = pokemon.pokemonName + " ($formName)"
+                selectedPokemonForm.text = "($formName)"
             } else {
-                selectedPokemonName.text = pokemon.pokemonName
+                selectedPokemonForm.text = ""
             }
             pokemonImage.setImageResource(formImage)
         }
@@ -359,10 +362,11 @@ class IndividualHunt : ComponentActivity() {
             pokemonRecyclerView.adapter = PokemonSelectionAdapter(groupedPokemonList) { selectedPokemon ->
                 val formName = selectedPokemon.forms.find { it.isDefaultForm }?.formName
                 val formImage = selectedPokemon.forms.find { it.isDefaultForm }!!.formImage
+                selectedPokemonName.text = selectedPokemon.pokemonName
                 if (formName != null) {
-                    selectedPokemonName.text = selectedPokemon.pokemonName + " ($formName)"
+                    selectedPokemonForm.text = "($formName)"
                 } else {
-                    selectedPokemonName.text = selectedPokemon.pokemonName
+                    selectedPokemonForm.text = ""
                 }
                 pokemonImage.setImageResource(formImage)
                 selectedPokemonID = selectedPokemon.pokemonID
