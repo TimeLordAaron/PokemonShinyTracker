@@ -14,15 +14,17 @@ class GameSelectionAdapter(
     private val onGameSelected: (Game) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    // constants to denote game items and header items
     companion object {
         const val VIEW_TYPE_HEADER = 0
         const val VIEW_TYPE_GAME = 1
     }
 
+    // class for game view holders
     inner class GameViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val gameIconBorder: FrameLayout = view.findViewById(R.id.game_icon_border)
-        val gameImage: ImageView = view.findViewById(R.id.game_image)
-        val gameName: TextView = view.findViewById(R.id.game_name)
+        private val gameIconBorder: FrameLayout = view.findViewById(R.id.game_icon_border)
+        private val gameImage: ImageView = view.findViewById(R.id.game_image)
+        private val gameName: TextView = view.findViewById(R.id.game_name)
 
         fun bind(game: Game) {
             // mode 0 = selecting origin game
@@ -41,6 +43,7 @@ class GameSelectionAdapter(
         }
     }
 
+    // class for header view holders
     inner class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val headerText: TextView = view.findViewById(R.id.generation_header_text)
 

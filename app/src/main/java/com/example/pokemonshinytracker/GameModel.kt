@@ -8,8 +8,11 @@ data class Game(val gameID: Int, val gameName: String, val gameImage: Int, val g
 
 object GameData {
 
+    // Function to insert the games into the database
     fun insertGameData(db: SQLiteDatabase, GAME_TABLE: String, GAME_NAME_COL: String, GAME_IMAGE_COL: String, GENERATION_COL: String) {
+        Log.d("GameModel", "insertGameData() started")
 
+        // format: game name, game image, generation
         val gameList = listOf(
             Triple("Red", R.drawable.game_1_red, 1),
             Triple("Blue", R.drawable.game_1_blue, 1),
@@ -54,25 +57,34 @@ object GameData {
             Triple("GO", R.drawable.game_0_go, 100)
         )
 
+        // insert each game into the database
         for ((name, image, generation) in gameList) {
             val values = ContentValues().apply {
                 put(GAME_NAME_COL, name)
                 put(GAME_IMAGE_COL, image)
                 put(GENERATION_COL, generation)
             }
-            db.insert(GAME_TABLE, null, values)
-            Log.d("GameModel", "Game \"$name\" inserted into the database")
+            val result = db.insert(GAME_TABLE, null, values)
+            if (result == -1L) {
+                Log.e("GameModel", "Error inserting game \"$name\" into the database")
+            } else {
+                Log.d("GameModel", "Game \"$name\" inserted into the database")
+            }
         }
-        Log.d("GameModel", "All games have been inserted into the database")
+        Log.d("GameModel", "insertGameData() completed")
     }
 }
 
+// Sealed class for separating game items and header items in the game recycler view
 sealed class GameListItem {
     data class GameItem(val game: Game) : GameListItem()
     data class HeaderItem(val generation: String) : GameListItem()
 }
 
+// Function to prepare the data set for the game recycler view (including headers)
 fun prepareGameListWithHeaders(gameList: List<Game>): List<GameListItem> {
+    Log.d("GameModel", "prepareGameListWithHeaders() started")
+
     val groupedList = mutableListOf<GameListItem>()
 
     val generations = listOf(
@@ -100,5 +112,6 @@ fun prepareGameListWithHeaders(gameList: List<Game>): List<GameListItem> {
         groupedList.add(GameListItem.GameItem(game))
     }
 
+    Log.d("GameModel", "prepareGameListWithHeaders() completed")
     return groupedList
 }
