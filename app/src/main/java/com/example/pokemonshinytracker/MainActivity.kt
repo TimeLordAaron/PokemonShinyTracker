@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : ComponentActivity() {
 
-    // Lateinit UI declarations
+    // lateinit UI declarations
     private lateinit var newHuntBtn: Button     // new hunt button
     private lateinit var searchBtn: Button      // search button
 
@@ -26,15 +26,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Access the database
+        // access the database
         val db = DBHelper(this, null)
         Log.d("MainActivity", "Database opened")
 
-        // Force update the database (for testing purposes)
+        // force update the database (for testing purposes)
         //db.forceUpgrade()
         //Log.d("MainActivity","Force updating the database")
 
-        // Retrieve relevant data from database
+        // retrieve relevant data from database
         val pokemonList = db.getPokemon()   // list of all pokemon
         if (pokemonList.isEmpty()) {
             Log.d("MainActivity", "Failed to retrieve pokemon from database")
@@ -44,26 +44,27 @@ class MainActivity : ComponentActivity() {
             Log.d("MainActivity", "Failed to retrieve games from database")
         }
         val hunts = db.getHunts()           // list of all saved hunts
+        Log.d("MainActivity", "Retrieved ${hunts.size} shiny hunts from database")
 
-        // Access the UI elements
+        // access the UI elements
         val noHuntsMessage = findViewById<TextView>(R.id.no_hunts_message)                      // message for when user has no saved hunts
         val shinyHuntRecyclerView: RecyclerView = findViewById(R.id.shiny_hunts_recycler_view)  // recycler view that displays the user's saved hunts
         newHuntBtn = findViewById(R.id.new_hunt_button)                                         // new hunt button
         searchBtn = findViewById(R.id.search_button)                                            // search button
 
-        // Instantiate an adapter for the shiny hunt recycler view
+        // instantiate an adapter for the shiny hunt recycler view
         val shinyHuntListAdapter = ShinyHuntListAdapter(this, hunts, pokemonList, gameList)
 
-        // Handle visibility of the no hunts message and the recycler view
+        // handle visibility of the no hunts message and the recycler view
         if (hunts.isEmpty()) {
             noHuntsMessage.visibility = View.VISIBLE
             shinyHuntRecyclerView.visibility = View.GONE
         } else {
-            // Determine the number of columns based on orientation
+            // determine the number of columns based on orientation
             val spanCount =
                 if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
 
-            // Apply the layout and adapter to the shiny hunt recycler view
+            // apply the layout and adapter to the shiny hunt recycler view
             shinyHuntRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
             shinyHuntRecyclerView.adapter = shinyHuntListAdapter
 
@@ -84,24 +85,25 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Handle clicking the new hunt button
+        // on click listener for the new hunt button
         newHuntBtn.setOnClickListener {
-            Log.d("MainActivity", "New Hunt button clicked. Preparing to start a new hunt")
+            Log.d("MainActivity", "New Hunt button clicked. Preparing to create a new shiny hunt")
 
-            // Set up an intent (using 0 as a placeholder for the hunt ID)
+            // set up an intent (using 0 as a placeholder for the hunt ID)
             val intent = Intent(this, IndividualHunt::class.java).apply {
                 putExtra("hunt_id", 0)
             }
             Log.d("MainActivity", "Created intent for a new hunt. Switching to IndividualHunt")
 
-            // Switch to IndividualHunt
+            // switch to IndividualHunt
             this.startActivity(intent)
         }
 
-        // Handle the Search button
+        // on click listener for the search button
         searchBtn.setOnClickListener {
 
         }
 
+        Log.d("MainActivity", "onCreate() completed")
     }
 }

@@ -1,5 +1,6 @@
 package com.example.pokemonshinytracker
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,7 @@ class GameSelectionAdapter(
     private val onGameSelected: (Game) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    // constants to denote game items and header items
+    // constants to differentiate between game items and header items
     companion object {
         const val VIEW_TYPE_HEADER = 0
         const val VIEW_TYPE_GAME = 1
@@ -52,26 +53,37 @@ class GameSelectionAdapter(
         }
     }
 
+    // Get the type of the view (invoked by the layout manager)
     override fun getItemViewType(position: Int): Int {
+        Log.d("GameSelectionAdapter", "getItemViewType() started")
+
         return when (gameListItems[position]) {
             is GameListItem.HeaderItem -> VIEW_TYPE_HEADER
             is GameListItem.GameItem -> VIEW_TYPE_GAME
         }
     }
 
+    // Create new Game/Header views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        Log.d("GameSelectionAdapter", "onCreateViewHolder() started")
+
         return if (viewType == VIEW_TYPE_HEADER) {
+            Log.d("GameSelectionAdapter", "View Type: Header")
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.game_header_item, parent, false)
             HeaderViewHolder(view)
         } else {
+            Log.d("GameSelectionAdapter", "View Type: Game")
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.game_item, parent, false)
             GameViewHolder(view)
         }
     }
 
+    // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        Log.d("GameSelectionAdapter", "onBindViewHolder() started")
+
         when (val item = gameListItems[position]) {
             is GameListItem.HeaderItem -> (holder as HeaderViewHolder).bind(item.generation)
             is GameListItem.GameItem -> (holder as GameViewHolder).bind(item.game)

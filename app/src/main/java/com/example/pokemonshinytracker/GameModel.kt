@@ -66,9 +66,9 @@ object GameData {
             }
             val result = db.insert(GAME_TABLE, null, values)
             if (result == -1L) {
-                Log.e("GameModel", "Error inserting game \"$name\" into the database")
+                Log.e("GameModel", "Error inserting game into the database: \"$name\"")
             } else {
-                Log.d("GameModel", "Game \"$name\" inserted into the database")
+                Log.d("GameModel", "Game inserted into the database: \"$name\"")
             }
         }
         Log.d("GameModel", "insertGameData() completed")

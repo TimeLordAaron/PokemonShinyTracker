@@ -8,7 +8,10 @@ data class Pokemon(val pokemonID: Int, val pokemonName: String, val forms: List<
 
 object PokemonData {
 
+    // Function to insert the Pokemon into the database
     fun insertPokemonData(db: SQLiteDatabase, POKEMON_TABLE: String, POKEMON_NAME_COL: String) {
+        Log.d("PokemonModel", "insertPokemonData() started")
+
         val pokemonList = listOf(
             "Bulbasaur",
             "Ivysaur",
@@ -921,30 +924,40 @@ object PokemonData {
             val values = ContentValues().apply {
                 put(POKEMON_NAME_COL, name)
             }
-            db.insert(POKEMON_TABLE, null, values)
-            Log.d("PokemonModel", "Pokemon \"$name\" inserted into the database")
+            val result = db.insert(POKEMON_TABLE, null, values)
+            if (result == -1L) {
+                Log.e("PokemonModel", "Error inserting Pokemon into the database: \"$name\"")
+            } else {
+                Log.d("PokemonModel", "Pokemon inserted into the database: \"$name\"")
+            }
         }
-        Log.d("PokemonData", "All Pokemon have been inserted into the database")
+
+        Log.d("PokemonModel", "insertPokemonData() completed")
     }
 }
 
+// Sealed class for separating Pokemon items and header items in the Pokemon recycler view
 sealed class PokemonListItem {
     data class PokemonItem(val pokemon: Pokemon) : PokemonListItem()
     data class HeaderItem(val generation: String) : PokemonListItem()
 }
 
+// Function to prepare the data set for the Pokemon recycler view (including headers)
 fun preparePokemonListWithHeaders(pokemonList: List<Pokemon>): List<PokemonListItem> {
+    Log.d("PokemonModel", "preparePokemonListWithHeaders() started")
+
     val groupedList = mutableListOf<PokemonListItem>()
 
     val generations = listOf(
-        "Generation 1" to 151,  // Assuming first 151 are Gen 1
-        "Generation 2" to 251,  // Next up to 251 are Gen 2
-        "Generation 3" to 386,  // And so on...
-        "Generation 4" to 493,
-        "Generation 5" to 649,
-        "Generation 6" to 721,
-        "Generation 7" to 809,
-        "Generation 8" to 905
+        "Generation 1" to 151,  // Gen 1: 1 - 151
+        "Generation 2" to 251,  // Gen 2: 152 - 251
+        "Generation 3" to 386,  // Gen 3: 252 - 386
+        "Generation 4" to 493,  // Gen 4: 387 - 493
+        "Generation 5" to 649,  // Gen 5: 494 - 649
+        "Generation 6" to 721,  // Gen 6: 650 - 721
+        "Generation 7" to 809,  // Gen 7: 722 - 809
+        "Generation 8" to 905,  // Gen 8: 810 - 905
+        "Generation 9" to 1025, // Gen 9: 906 - 1025
     )
 
     var lastGen = ""
@@ -959,5 +972,6 @@ fun preparePokemonListWithHeaders(pokemonList: List<Pokemon>): List<PokemonListI
         groupedList.add(PokemonListItem.PokemonItem(pokemon))
     }
 
+    Log.d("PokemonModel", "preparePokemonListWithHeaders() completed")
     return groupedList
 }

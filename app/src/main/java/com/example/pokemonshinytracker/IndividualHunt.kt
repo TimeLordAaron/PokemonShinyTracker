@@ -636,9 +636,12 @@ class IndividualHunt : ComponentActivity() {
                 dialog.dismiss()
             }
         }
+
+        Log.d("IndividualHunt", "onCreate() completed")
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
+        Log.d("IndividualHunt", "onConfigurationChanged() started")
         super.onConfigurationChanged(newConfig)
 
         // update layout orientation dynamically
@@ -681,6 +684,8 @@ class IndividualHunt : ComponentActivity() {
         // apply the updated layout managers
         pokemonRecyclerView.layoutManager = pokemonGridLayoutManager
         gameRecyclerView.layoutManager = gameGridLayoutManager
+
+        Log.d("IndividualHunt", "onConfigurationChanged() completed")
     }
 
 }

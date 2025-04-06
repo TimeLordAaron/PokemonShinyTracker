@@ -10,12 +10,13 @@ data class ShinyHunt(val huntID: Int, var formID: Int?, var originGameID: Int?, 
 
 object ShinyHuntData {
 
+    // Function to insert mock shiny hunts into the database
     fun insertShinyHuntData(db: SQLiteDatabase, SHINY_HUNT_TABLE: String, FORM_ID_COL: String, ORIGIN_GAME_ID_COL: String,
                             METHOD_COL: String, START_DATE_COL: String, COUNTER_COL: String, PHASE_COL: String,
                             IS_COMPLETE_COL: String, FINISH_DATE_COL: String, CURRENT_GAME_ID_COL: String) {
-        val shinyHunts = mutableListOf<List<Any?>>()
+        Log.d("ShinyHuntModel", "insertShinyHuntData() started")
 
-        Log.d("ShinyHuntModel", "Creating mock shiny hunts")
+        val shinyHunts = mutableListOf<List<Any?>>()
 
         /*
         // Mock Data Set #1: One hunt for every pokemon form
@@ -69,10 +70,10 @@ object ShinyHuntData {
         shinyHunts.add(listOf(938, 28, "Soft Resets", "", 2058, 0, 1, "", 38))                  // Landorus (Ultra Moon)
         shinyHunts.add(listOf(938, 27, "Soft Resets", "", 563, 0, 1, "", 38))                   // Landorus (Ultra Sun)
         shinyHunts.add(listOf(737, 28, "Soft Resets", "", 835, 0, 1, "", 38))                   // Cresselia
-        shinyHunts.add(listOf(729, 27, "Soft Resets", "", 2000, 0, 0, "", null))                // Dialga (ongoing)
-        shinyHunts.add(listOf(937, 28, "Soft Resets", "", 1400, 0, 0, "", null))                // Zekrom (ongoing)
+        shinyHunts.add(listOf(937, 28, "Soft Resets", "", 1414, 0, 1, "", 28))                  // Zekrom
+        shinyHunts.add(listOf(729, 27, "Soft Resets", "", 2015, 0, 0, "", null))                // Dialga (ongoing)
 
-        // Insert each shiny hunt into the database
+        // insert each shiny hunt into the database
         for (hunt in shinyHunts) {
             val values = ContentValues().apply {
                 put(FORM_ID_COL, hunt[0] as Int)
@@ -85,10 +86,14 @@ object ShinyHuntData {
                 put(FINISH_DATE_COL, hunt[7] as String?)
                 put(CURRENT_GAME_ID_COL, hunt[8] as Int?)
             }
-            db.insert(SHINY_HUNT_TABLE, null, values)
-            Log.d("ShinyHuntModel", "Inserted shiny hunt: $hunt")
+            val result = db.insert(SHINY_HUNT_TABLE, null, values)
+            if (result == -1L) {
+                Log.e("ShinyHuntModel", "Error inserting shiny hunt into the database: $hunt")
+            } else {
+                Log.d("ShinyHuntModel", "Shiny hunt inserted into the database: $hunt")
+            }
         }
 
-        Log.d("ShinyHuntData", "Shiny hunts inserted into the database")
+        Log.d("ShinyHuntData", "insertShinyHuntData() completed")
     }
 }

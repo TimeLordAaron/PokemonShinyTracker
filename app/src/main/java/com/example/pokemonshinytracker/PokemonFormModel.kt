@@ -16,8 +16,12 @@ data class Quadruple(
 
 object PokemonFormData {
 
+    // Function to insert the Pokemon forms into the database
     fun insertPokemonFormData(db: SQLiteDatabase, POKEMON_FORM_TABLE: String, POKEMON_ID_COL: String,
                               FORM_NAME_COL: String, FORM_IMAGE_COL: String, IS_DEFAULT_FORM_COL: String) {
+        Log.d("PokemonFormModel", "insertPokemonFormData() started")
+
+        // format: pokemon ID, form name, form image, is default form (for the national dex)
         val pokemonFormList = listOf(
             Quadruple(1, null, R.drawable.pokemon_0001_bulbasaur_01, true),
             Quadruple(2, null, R.drawable.pokemon_0002_ivysaur_01, true),
@@ -1364,9 +1368,13 @@ object PokemonFormData {
                 put(FORM_IMAGE_COL, formImage)
                 put(IS_DEFAULT_FORM_COL, isDefaultForm)
             }
-            db.insert(POKEMON_FORM_TABLE, null, values)
-            Log.d("PokemonFormModel", "Form $formName for pokemonID $pokemonID inserted into the database")
+            val result = db.insert(POKEMON_FORM_TABLE, null, values)
+            if (result == -1L) {
+                Log.e("PokemonFormModel", "Error inserting Pokemon Form into the database: {Pokemon ID: ${pokemonID}, Form Name: ${formName}}")
+            } else {
+                Log.d("PokemonFormModel", "Pokemon Form inserted into the database: {Form ID: ${result}, Pokemon ID: ${pokemonID}, Form Name: ${formName}}")
+            }
         }
-        Log.d("PokemonFormModel", "All Pokemon forms have been inserted into the database")
+        Log.d("PokemonFormModel", "insertPokemonData() completed")
     }
 }
