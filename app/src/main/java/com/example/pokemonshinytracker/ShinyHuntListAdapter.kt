@@ -113,7 +113,7 @@ class ShinyHuntListAdapter(private val context: Context, private var huntSet: Li
             // update the database
             val db = DBHelper(context, null)
             db.updateHunt(hunt.huntID, hunt.formID, hunt.originGameID, hunt.method, hunt.startDate,
-                hunt.counter, hunt.phase, hunt.isComplete, hunt.finishDate, hunt.currentGameID)
+                hunt.counter, hunt.phase, hunt.isComplete, hunt.finishDate, hunt.currentGameID, hunt.defaultPosition)
         }
 
         // on click listener for the decrement counter button
@@ -129,7 +129,7 @@ class ShinyHuntListAdapter(private val context: Context, private var huntSet: Li
             // update the database
             val db = DBHelper(context, null)
             db.updateHunt(hunt.huntID, hunt.formID, hunt.originGameID, hunt.method, hunt.startDate,
-                hunt.counter, hunt.phase, hunt.isComplete, hunt.finishDate, hunt.currentGameID)
+                hunt.counter, hunt.phase, hunt.isComplete, hunt.finishDate, hunt.currentGameID, hunt.defaultPosition)
         }
 
         // on long click listener for the view
@@ -193,6 +193,10 @@ class ShinyHuntListAdapter(private val context: Context, private var huntSet: Li
             // convert to mutable list if huntSet is immutable
             val mutableHuntSet = huntSet.toMutableList()
 
+            // get the two shiny hunts being swapped
+            val firstHunt = mutableHuntSet[fromPosition]
+            val secondHunt = mutableHuntSet[toPosition]
+
             // swap the items in the list
             Collections.swap(mutableHuntSet, fromPosition, toPosition)
 
@@ -210,6 +214,13 @@ class ShinyHuntListAdapter(private val context: Context, private var huntSet: Li
             // notify the adapter about the move with animation
             notifyItemMoved(fromPosition, toPosition)
             notifyDataSetChanged()
+
+            // commit the change to the database
+            val db = DBHelper(context, null)
+            db.swapHunts(firstHunt, secondHunt)
+
+            // update the hunt set
+            huntSet = db.getHunts()
         }
 
         Log.d("ShinyHuntListAdapter", "swapItems() completed")

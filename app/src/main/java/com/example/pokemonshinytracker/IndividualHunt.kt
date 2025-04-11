@@ -55,6 +55,7 @@ class IndividualHunt : ComponentActivity() {
         var selectedFormID: Int? = null
         var selectedOriginGameID: Int? = null
         var selectedCurrentGameID: Int? = null
+        var selectedDefaultPosition: Int? = null
 
         // access the database
         val db = DBHelper(this, null)
@@ -137,6 +138,8 @@ class IndividualHunt : ComponentActivity() {
                 Log.d("IndividualHunt", "Origin Game ID: $selectedOriginGameID")
                 selectedCurrentGameID = hunt.currentGameID
                 Log.d("IndividualHunt", "Current Game ID: $selectedCurrentGameID")
+                selectedDefaultPosition = hunt.defaultPosition
+                Log.d("IndividualHunt", "Default Position: $selectedDefaultPosition")
 
                 // enable the delete button
                 deleteBtn.visibility = View.VISIBLE
@@ -245,7 +248,8 @@ class IndividualHunt : ComponentActivity() {
                 phase.text.toString().toInt(),
                 completionCheckbox.isChecked,
                 if (completionCheckbox.isChecked) selectedFinishDate.text.toString() else null,
-                if (completionCheckbox.isChecked) selectedCurrentGameID else null
+                if (completionCheckbox.isChecked) selectedCurrentGameID else null,
+                selectedDefaultPosition
             )
 
             // return to MainActivity

@@ -81,6 +81,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     $IS_COMPLETE_COL INTEGER,
                     $FINISH_DATE_COL TEXT,
                     $CURRENT_GAME_ID_COL INTEGER,
+                    $DEFAULT_POSITION_COL INTEGER,
                     FOREIGN KEY ($FORM_ID_COL) REFERENCES $POKEMON_FORM_TABLE($FORM_ID_COL),
                     FOREIGN KEY ($ORIGIN_GAME_ID_COL) REFERENCES $GAME_TABLE($GAME_ID_COL),
                     FOREIGN KEY ($CURRENT_GAME_ID_COL) REFERENCES $GAME_TABLE($GAME_ID_COL)	
@@ -97,7 +98,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 PokemonData.insertPokemonData(db, POKEMON_TABLE, POKEMON_NAME_COL)
                 PokemonFormData.insertPokemonFormData(db, POKEMON_FORM_TABLE, POKEMON_ID_COL, FORM_NAME_COL, FORM_IMAGE_COL, IS_DEFAULT_FORM_COL)
                 GameData.insertGameData(db, GAME_TABLE, GAME_NAME_COL, GAME_IMAGE_COL, GENERATION_COL)
-                ShinyHuntData.insertShinyHuntData(db, SHINY_HUNT_TABLE, FORM_ID_COL, ORIGIN_GAME_ID_COL, METHOD_COL, START_DATE_COL, COUNTER_COL, PHASE_COL, IS_COMPLETE_COL, FINISH_DATE_COL, CURRENT_GAME_ID_COL)
+                ShinyHuntData.insertShinyHuntData(db, SHINY_HUNT_TABLE, HUNT_ID_COL, FORM_ID_COL, ORIGIN_GAME_ID_COL, METHOD_COL, START_DATE_COL, COUNTER_COL, PHASE_COL, IS_COMPLETE_COL, FINISH_DATE_COL, CURRENT_GAME_ID_COL, DEFAULT_POSITION_COL)
                 db.setTransactionSuccessful()   // mark the database transaction as successful
             } catch (e: Exception) {
                 Log.e("DBHelper", "Error inserting initial data: ${e.message}")
@@ -238,7 +239,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     // Function to add new shiny hunts to the database
     private fun addHunt(db: SQLiteDatabase, formID: Int?, originGameID: Int?, method: String, startDate: String?,
-                counter: Int, phase: Int, isComplete: Boolean, finishDate: String?, currentGameID: Int?) {
+                counter: Int, phase: Int, isComplete: Boolean, finishDate: String?, currentGameID: Int?, defaultPosition: Int?) {
         Log.d("DBHelper", "addHunt() started")
 
         val values = ContentValues().apply {
@@ -257,11 +258,21 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         try {
             db.beginTransaction()   // start the database transaction
 
-            val result = db.insert(SHINY_HUNT_TABLE, null, values)
-            if (result == -1L) {
+            val newHuntID = db.insert(SHINY_HUNT_TABLE, null, values)
+            if (newHuntID == -1L) {
                 Log.e("DBHelper", "Failed to insert shiny hunt with formID: $formID")
             } else {
-                Log.d("DBHelper", "Inserted shiny hunt with formID: $formID, ID: $result")
+                Log.d("DBHelper", "Inserted shiny hunt with formID: $formID, ID: $newHuntID")
+                // use the returned huntID to set the shiny hunt's defaultPosition
+                val updateValues = ContentValues().apply {
+                    put(DEFAULT_POSITION_COL, newHuntID)
+                }
+                val result = db.update(SHINY_HUNT_TABLE, updateValues, "$HUNT_ID_COL = ?", arrayOf(newHuntID.toString()))
+                if (result == 0) {
+                    Log.e("DBHelper", "Error setting $DEFAULT_POSITION_COL of the new shiny hunt")
+                } else {
+                    Log.d("DBHelper", "Set defaultPosition '$newHuntID' of the new shiny hunt")
+                }
                 db.setTransactionSuccessful()   // mark the database transaction as successful
             }
         } catch (e: Exception) {
@@ -306,7 +317,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     // Function to update a hunt in the database
     fun updateHunt(huntID: Int, formID: Int?, originGameID: Int?, method: String, startDate: String?,
-                   counter: Int, phase: Int, isComplete: Boolean, finishDate: String?, currentGameID: Int?) {
+                   counter: Int, phase: Int, isComplete: Boolean, finishDate: String?, currentGameID: Int?, defaultPosition: Int?) {
         Log.d("DBHelper", "updateHunt() started")
 
         var db: SQLiteDatabase? = null
@@ -321,6 +332,8 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 return  // exit early if the database instance can't be created
             }
 
+            db.beginTransaction()
+
             // huntID == 0 => creating a new shiny hunt; call addHunt()
             if (huntID == 0) {
                 Log.d("DBHelper", "huntID is 0. Calling addHunt() to create a new hunt")
@@ -334,7 +347,8 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     phase,
                     isComplete,
                     finishDate,
-                    currentGameID
+                    currentGameID,
+                    defaultPosition
                 )
             }
 
@@ -353,6 +367,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     put(IS_COMPLETE_COL, if (isComplete) 1 else 0)      // store as integer since SQLite doesn't support Boolean type
                     put(FINISH_DATE_COL, finishDate)
                     put(CURRENT_GAME_ID_COL, currentGameID)
+                    put(DEFAULT_POSITION_COL, defaultPosition)
                 }
 
                 // specify the row to update (via the huntID)
@@ -394,7 +409,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 args = arrayOf(huntID.toString())
             } else {
                 Log.d("DBHelper", "Fetching all hunts")
-                query = "SELECT * FROM $SHINY_HUNT_TABLE ORDER BY $HUNT_ID_COL DESC"
+                query = "SELECT * FROM $SHINY_HUNT_TABLE ORDER BY $DEFAULT_POSITION_COL DESC"
                 args = null
             }
 
@@ -411,7 +426,8 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                             phase = cursor.getInt(6),
                             isComplete = cursor.getInt(7) == 1, // Convert 0/1 to Boolean
                             finishDate = cursor.getString(8),
-                            currentGameID = if (cursor.isNull(9)) null else cursor.getInt(9)
+                            currentGameID = if (cursor.isNull(9)) null else cursor.getInt(9),
+                            defaultPosition = cursor.getInt(10)
                         )
                         huntList.add(hunt)
                     } while (cursor.moveToNext())
@@ -429,6 +445,57 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         }
 
         return huntList
+    }
+
+    // Function to swap the default position of shiny hunts
+    fun swapHunts(firstHunt: ShinyHunt, secondHunt: ShinyHunt) {
+        Log.d("DBHelper", "swapHunts() started")
+
+        var db: SQLiteDatabase? = null
+
+        try {
+            // attempt to get a writable instance of the database
+            try {
+                db = writableDatabase
+                Log.d("DBHelper", "Writable instance of the database created")
+            } catch (e: SQLiteException) {
+                Log.e("DBHelper", "Error creating a writable instance of the database: ${e.message}")
+                return  // exit early if the database instance can't be created
+            }
+
+            db.beginTransaction()
+
+            // set firstHunt's defaultPosition to secondHunt's defaultPosition
+            val firstHuntValues = ContentValues().apply {
+                put(DEFAULT_POSITION_COL, secondHunt.defaultPosition)
+            }
+            db.update(
+                SHINY_HUNT_TABLE,
+                firstHuntValues,
+                "$HUNT_ID_COL = ?",
+                arrayOf(firstHunt.huntID.toString())
+            )
+
+            // set secondHunt's defaultPosition to firstHunt's original defaultPosition
+            val secondHuntValues = ContentValues().apply {
+                put(DEFAULT_POSITION_COL, firstHunt.defaultPosition)
+            }
+            db.update(
+                SHINY_HUNT_TABLE,
+                secondHuntValues,
+                "$HUNT_ID_COL = ?",
+                arrayOf(secondHunt.huntID.toString())
+            )
+
+            db.setTransactionSuccessful()
+            Log.d("DBHelper", "Swapped defaultPosition of hunt ${firstHunt.huntID} and ${secondHunt.huntID}")
+        } catch (e: SQLException) {
+            Log.e("DBHelper", "Error swapping shiny hunts: ${e.message}")
+        } finally {
+            db?.endTransaction()
+            db?.close()
+            Log.d("DBHelper", "swapHunts() completed")
+        }
     }
 
     // Function to retrieve pokemon from the database (by pokemonID or all pokemon if no ID is provided)
@@ -558,7 +625,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
         // Database name and version
         const val DATABASE_NAME = "SHINY_TRACKER_DB"
-        const val DATABASE_VERSION = 3
+        const val DATABASE_VERSION = 4
 
         // Pokemon Table
         const val POKEMON_TABLE = "Pokemon"
@@ -592,5 +659,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         const val IS_COMPLETE_COL = "isComplete"
         const val FINISH_DATE_COL = "finishDate"
         const val CURRENT_GAME_ID_COL = "currentGameID"     // foreign key to Game Table
+        const val DEFAULT_POSITION_COL = "defaultPosition"  // handles the default order of the shiny hunts
     }
 }

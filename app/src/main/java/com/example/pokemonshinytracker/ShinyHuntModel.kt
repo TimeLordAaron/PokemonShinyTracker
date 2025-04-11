@@ -6,14 +6,14 @@ import android.util.Log
 import kotlin.random.Random
 
 data class ShinyHunt(val huntID: Int, var formID: Int?, var originGameID: Int?, var method: String, var startDate: String?,
-                     var counter: Int, var phase: Int, var isComplete: Boolean, var finishDate: String?, var currentGameID: Int?)
+                     var counter: Int, var phase: Int, var isComplete: Boolean, var finishDate: String?, var currentGameID: Int?, var defaultPosition: Int?)
 
 object ShinyHuntData {
 
     // Function to insert mock shiny hunts into the database
-    fun insertShinyHuntData(db: SQLiteDatabase, SHINY_HUNT_TABLE: String, FORM_ID_COL: String, ORIGIN_GAME_ID_COL: String,
+    fun insertShinyHuntData(db: SQLiteDatabase, SHINY_HUNT_TABLE: String, HUNT_ID_COL: String, FORM_ID_COL: String, ORIGIN_GAME_ID_COL: String,
                             METHOD_COL: String, START_DATE_COL: String, COUNTER_COL: String, PHASE_COL: String,
-                            IS_COMPLETE_COL: String, FINISH_DATE_COL: String, CURRENT_GAME_ID_COL: String) {
+                            IS_COMPLETE_COL: String, FINISH_DATE_COL: String, CURRENT_GAME_ID_COL: String, DEFAULT_POSITION_COL: String) {
         Log.d("ShinyHuntModel", "insertShinyHuntData() started")
 
         val shinyHunts = mutableListOf<List<Any?>>()
@@ -86,11 +86,21 @@ object ShinyHuntData {
                 put(FINISH_DATE_COL, hunt[7] as String?)
                 put(CURRENT_GAME_ID_COL, hunt[8] as Int?)
             }
-            val result = db.insert(SHINY_HUNT_TABLE, null, values)
-            if (result == -1L) {
+            val newHuntID = db.insert(SHINY_HUNT_TABLE, null, values)
+            if (newHuntID == -1L) {
                 Log.e("ShinyHuntModel", "Error inserting shiny hunt into the database: $hunt")
             } else {
                 Log.d("ShinyHuntModel", "Shiny hunt inserted into the database: $hunt")
+                // use the returned huntID to set the shiny hunt's defaultPosition
+                val updateValues = ContentValues().apply {
+                    put(DEFAULT_POSITION_COL, newHuntID)
+                }
+                val result = db.update(SHINY_HUNT_TABLE, updateValues, "$HUNT_ID_COL = ?", arrayOf(newHuntID.toString()))
+                if (result == 0) {
+                    Log.e("ShinyHuntModel", "Error setting $DEFAULT_POSITION_COL of shiny hunt: $hunt")
+                } else {
+                    Log.d("ShinyHuntModel", "Set defaultPosition '$newHuntID' of shiny hunt: $hunt")
+                }
             }
         }
 
