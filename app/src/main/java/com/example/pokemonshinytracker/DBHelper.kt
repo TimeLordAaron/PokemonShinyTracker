@@ -256,7 +256,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
         // insert the new hunt into the database
         try {
-            db.beginTransaction()   // start the database transaction
+            // db.beginTransaction()   // start the database transaction
 
             val newHuntID = db.insert(SHINY_HUNT_TABLE, null, values)
             if (newHuntID == -1L) {
@@ -267,18 +267,24 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 val updateValues = ContentValues().apply {
                     put(DEFAULT_POSITION_COL, newHuntID)
                 }
-                val result = db.update(SHINY_HUNT_TABLE, updateValues, "$HUNT_ID_COL = ?", arrayOf(newHuntID.toString()))
+
+                // specify the row to update (via the huntID)
+                val selection = "$HUNT_ID_COL = ?"
+                val selectionArgs = arrayOf(newHuntID.toInt().toString())
+                Log.d("DBHelper", "selectionArgs: ${selectionArgs[0]}")
+
+                val result = db.update(SHINY_HUNT_TABLE, updateValues, selection, selectionArgs)
                 if (result == 0) {
                     Log.e("DBHelper", "Error setting $DEFAULT_POSITION_COL of the new shiny hunt")
                 } else {
                     Log.d("DBHelper", "Set defaultPosition '$newHuntID' of the new shiny hunt")
+                    db.setTransactionSuccessful()   // set the database transaction as successful
                 }
-                db.setTransactionSuccessful()   // mark the database transaction as successful
             }
         } catch (e: Exception) {
             Log.e("DBHelper", "Error inserting shiny hunt: ${e.message}")
         } finally {
-            db.endTransaction()     // end the database transaction; rollback if not successful
+            // db.endTransaction()     // end the database transaction; rollback if not successful
         }
 
         Log.d("DBHelper", "addHunt() completed")
@@ -305,6 +311,10 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             // delete the hunt from the database
             val result = db.delete(SHINY_HUNT_TABLE, "huntID = ?", arrayOf(huntID.toString()))
             Log.d("DBHelper", "$result row(s) deleted from the $SHINY_HUNT_TABLE table")
+
+            // set the database transaction as successful
+            db.setTransactionSuccessful()
+
         } catch (e: Exception) {
             Log.e("DBHelper", "Error deleting shiny hunt: ${e.message}")
         } finally {
@@ -373,10 +383,14 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 // specify the row to update (via the huntID)
                 val selection = "$HUNT_ID_COL = ?"
                 val selectionArgs = arrayOf(huntID.toString())
+                Log.d("DBHelper", "selectionArgs: ${selectionArgs[0]}")
 
                 // update the table
                 val result = db.update(SHINY_HUNT_TABLE, values, selection, selectionArgs)
                 Log.d("DBHelper", "$result row(s) updated in the $SHINY_HUNT_TABLE table")
+
+                // set the database transaction as successful
+                db.setTransactionSuccessful()
             }
         } catch (e: Exception) {
             Log.e("DBHelper", "Error updating shiny hunt: ${e.message}")

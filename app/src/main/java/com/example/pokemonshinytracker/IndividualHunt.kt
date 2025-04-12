@@ -211,7 +211,7 @@ class IndividualHunt : ComponentActivity() {
                 }
 
             } else {
-                Log.e("IndividualHunt", "No hunt found for ID: $selectedHuntID")
+                Log.d("IndividualHunt", "No hunt found for ID: $selectedHuntID. This is a new hunt")
             }
         }
 
