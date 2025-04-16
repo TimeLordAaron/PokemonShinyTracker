@@ -5,8 +5,8 @@ import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import kotlin.random.Random
 
-data class ShinyHunt(val huntID: Int, var formID: Int?, var originGameID: Int?, var method: String, var startDate: String?,
-                     var counter: Int, var phase: Int, var isComplete: Boolean, var finishDate: String?, var currentGameID: Int?, var defaultPosition: Int?)
+data class ShinyHunt(val huntID: Int, var formID: Int?, var originGameID: Int?, var method: String, var startDate: String?, var counter: Int,
+                     var phase: Int, var isComplete: Boolean, var finishDate: String?, var currentGameID: Int?, var defaultPosition: Int?, var pokemonName: String)
 
 object ShinyHuntData {
 

@@ -414,16 +414,24 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             db = this.readableDatabase
             Log.d("DBHelper", "Readable instance of the database created")
 
-            val query: String
+            var query: String
             val args: Array<String>?
 
+            Log.d("DBHelper", "Creating static part of the getHunts SQL query")
+            query = ("""
+            SELECT s.*, p.$POKEMON_NAME_COL
+            FROM $SHINY_HUNT_TABLE AS s
+            JOIN $POKEMON_FORM_TABLE AS pf USING ($FORM_ID_COL)
+            JOIN $POKEMON_TABLE AS p USING ($POKEMON_ID_COL)
+            """.trimIndent())
+
             if (huntID != null) {
-                Log.d("DBHelper", "Fetching hunt with ID: $huntID")
-                query = "SELECT * FROM $SHINY_HUNT_TABLE WHERE $HUNT_ID_COL = ?"
+                Log.d("DBHelper", "huntID is $huntID. Appending WHERE clause to filter by huntID")
+                query += " WHERE $HUNT_ID_COL = ?"
                 args = arrayOf(huntID.toString())
             } else {
-                Log.d("DBHelper", "Fetching all hunts")
-                query = "SELECT * FROM $SHINY_HUNT_TABLE ORDER BY $DEFAULT_POSITION_COL DESC"
+                Log.d("DBHelper", "huntID is null. Appending ORDER BY clause to retrieve and sort all saved shiny hunts")
+                query += " ORDER BY $DEFAULT_POSITION_COL DESC"
                 args = null
             }
 
@@ -441,7 +449,8 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                             isComplete = cursor.getInt(7) == 1, // Convert 0/1 to Boolean
                             finishDate = cursor.getString(8),
                             currentGameID = if (cursor.isNull(9)) null else cursor.getInt(9),
-                            defaultPosition = cursor.getInt(10)
+                            defaultPosition = cursor.getInt(10),
+                            pokemonName = cursor.getString(11)
                         )
                         huntList.add(hunt)
                     } while (cursor.moveToNext())
