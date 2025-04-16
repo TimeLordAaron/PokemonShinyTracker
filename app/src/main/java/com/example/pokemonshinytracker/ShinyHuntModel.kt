@@ -11,9 +11,7 @@ data class ShinyHunt(val huntID: Int, var formID: Int?, var originGameID: Int?, 
 object ShinyHuntData {
 
     // Function to insert mock shiny hunts into the database
-    fun insertShinyHuntData(db: SQLiteDatabase, SHINY_HUNT_TABLE: String, HUNT_ID_COL: String, FORM_ID_COL: String, ORIGIN_GAME_ID_COL: String,
-                            METHOD_COL: String, START_DATE_COL: String, COUNTER_COL: String, PHASE_COL: String,
-                            IS_COMPLETE_COL: String, FINISH_DATE_COL: String, CURRENT_GAME_ID_COL: String, DEFAULT_POSITION_COL: String) {
+    fun insertShinyHuntData(db: SQLiteDatabase) {
         Log.d("ShinyHuntModel", "insertShinyHuntData() started")
 
         val shinyHunts = mutableListOf<List<Any?>>()
@@ -76,28 +74,28 @@ object ShinyHuntData {
         // insert each shiny hunt into the database
         for (hunt in shinyHunts) {
             val values = ContentValues().apply {
-                put(FORM_ID_COL, hunt[0] as Int)
-                put(ORIGIN_GAME_ID_COL, hunt[1] as Int?)
-                put(METHOD_COL, hunt[2] as String)
-                put(START_DATE_COL, hunt[3] as String)
-                put(COUNTER_COL, hunt[4] as Int)
-                put(PHASE_COL, hunt[5] as Int)
-                put(IS_COMPLETE_COL, hunt[6] as Int)
-                put(FINISH_DATE_COL, hunt[7] as String?)
-                put(CURRENT_GAME_ID_COL, hunt[8] as Int?)
+                put(DBHelper.FORM_ID_COL, hunt[0] as Int)
+                put(DBHelper.ORIGIN_GAME_ID_COL, hunt[1] as Int?)
+                put(DBHelper.METHOD_COL, hunt[2] as String)
+                put(DBHelper.START_DATE_COL, hunt[3] as String)
+                put(DBHelper.COUNTER_COL, hunt[4] as Int)
+                put(DBHelper.PHASE_COL, hunt[5] as Int)
+                put(DBHelper.IS_COMPLETE_COL, hunt[6] as Int)
+                put(DBHelper.FINISH_DATE_COL, hunt[7] as String?)
+                put(DBHelper.CURRENT_GAME_ID_COL, hunt[8] as Int?)
             }
-            val newHuntID = db.insert(SHINY_HUNT_TABLE, null, values)
+            val newHuntID = db.insert(DBHelper.SHINY_HUNT_TABLE, null, values)
             if (newHuntID == -1L) {
                 Log.e("ShinyHuntModel", "Error inserting shiny hunt into the database: $hunt")
             } else {
                 Log.d("ShinyHuntModel", "Shiny hunt inserted into the database: $hunt")
                 // use the returned huntID to set the shiny hunt's defaultPosition
                 val updateValues = ContentValues().apply {
-                    put(DEFAULT_POSITION_COL, newHuntID)
+                    put(DBHelper.DEFAULT_POSITION_COL, newHuntID)
                 }
-                val result = db.update(SHINY_HUNT_TABLE, updateValues, "$HUNT_ID_COL = ?", arrayOf(newHuntID.toString()))
+                val result = db.update(DBHelper.SHINY_HUNT_TABLE, updateValues, "$DBHelper.HUNT_ID_COL = ?", arrayOf(newHuntID.toString()))
                 if (result == 0) {
-                    Log.e("ShinyHuntModel", "Error setting $DEFAULT_POSITION_COL of shiny hunt: $hunt")
+                    Log.e("ShinyHuntModel", "Error setting $DBHelper.DEFAULT_POSITION_COL of shiny hunt: $hunt")
                 } else {
                     Log.d("ShinyHuntModel", "Set defaultPosition '$newHuntID' of shiny hunt: $hunt")
                 }
@@ -106,4 +104,28 @@ object ShinyHuntData {
 
         Log.d("ShinyHuntData", "insertShinyHuntData() completed")
     }
+}
+
+// Helper enum classes for sorting/filtering the shiny hunts
+
+// SortMethod: methods to sort the shiny hunts by
+enum class SortMethod(val sortMethod: String) {
+    DEFAULT(DBHelper.DEFAULT_POSITION_COL),     // sorts by defaultPosition (initially just the order the shiny hunts were created in, but allows for the position of hunts to be swapped)
+    DATE_STARTED(DBHelper.START_DATE_COL),      // sorts by startDate
+    DATE_FINISHED(DBHelper.FINISH_DATE_COL),    // sorts by finishDate
+    NAME(DBHelper.POKEMON_NAME_COL),            // sorts by pokemonName
+    GENERATION(DBHelper.FORM_ID_COL)            // sorts by formID (since it already follows Pokedex order)
+}
+
+// SortOrder: specifies if the shiny hunts should be sorted in ascending or descending order
+enum class SortOrder(val order: String) {
+    ASC("ASC"),
+    DESC("DESC")
+}
+
+// CompletionStatus: filters for shiny hunt based on completion status
+enum class CompletionStatus(val isComplete: Int) {
+    IN_PROGRESS(0), // in the database, isComplete = 0 corresponds to an in-progress hunt
+    COMPLETE(1),    // in the database, isComplete = 1 corresponds to a completed hunt
+    BOTH(2)         // placeholder for when no completion status filter is selected
 }

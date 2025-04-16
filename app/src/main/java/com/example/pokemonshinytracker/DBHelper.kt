@@ -95,10 +95,10 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
             // STEP 5: Insert initial data into the database
             try {
-                PokemonData.insertPokemonData(db, POKEMON_TABLE, POKEMON_NAME_COL)
-                PokemonFormData.insertPokemonFormData(db, POKEMON_FORM_TABLE, POKEMON_ID_COL, FORM_NAME_COL, FORM_IMAGE_COL, IS_DEFAULT_FORM_COL)
-                GameData.insertGameData(db, GAME_TABLE, GAME_NAME_COL, GAME_IMAGE_COL, GENERATION_COL)
-                ShinyHuntData.insertShinyHuntData(db, SHINY_HUNT_TABLE, HUNT_ID_COL, FORM_ID_COL, ORIGIN_GAME_ID_COL, METHOD_COL, START_DATE_COL, COUNTER_COL, PHASE_COL, IS_COMPLETE_COL, FINISH_DATE_COL, CURRENT_GAME_ID_COL, DEFAULT_POSITION_COL)
+                PokemonData.insertPokemonData(db)
+                PokemonFormData.insertPokemonFormData(db)
+                GameData.insertGameData(db)
+                ShinyHuntData.insertShinyHuntData(db)
                 db.setTransactionSuccessful()   // mark the database transaction as successful
             } catch (e: Exception) {
                 Log.e("DBHelper", "Error inserting initial data: ${e.message}")

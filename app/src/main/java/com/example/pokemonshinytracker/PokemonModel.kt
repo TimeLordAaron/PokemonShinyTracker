@@ -9,7 +9,7 @@ data class Pokemon(val pokemonID: Int, val pokemonName: String, val forms: List<
 object PokemonData {
 
     // Function to insert the Pokemon into the database
-    fun insertPokemonData(db: SQLiteDatabase, POKEMON_TABLE: String, POKEMON_NAME_COL: String) {
+    fun insertPokemonData(db: SQLiteDatabase) {
         Log.d("PokemonModel", "insertPokemonData() started")
 
         val pokemonList = listOf(
@@ -1042,9 +1042,9 @@ object PokemonData {
 
         for (name in pokemonList) {
             val values = ContentValues().apply {
-                put(POKEMON_NAME_COL, name)
+                put(DBHelper.POKEMON_NAME_COL, name)
             }
-            val result = db.insert(POKEMON_TABLE, null, values)
+            val result = db.insert(DBHelper.POKEMON_TABLE, null, values)
             if (result == -1L) {
                 Log.e("PokemonModel", "Error inserting Pokemon into the database: \"$name\"")
             } else {

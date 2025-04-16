@@ -9,7 +9,7 @@ data class Game(val gameID: Int, val gameName: String, val gameImage: Int, val g
 object GameData {
 
     // Function to insert the games into the database
-    fun insertGameData(db: SQLiteDatabase, GAME_TABLE: String, GAME_NAME_COL: String, GAME_IMAGE_COL: String, GENERATION_COL: String) {
+    fun insertGameData(db: SQLiteDatabase) {
         Log.d("GameModel", "insertGameData() started")
 
         // format: game name, game image, generation
@@ -60,11 +60,11 @@ object GameData {
         // insert each game into the database
         for ((name, image, generation) in gameList) {
             val values = ContentValues().apply {
-                put(GAME_NAME_COL, name)
-                put(GAME_IMAGE_COL, image)
-                put(GENERATION_COL, generation)
+                put(DBHelper.GAME_NAME_COL, name)
+                put(DBHelper.GAME_IMAGE_COL, image)
+                put(DBHelper.GENERATION_COL, generation)
             }
-            val result = db.insert(GAME_TABLE, null, values)
+            val result = db.insert(DBHelper.GAME_TABLE, null, values)
             if (result == -1L) {
                 Log.e("GameModel", "Error inserting game into the database: \"$name\"")
             } else {
