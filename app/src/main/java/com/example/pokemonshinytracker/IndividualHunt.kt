@@ -434,11 +434,11 @@ class IndividualHunt : ComponentActivity() {
                     // format and set the text for the start date
                     selectedStartDate.text =
                         (buildString {
+                            append(selectedYear.toString())
+                            append("-")
+                            append((selectedMonth + 1).toString())
+                            append("-")
                             append(selectedDay.toString())
-                            append("/")
-                            append((selectedMonth + 1))
-                            append("/")
-                            append(selectedYear)
                         })
                 },
                 // pass the year, month, and day for the selected date
@@ -577,11 +577,11 @@ class IndividualHunt : ComponentActivity() {
                     // format and set the text for the finish date
                     selectedFinishDate.text =
                         (buildString {
+                            append(selectedYear.toString())
+                            append("-")
+                            append((selectedMonth + 1).toString())
+                            append("-")
                             append(selectedDay.toString())
-                            append("/")
-                            append((selectedMonth + 1))
-                            append("/")
-                            append(selectedYear)
                         })
                 },
                 // pass the year, month, and day for the selected date

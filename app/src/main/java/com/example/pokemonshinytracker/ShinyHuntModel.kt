@@ -30,7 +30,7 @@ object ShinyHuntData {
                         formID,
                         originGame,
                         "Random Encounter",
-                        "4/20/2024",
+                        "2024-04-20",
                         counter,
                         0,
                         1,
@@ -57,8 +57,8 @@ object ShinyHuntData {
         */
 
         // Mock Data Set #2: Some of my personal shiny hunts
-        shinyHunts.add(listOf(740, 33, "Soft Resets", "9/20/2024", 3111, 0, 1, "1/6/2025", 37)) // Darkrai
-        shinyHunts.add(listOf(341, 37, "Masuda Method", "", 319, 0, 1, "1/17/2025", 37))        // Gligar
+        shinyHunts.add(listOf(740, 33, "Soft Resets", "2024-09-20", 3111, 0, 1, "2025-01-06", 37)) // Darkrai
+        shinyHunts.add(listOf(341, 37, "Masuda Method", "", 319, 0, 1, "2025-01-17", 37))        // Gligar
         shinyHunts.add(listOf(734, 28, "Soft Resets", "", 1768, 0, 1, "", 38))                  // Regigigas
         shinyHunts.add(listOf(733, 27, "Soft Resets", "", 1381, 0, 1, "", 38))                  // Heatran
         shinyHunts.add(listOf(233, 28, "Soft Resets", "", 559, 0, 1, "", 38))                   // Zapdos
