@@ -16,11 +16,17 @@ object ShinyHuntData {
 
         val shinyHunts = mutableListOf<List<Any?>>()
 
-        /*
         // Mock Data Set #1: One hunt for every pokemon form
         for (formID in 1199 downTo 1) {
             val originGame = Random.nextInt(1, 21)
             val counter = Random.nextInt(0, 10000)
+            val phase = Random.nextInt(0, 20)
+            val startYear = Random.nextInt(2020, 2025)
+            val startMonth = Random.nextInt(1, 12)
+            val startDay = Random.nextInt(1, 28)
+            val finishYear = Random.nextInt(2020, 2025)
+            val finishMonth = Random.nextInt(1, 12)
+            val finishDay = Random.nextInt(1, 28)
             if (formID > 600) {
                 val currentGame = Random.nextInt(22, 38)
                 shinyHunts.add(
@@ -28,11 +34,11 @@ object ShinyHuntData {
                         formID,
                         originGame,
                         "Random Encounter",
-                        "2024-04-20",
+                        String.format("%04d-%02d-%02d", startYear, startMonth, startDay),
                         counter,
-                        0,
+                        phase,
                         1,
-                        null,
+                        String.format("%04d-%02d-%02d", finishYear, finishMonth, finishDay),
                         currentGame
                     )
                 )
@@ -42,9 +48,9 @@ object ShinyHuntData {
                         formID,
                         originGame,
                         "Random Encounter",
-                        "4/20/2024",
+                        String.format("%04d-%02d-%02d", startYear, startMonth, startDay),
                         counter,
-                        0,
+                        phase,
                         0,
                         null,
                         null
@@ -52,8 +58,8 @@ object ShinyHuntData {
                 )
             }
         }
-        */
 
+        /*
         // Mock Data Set #2: Some of my personal shiny hunts
         shinyHunts.add(listOf(740, 33, "Soft Resets", "2024-09-20", 3111, 0, 1, "2025-01-06", 37)) // Darkrai
         shinyHunts.add(listOf(341, 37, "Masuda Method", "", 319, 0, 1, "2025-01-17", 37))        // Gligar
@@ -70,6 +76,7 @@ object ShinyHuntData {
         shinyHunts.add(listOf(737, 28, "Soft Resets", "", 835, 0, 1, "", 38))                   // Cresselia
         shinyHunts.add(listOf(937, 28, "Soft Resets", "", 1414, 0, 1, "", 28))                  // Zekrom
         shinyHunts.add(listOf(729, 27, "Soft Resets", "", 2015, 0, 0, "", null))                // Dialga (ongoing)
+        */
 
         // insert each shiny hunt into the database
         for (hunt in shinyHunts) {
@@ -93,7 +100,7 @@ object ShinyHuntData {
                 val updateValues = ContentValues().apply {
                     put(DBHelper.DEFAULT_POSITION_COL, newHuntID)
                 }
-                val result = db.update(DBHelper.SHINY_HUNT_TABLE, updateValues, "$DBHelper.HUNT_ID_COL = ?", arrayOf(newHuntID.toString()))
+                val result = db.update(DBHelper.SHINY_HUNT_TABLE, updateValues, "${DBHelper.HUNT_ID_COL} = ?", arrayOf(newHuntID.toString()))
                 if (result == 0) {
                     Log.e("ShinyHuntModel", "Error setting $DBHelper.DEFAULT_POSITION_COL of shiny hunt: $hunt")
                 } else {

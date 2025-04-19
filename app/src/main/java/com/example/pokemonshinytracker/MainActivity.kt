@@ -31,8 +31,8 @@ class MainActivity : ComponentActivity() {
         Log.d("MainActivity", "Database opened")
 
         // force update the database (for testing purposes)
-        //db.forceUpgrade()
-        //Log.d("MainActivity","Force updating the database")
+        // db.forceUpgrade()
+        // Log.d("MainActivity","Force updating the database")
 
         // retrieve relevant data from database
         val pokemonList = db.getPokemon()   // list of all pokemon
@@ -43,7 +43,13 @@ class MainActivity : ComponentActivity() {
         if (gameList.isEmpty()) {
             Log.d("MainActivity", "Failed to retrieve games from database")
         }
-        val hunts = db.getHunts()           // list of all saved hunts
+        //val hunts = db.getHunts()                                                 // gets all hunts
+        //val hunts = db.getHunts(formIDs = listOf(720, 721, 722, 723, 724, 725))   // filters for Rotom
+        //val hunts = db.getHunts(originGameIDs = listOf(12, 13, 14))               // filters for hunts in D/P/PL
+        //val hunts = db.getHunts(currentGameIDs = listOf(27, 28))                  // filters for shinies transferred to US/UM
+        val hunts = db.getHunts(startedFrom = "2021-05-01", startedTo = "2021-07-01")   // filters for hunts started from May-July 2020 ( doesn't work yet >:( )
+        //val hunts = db.getHunts(counterLo = 0, counterHi = 100)     // filters for hunts completed in 100 encounters or less
+        //val hunts = db.getHunts(completionStatus = CompletionStatus.IN_PROGRESS, sortMethod = SortMethod.NAME, sortOrder = SortOrder.DESC)  // filters for in progress hunts, sorts by name in reverse alphabetical order
         Log.d("MainActivity", "Retrieved ${hunts.size} shiny hunts from database")
 
         // access the UI elements

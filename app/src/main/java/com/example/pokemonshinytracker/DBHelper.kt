@@ -12,6 +12,8 @@ import java.sql.SQLException
 class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
 
+    var whereClauseAdded = false    // global variable for use in getHunts() and addWhereOrAndClause()
+
     // Function to create the database
     override fun onCreate(db: SQLiteDatabase) {
         Log.d("DBHelper", "onCreate() started")
@@ -403,7 +405,11 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     }
 
     // Function to retrieve all shiny hunts from the database (by ID or all hunts if no ID is provided)
-    fun getHunts(huntID: Int? = null): List<ShinyHunt> {
+    fun getHunts(huntID: Int? = null, sortMethod: SortMethod = SortMethod.DEFAULT, sortOrder: SortOrder = SortOrder.DESC,
+                 formIDs: List<Int> = emptyList(), originGameIDs: List<Int> = emptyList(), currentGameIDs: List<Int> = emptyList(),
+                 method: String? = null, startedFrom: String? = null, startedTo: String? = null, finishedFrom: String? = null,
+                 finishedTo: String? = null, counterLo: Int? = null, counterHi: Int? = null, phaseLo: Int? = null, phaseHi: Int? = null,
+                 completionStatus: CompletionStatus = CompletionStatus.BOTH): List<ShinyHunt> {
         Log.d("DBHelper", "getHunts() started")
 
         val huntList = mutableListOf<ShinyHunt>()
@@ -415,7 +421,9 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             Log.d("DBHelper", "Readable instance of the database created")
 
             var query: String
-            val args: Array<String>?
+            var argsList = mutableListOf<String>()  // a mutable list of strings to organize the args for the query
+            val args: Array<String>?                // the actual args array used in the raw query
+            whereClauseAdded = false                // boolean to track when a WHERE clause has been added to the query
 
             Log.d("DBHelper", "Creating static part of the getHunts SQL query")
             query = ("""
@@ -426,14 +434,143 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             """.trimIndent())
 
             if (huntID != null) {
-                Log.d("DBHelper", "huntID is $huntID. Appending WHERE clause to filter by huntID")
-                query += " WHERE $HUNT_ID_COL = ?"
+                // a huntID was provided. filter for that specific hunt
+                Log.d("DBHelper", "huntID is $huntID. Applying WHERE clause for huntID")
+                query += "\n"
+                query += "WHERE $HUNT_ID_COL = ?"
                 args = arrayOf(huntID.toString())
             } else {
-                Log.d("DBHelper", "huntID is null. Appending ORDER BY clause to retrieve and sort all saved shiny hunts")
-                query += " ORDER BY $DEFAULT_POSITION_COL DESC"
-                args = null
+                // a huntID was not provided. apply the appropriate filters to the SQL query
+                Log.d("DBHelper", "huntID is null. Applying filters to the SQL query")
+
+                // formIDs: include if not empty
+                Log.d("DBHelper", "Checking formIDs")
+                if (formIDs.isNotEmpty()) {
+                    Log.d("DBHelper", "Applying formID filter: $formIDs")
+                    // create a placeholder for each formID
+                    val placeholders = formIDs.joinToString(",") { "?" }
+                    query += "\n" + addWhereOrAndClause() + "s.$FORM_ID_COL IN ($placeholders)"
+                    // add the formIDs to the args list
+                    argsList.addAll(formIDs.map { it.toString() })
+                }
+
+                // originGameIDs: include if not empty
+                Log.d("DBHelper", "Checking originGameIDs")
+                if (originGameIDs.isNotEmpty()) {
+                    Log.d("DBHelper", "Applying originGameID filter: $originGameIDs")
+                    // create a placeholder for each originGameID
+                    val placeholders = originGameIDs.joinToString(",") { "?" }
+                    query += "\n" + addWhereOrAndClause() + "s.$ORIGIN_GAME_ID_COL IN ($placeholders)"
+                    // add the originGameIDs to the args list
+                    argsList.addAll(originGameIDs.map { it.toString() })
+                }
+
+                // currentGameIDs: include if not empty
+                Log.d("DBHelper", "Checking currentGameIDs")
+                if (currentGameIDs.isNotEmpty()) {
+                    Log.d("DBHelper", "Applying currentGameID filter: $currentGameIDs")
+                    // create a placeholder for each currentGameID
+                    val placeholders = currentGameIDs.joinToString(",") { "?" }
+                    query += "\n" + addWhereOrAndClause() + "s.$CURRENT_GAME_ID_COL IN ($placeholders)"
+                    // add the currentGameIDs to the args list
+                    argsList.addAll(currentGameIDs.map { it.toString() })
+                }
+
+                // method: include if not null or blank
+                Log.d("DBHelper", "Checking method")
+                if (!method.isNullOrBlank()) {
+                    Log.d("DBHelper", "Applying method filter: $method")
+                    // add the method string directly to the query
+                    query += "\n" + addWhereOrAndClause() + "s.$METHOD_COL = \"$method\""
+                }
+
+                // startedFrom: include if in the correct date format (YYYY-MM-DD)
+                Log.d("DBHelper", "Checking startedFrom")
+                if (isValidDateFormat(startedFrom)) {
+                    Log.d("DBHelper", "Applying startedFrom filter: $startedFrom")
+                    // add the startedFrom string directly to the query
+                    query += "\n" + addWhereOrAndClause() + "s.$START_DATE_COL >= \"$startedFrom\""
+                }
+
+                // startedTo: include if in the correct date format (YYYY-MM-DD)
+                Log.d("DBHelper", "Checking startedTo")
+                if (isValidDateFormat(startedTo)) {
+                    Log.d("DBHelper", "Applying startedTo filter: $startedTo")
+                    // add the startedTo string directly to the query
+                    query += "\n" + addWhereOrAndClause() + "s.$START_DATE_COL <= \"$startedTo\""
+                }
+
+                // finishedFrom: include if in the correct date format (YYYY-MM-DD)
+                Log.d("DBHelper", "Checking finishedFrom")
+                if (isValidDateFormat(finishedFrom)) {
+                    Log.d("DBHelper", "Applying finishedFrom filter: $finishedFrom")
+                    // add the finishedFrom string directly to the query
+                    query += "\n" + addWhereOrAndClause() + "s.$FINISH_DATE_COL >= \"$finishedFrom\""
+                }
+
+                // finishedTo: include if in the correct date format (YYYY-MM-DD)
+                Log.d("DBHelper", "Checking finishedTo")
+                if (isValidDateFormat(finishedTo)) {
+                    Log.d("DBHelper", "Applying finishedTo filter: $finishedTo")
+                    // add the finishedTo string directly to the query
+                    query += "\n" + addWhereOrAndClause() + "s.$FINISH_DATE_COL <= \"$finishedTo\""
+                }
+
+                // counterLo: include if non-negative integer
+                Log.d("DBHelper", "Checking counterLo")
+                if (counterLo != null && counterLo >= 0) {
+                    Log.d("DBHelper", "Applying counterLo filter: $counterLo")
+                    query += "\n" + addWhereOrAndClause() + "s.$COUNTER_COL >= ?"
+                    // add the counter low bound to the args list
+                    argsList.add(counterLo.toString())
+                }
+
+                // counterHi: include if non-negative integer
+                Log.d("DBHelper", "Checking counterHi")
+                if (counterHi != null && counterHi >= 0) {
+                    Log.d("DBHelper", "Applying counterHi filter: $counterHi")
+                    query += "\n" + addWhereOrAndClause() + "s.$COUNTER_COL <= ?"
+                    // add the counter high bound to the args list
+                    argsList.add(counterHi.toString())
+                }
+
+                // phaseLo: include if non-negative integer
+                Log.d("DBHelper", "Checking phaseLo")
+                if (phaseLo != null && phaseLo >= 0) {
+                    Log.d("DBHelper", "Applying phaseLo filter: $phaseLo")
+                    query += "\n" + addWhereOrAndClause() + "s.$PHASE_COL >= ?"
+                    // add the phase low bound to the args list
+                    argsList.add(phaseLo.toString())
+                }
+
+                // phaseHi: include if non-negative integer
+                Log.d("DBHelper", "Checking phaseHi")
+                if (phaseHi != null && phaseHi >= 0) {
+                    Log.d("DBHelper", "Applying phaseHi filter: $phaseHi")
+                    query += "\n" + addWhereOrAndClause() + "s.$PHASE_COL <= ?"
+                    // add the phase high bound to the args list
+                    argsList.add(phaseHi.toString())
+                }
+
+                // completionStatus: include if not BOTH
+                Log.d("DBHelper", "Checking completionStatus")
+                if (completionStatus != CompletionStatus.BOTH) {
+                    Log.d("DBHelper", "Applying completionStatus filter: $completionStatus => ${completionStatus.isComplete}")
+                    query += "\n" + addWhereOrAndClause() + "s.$IS_COMPLETE_COL = ?"
+                    // add the completion status to the args list
+                    argsList.add(completionStatus.isComplete.toString())
+                }
+
+                // add the ORDER BY clause with the sort method and sort order applied
+                Log.d("DBHelper", "Applying sortMethod: $sortMethod")
+                Log.d("DBHelper", "Applying sortOrder: $sortOrder")
+                query += "\n" + "ORDER BY ${sortMethod.sortMethod} ${sortOrder.order}"
+
+                // convert the mutable args list into a string array
+                args = argsList.toTypedArray()
             }
+
+            Log.d("DBHelper", "Full SQL Query (with placeholders):\n" + query)
 
             db.rawQuery(query, args).use { cursor ->
                 if (cursor.moveToFirst()) {
@@ -468,6 +605,28 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         }
 
         return huntList
+    }
+
+    // Helper function to determine whether a WHERE or AND clause should be added to the SQL query for getHunts()
+    fun addWhereOrAndClause(): String {
+        val clause: String
+        if (!whereClauseAdded) {
+            clause = "WHERE "
+            whereClauseAdded = true     // change state of whereClauseAdded
+        }
+        else {
+            clause = "AND "
+        }
+        return clause
+    }
+
+    // Helper function to check if dates are in the correct format (YYYY-MM-DD)
+    fun isValidDateFormat(date: String?): Boolean {
+        val regex = Regex("""\d{4}-\d{2}-\d{2}""")
+        if (date == null) {
+            return false
+        }
+        return regex.matches(date!!)
     }
 
     // Function to swap the default position of shiny hunts
