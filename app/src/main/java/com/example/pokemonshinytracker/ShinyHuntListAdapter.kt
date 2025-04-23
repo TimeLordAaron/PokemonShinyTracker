@@ -12,171 +12,188 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.collection.emptyIntList
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Collections
 
-class ShinyHuntListAdapter(private val context: Context, private var huntSet: List<ShinyHunt>, private val pokemonSet: List<Pokemon>, private val gameSet: List<Game>) :
-    RecyclerView.Adapter<ShinyHuntListAdapter.ViewHolder>() {
+// DiffUtil class to efficiently convert the old list into the new list
+class ShinyHuntDiffCallback : DiffUtil.ItemCallback<ShinyHunt>() {
+    override fun areItemsTheSame(oldItem: ShinyHunt, newItem: ShinyHunt): Boolean {
+        return oldItem.huntID == newItem.huntID
+    }
+
+    override fun areContentsTheSame(oldItem: ShinyHunt, newItem: ShinyHunt): Boolean {
+        return oldItem == newItem
+    }
+}
+
+class ShinyHuntListAdapter(
+    private val context: Context,
+    private val pokemonSet: List<Pokemon>,
+    private val gameSet: List<Game>
+) : ListAdapter<ShinyHunt, ShinyHuntListAdapter.ViewHolder>(ShinyHuntDiffCallback()) {
 
     private val expandedItems = mutableSetOf<Int>() // stores the positions of expanded items
+    private var currentSortMethod: SortMethod = SortMethod.DEFAULT  // stores the current sort method
+    private var currentSortOrder: SortOrder = SortOrder.DESC        // stores the current sort order
+    var onScrollToPosition: ((Int) -> Unit)? = null                 // variable to scroll to position of the swapped hunt
 
     // View holder for shiny hunts
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val background: LinearLayout
-        val pokemonName: TextView
-        val originGameIconBorder: FrameLayout
-        val originGameIcon: ImageView
-        val currentGameIconBorder: FrameLayout
-        val currentGameIcon: ImageView
-        val pokemonImage: ImageView
-        val counterValue: TextView
-        val counterIncrementBtn: Button
-        val counterDecrementBtn: Button
-        val longClickMenu: LinearLayout
-        val moveUpButton: ImageButton
-        val moveDownButton: ImageButton
-        val editButton: ImageButton
-        var longClickMenuOpened: Boolean
-
-        init {
-            background = view.findViewById(R.id.background)
-            pokemonName = view.findViewById(R.id.pokemon_name)
-            originGameIconBorder = view.findViewById(R.id.origin_game_icon_border)
-            originGameIcon = view.findViewById(R.id.origin_game_icon)
-            currentGameIconBorder = view.findViewById(R.id.current_game_icon_border)
-            currentGameIcon = view.findViewById(R.id.current_game_icon)
-            pokemonImage = view.findViewById(R.id.pokemon_image)
-            counterValue = view.findViewById(R.id.counter_value)
-            counterIncrementBtn = view.findViewById(R.id.increment_counter_button)
-            counterDecrementBtn = view.findViewById(R.id.decrement_counter_button)
-            longClickMenu = view.findViewById(R.id.long_click_menu)
-            moveUpButton = view.findViewById(R.id.move_up_button)
-            moveDownButton = view.findViewById(R.id.move_down_button)
-            editButton = view.findViewById(R.id.edit_button)
-            longClickMenuOpened = false
-        }
+        val background: LinearLayout = view.findViewById(R.id.background)
+        val pokemonName: TextView = view.findViewById(R.id.pokemon_name)
+        val originGameIconBorder: FrameLayout = view.findViewById(R.id.origin_game_icon_border)
+        val originGameIcon: ImageView = view.findViewById(R.id.origin_game_icon)
+        val currentGameIconBorder: FrameLayout = view.findViewById(R.id.current_game_icon_border)
+        val currentGameIcon: ImageView = view.findViewById(R.id.current_game_icon)
+        val pokemonImage: ImageView = view.findViewById(R.id.pokemon_image)
+        val counterValue: TextView = view.findViewById(R.id.counter_value)
+        val counterIncrementBtn: Button = view.findViewById(R.id.increment_counter_button)
+        val counterDecrementBtn: Button = view.findViewById(R.id.decrement_counter_button)
+        val longClickMenu: LinearLayout = view.findViewById(R.id.long_click_menu)
+        val moveUpButton: ImageButton = view.findViewById(R.id.move_up_button)
+        val moveDownButton: ImageButton = view.findViewById(R.id.move_down_button)
+        val editButton: ImageButton = view.findViewById(R.id.edit_button)
     }
 
     // Create new shiny hunt views (invoked by the layout manager)
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         Log.d("ShinyHuntListAdapter", "onCreateViewHolder() started")
 
         // create a new view, which defines the UI of the list item
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.shiny_hunt_item, viewGroup, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.shiny_hunt_item, parent, false)
 
-        Log.d("ShinyHuntListAdapter", "onCreateViewHolder() completed")
+        Log.d("ShinyHuntListAdapter", "onCreateViewHolder() completed. Returning the view holder")
         return ViewHolder(view)
     }
 
     // Replace the contents of a shiny hunt view (invoked by the layout manager)
-    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Log.d("ShinyHuntListAdapter", "onBindViewHolder() started")
 
         // extract the shiny hunt from the huntSet
-        val hunt = huntSet[position]
+        val hunt = getItem(position)
 
         Log.d("ShinyHuntListAdapter", "Binding View Holder for shiny hunt: $hunt")
-        viewHolder.background.setBackgroundResource( if (hunt.isComplete) R.drawable.ui_container_complete_hunt else R.drawable.ui_container_incomplete_hunt )
+        holder.background.setBackgroundResource(
+            if (hunt.isComplete) R.drawable.ui_container_complete_hunt
+            else R.drawable.ui_container_incomplete_hunt
+        )
+
         val pokemon = pokemonSet.find { p -> p.forms.any { it.formID == hunt.formID } }
-        viewHolder.pokemonName.text = pokemon?.pokemonName ?: "N/A"
-        if (hunt.originGameID != null) {
-            viewHolder.originGameIcon.setImageResource(gameSet[hunt.originGameID!!].gameImage)
-            viewHolder.originGameIconBorder.visibility = View.VISIBLE
-        } else {
-            viewHolder.originGameIconBorder.visibility = View.GONE
+        holder.pokemonName.text = pokemon?.pokemonName ?: "N/A"
+
+        hunt.originGameID?.let {
+            holder.originGameIcon.setImageResource(gameSet[it].gameImage)
+            holder.originGameIconBorder.visibility = View.VISIBLE
+        } ?: run {
+            holder.originGameIconBorder.visibility = View.GONE
         }
-        if (hunt.currentGameID != null) {
-            viewHolder.currentGameIcon.setImageResource(gameSet[hunt.currentGameID!!].gameImage)
-            viewHolder.currentGameIconBorder.visibility = View.VISIBLE
-        } else {
-            viewHolder.currentGameIconBorder.visibility = View.GONE
+
+        hunt.currentGameID?.let {
+            holder.currentGameIcon.setImageResource(gameSet[it].gameImage)
+            holder.currentGameIconBorder.visibility = View.VISIBLE
+        } ?: run {
+            holder.currentGameIconBorder.visibility = View.GONE
         }
-        viewHolder.pokemonImage.setImageResource(if (hunt.formID == null) R.drawable.etc_default else pokemon!!.forms.find { it.formID == hunt.formID }!!.formImage)
-        viewHolder.counterValue.text = hunt.counter.toString()
+
+        holder.pokemonImage.setImageResource(
+            if (hunt.formID == null) R.drawable.etc_default
+            else pokemon!!.forms.find { it.formID == hunt.formID }!!.formImage
+        )
+
+        holder.counterValue.text = hunt.counter.toString()
 
         // ensure the longClickMenu visibility is correctly set based on the item's state
-        viewHolder.longClickMenu.visibility = if (expandedItems.contains(position)) View.VISIBLE else View.GONE
+        holder.longClickMenu.visibility = if (expandedItems.contains(hunt.huntID)) View.VISIBLE else View.GONE
 
-        // set the move buttons' visibility
-        viewHolder.moveUpButton.visibility = if (position == 0) View.INVISIBLE else View.VISIBLE
-        viewHolder.moveDownButton.visibility = if (position == huntSet.size - 1) View.INVISIBLE else View.VISIBLE
+        // set the move buttons' visibility (only enabled when sort method is DEFAULT)
+        if (currentSortMethod != SortMethod.DEFAULT) {
+            holder.moveUpButton.visibility = View.INVISIBLE
+            holder.moveDownButton.visibility = View.INVISIBLE
+        } else {
+            holder.moveUpButton.visibility = if (position == 0) View.INVISIBLE else View.VISIBLE
+            holder.moveDownButton.visibility = if (position == itemCount - 1) View.INVISIBLE else View.VISIBLE
+        }
 
         // on click listener for the increment counter button
-        viewHolder.counterIncrementBtn.setOnClickListener {
+        holder.counterIncrementBtn.setOnClickListener {
             Log.d("ShinyHuntListAdapter", "Increment counter button clicked for shiny hunt: $hunt")
 
             // increment the counter
             hunt.counter++
-            viewHolder.counterValue.text = hunt.counter.toString()
+            holder.counterValue.text = hunt.counter.toString()
 
             // update the database
-            val db = DBHelper(context, null)
-            db.updateHunt(hunt.huntID, hunt.formID, hunt.originGameID, hunt.method, hunt.startDate,
-                hunt.counter, hunt.phase, hunt.isComplete, hunt.finishDate, hunt.currentGameID, hunt.defaultPosition)
+            DBHelper(context, null).updateHunt(
+                hunt.huntID, hunt.formID, hunt.originGameID, hunt.method, hunt.startDate,
+                hunt.counter, hunt.phase, hunt.isComplete, hunt.finishDate, hunt.currentGameID, hunt.defaultPosition
+            )
         }
 
         // on click listener for the decrement counter button
-        viewHolder.counterDecrementBtn.setOnClickListener {
+        holder.counterDecrementBtn.setOnClickListener {
             Log.d("ShinyHuntListAdapter", "Decrement counter button clicked for shiny hunt: $hunt")
 
             // decrement the counter (if greater than 0)
             if (hunt.counter > 0) {
                 hunt.counter--
-                viewHolder.counterValue.text = hunt.counter.toString()
+                holder.counterValue.text = hunt.counter.toString()
             }
 
             // update the database
-            val db = DBHelper(context, null)
-            db.updateHunt(hunt.huntID, hunt.formID, hunt.originGameID, hunt.method, hunt.startDate,
-                hunt.counter, hunt.phase, hunt.isComplete, hunt.finishDate, hunt.currentGameID, hunt.defaultPosition)
+            DBHelper(context, null).updateHunt(
+                hunt.huntID, hunt.formID, hunt.originGameID, hunt.method, hunt.startDate,
+                hunt.counter, hunt.phase, hunt.isComplete, hunt.finishDate, hunt.currentGameID, hunt.defaultPosition
+            )
         }
 
         // on long click listener for the view
-        viewHolder.background.setOnLongClickListener {
+        holder.background.setOnLongClickListener {
             Log.d("ShinyHuntListAdapter", "View long clicked for shiny hunt: $hunt")
 
-            if (expandedItems.contains(position)) {
-                Log.d("ShinyHuntListAdapter", "Closing long click menu for shiny hunt: $hunt")
-                expandedItems.remove(position)
-                viewHolder.longClickMenu.visibility = View.GONE
+            if (expandedItems.contains(hunt.huntID)) {
+                expandedItems.remove(hunt.huntID)
+                holder.longClickMenu.visibility = View.GONE
             } else {
-                Log.d("ShinyHuntListAdapter", "Opening long click menu for shiny hunt: $hunt")
-                expandedItems.add(position)
-                viewHolder.longClickMenu.visibility = View.VISIBLE
+                expandedItems.add(hunt.huntID)
+                holder.longClickMenu.visibility = View.VISIBLE
             }
-
             notifyDataSetChanged()
             true
         }
 
         // on click listener for the move up button
-        viewHolder.moveUpButton.setOnClickListener {
+        holder.moveUpButton.setOnClickListener {
             Log.d("ShinyHuntListAdapter", "Move up button clicked for shiny hunt: $hunt")
 
-            if (position > 0) { // ensure it's not the first item
-                swapItems(position, position - 1)
+            val currentPosition = holder.bindingAdapterPosition
+            if (currentPosition > 0) {
+                swapItems(currentPosition, currentPosition - 1)
             }
         }
 
         // on click listener for the move down button
-        viewHolder.moveDownButton.setOnClickListener {
+        holder.moveDownButton.setOnClickListener {
             Log.d("ShinyHuntListAdapter", "Move down button clicked for shiny hunt: $hunt")
 
-            if (position < huntSet.size - 1) { // ensure it's not the last item
-                swapItems(position, position + 1)
+            val currentPosition = holder.bindingAdapterPosition
+            if (currentPosition < itemCount - 1) {
+                swapItems(currentPosition, currentPosition + 1)
             }
         }
 
         // on click listener for the edit button
-        viewHolder.editButton.setOnClickListener {
+        holder.editButton.setOnClickListener {
             Log.d("ShinyHuntListAdapter", "Edit button clicked for shiny hunt: $hunt")
 
             // switch to the detailed view of the shiny hunt
             val intent = Intent(context, IndividualHunt::class.java).apply {
                 putExtra("hunt_id", hunt.huntID)
             }
+
             Log.d("ShinyHuntListAdapter", "Created intent for selected hunt. Switching to Individual Hunt window")
             context.startActivity(intent)
         }
@@ -184,50 +201,49 @@ class ShinyHuntListAdapter(private val context: Context, private var huntSet: Li
         Log.d("ShinyHuntListAdapter", "onBindViewHolder() completed")
     }
 
+    // Function to update the current sort method
+    fun updateSortMethod(method: SortMethod, order: SortOrder) {
+        currentSortMethod = method
+        currentSortOrder = order
+        notifyDataSetChanged()
+    }
+
     // Function to swap the position of shiny hunts
-    // TODO: Commit the position changes to the database
     private fun swapItems(fromPosition: Int, toPosition: Int) {
         Log.d("ShinyHuntListAdapter", "swapItems() started")
 
-        // ensure valid position for swapping
-        if (fromPosition in huntSet.indices && toPosition in huntSet.indices) {
-            // convert to mutable list if huntSet is immutable
-            val mutableHuntSet = huntSet.toMutableList()
+        if (fromPosition in currentList.indices && toPosition in currentList.indices) {
+            val mutableHuntSet = currentList.toMutableList()
 
-            // get the two shiny hunts being swapped
             val firstHunt = mutableHuntSet[fromPosition]
             val secondHunt = mutableHuntSet[toPosition]
 
-            // swap the items in the list
+            // commit to database
+            val db = DBHelper(context, null)
+            // reverse the swap direction if sort order is ASC
+            if (currentSortOrder == SortOrder.ASC) {
+                db.swapHunts(secondHunt, firstHunt)
+            } else {
+                db.swapHunts(firstHunt, secondHunt)
+            }
+
+            // swap the defaultPosition values in the in-memory objects
+            val tempPosition = firstHunt.defaultPosition
+            firstHunt.defaultPosition = secondHunt.defaultPosition
+            secondHunt.defaultPosition = tempPosition
+
+            // swap items in the list (visual swap)
             Collections.swap(mutableHuntSet, fromPosition, toPosition)
 
-            // preserve the expanded state of both items during the swap
-            val expandedStateFrom = expandedItems.contains(fromPosition)
-            val expandedStateTo = expandedItems.contains(toPosition)
+            submitList(mutableHuntSet.toList()) {
+                // force rebinding after the new list is committed
+                notifyItemChanged(fromPosition)
+                notifyItemChanged(toPosition)
+                onScrollToPosition?.invoke(toPosition)
+            }
 
-            // update the huntSet (this step is important to notify the adapter)
-            huntSet = mutableHuntSet
-
-            // update the expandedItems set based on the swapped positions
-            if (expandedStateFrom) expandedItems.add(toPosition) else expandedItems.remove(toPosition)
-            if (expandedStateTo) expandedItems.add(fromPosition) else expandedItems.remove(fromPosition)
-
-            // notify the adapter about the move with animation
-            notifyItemMoved(fromPosition, toPosition)
-            notifyDataSetChanged()
-
-            // commit the change to the database
-            val db = DBHelper(context, null)
-            db.swapHunts(firstHunt, secondHunt)
-
-            // update the hunt set
-            huntSet = db.getHunts()
         }
 
         Log.d("ShinyHuntListAdapter", "swapItems() completed")
     }
-
-    // return the size of the dataset (invoked by the layout manager)
-    override fun getItemCount() = huntSet.size
-
 }

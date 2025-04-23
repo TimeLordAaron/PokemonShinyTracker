@@ -44,4 +44,7 @@
     <string name="move_down">Button to move shiny hunt down</string>
     <string name="edit">Button to edit shiny hunt</string>
     <string name="game_item_name_placeholder">Game</string>
+    <string name="filter_label">Filter</string>
+    <string name="clear_filters_label">Clear Filters</string>
+    <string name="expand_all_label">Expand All</string>
 </resources>

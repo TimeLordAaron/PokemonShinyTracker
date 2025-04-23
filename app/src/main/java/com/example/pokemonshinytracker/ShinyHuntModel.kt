@@ -17,7 +17,7 @@ object ShinyHuntData {
         val shinyHunts = mutableListOf<List<Any?>>()
 
         // Mock Data Set #1: One hunt for every pokemon form
-        for (formID in 1199 downTo 1) {
+        for (formID in 1470 downTo 1) {
             val originGame = Random.nextInt(1, 21)
             val counter = Random.nextInt(0, 10000)
             val phase = Random.nextInt(0, 20)
