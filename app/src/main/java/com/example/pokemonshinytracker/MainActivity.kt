@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
@@ -19,16 +20,20 @@ import androidx.recyclerview.widget.RecyclerView
 class MainActivity : ComponentActivity() {
 
     // lateinit UI declarations
-    private lateinit var newHuntBtn: Button             // new hunt button
-    private lateinit var filterBtn: Button              // filter button
-    private lateinit var clearFiltersBtn: Button        // clear filters button
-    private lateinit var expandAllCheckbox: CheckBox    // expand all checkbox
-    private lateinit var sortBtn: Button                // sort button
-    private lateinit var sortDefaultBtn: Button         // sort by default button
-    private lateinit var sortStartDateBtn: Button       // sort by start date button
-    private lateinit var sortFinishDateBtn: Button      // sort by finish date button
-    private lateinit var sortNameBtn: Button            // sort by name button
-    private lateinit var sortGenerationBtn: Button      // sort by generation button
+    private lateinit var newHuntBtn: Button                     // new hunt button
+    private lateinit var filterBtn: Button                      // filter button
+    private lateinit var clearFiltersBtn: Button                // clear filters button
+    private lateinit var expandAllCheckbox: CheckBox            // expand all checkbox
+    private lateinit var shinyHuntRecyclerView: RecyclerView    // shiny hunt recycler view
+    private lateinit var sortBtn: Button                        // floating sort button
+    private lateinit var sortMenu: FrameLayout                  // sort menu
+    private lateinit var sortMenuLayout: LinearLayout           // sort menu linear layout
+    private lateinit var sortBackBtn: Button                    // sort menu back button
+    private lateinit var sortDefaultBtn: Button                 // sort by default button
+    private lateinit var sortStartDateBtn: Button               // sort by start date button
+    private lateinit var sortFinishDateBtn: Button              // sort by finish date button
+    private lateinit var sortNameBtn: Button                    // sort by name button
+    private lateinit var sortGenerationBtn: Button              // sort by generation button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("MainActivity", "onCreate() started")
@@ -70,13 +75,15 @@ class MainActivity : ComponentActivity() {
 
         // access the UI elements
         val noHuntsMessage = findViewById<TextView>(R.id.no_hunts_message)                      // message for when user has no saved hunts
-        val shinyHuntRecyclerView: RecyclerView = findViewById(R.id.shiny_hunts_recycler_view)  // recycler view that displays the user's saved hunts
+        shinyHuntRecyclerView = findViewById(R.id.shiny_hunts_recycler_view)  // recycler view that displays the user's saved hunts
         newHuntBtn = findViewById(R.id.new_hunt_button)                                         // new hunt button
         filterBtn = findViewById(R.id.filter_button)                                            // filter button
         clearFiltersBtn = findViewById(R.id.clear_filters_button)                               // clear filters button
         expandAllCheckbox = findViewById(R.id.expand_all_checkbox)                              // expand all checkbox
         sortBtn = findViewById(R.id.sort_button)                                                // floating sort button
-        val sortMenu = findViewById<LinearLayout>(R.id.sort_menu)                               // sort menu
+        sortMenu = findViewById(R.id.sort_menu)                                                 // sort menu
+        sortMenuLayout = findViewById(R.id.sort_menu_layout)                                    // sort menu linear layout
+        sortBackBtn = findViewById(R.id.sort_back_button)                                       // sort menu back button
         sortDefaultBtn = findViewById(R.id.sort_default_button)                                 // sort by default button
         sortStartDateBtn = findViewById(R.id.sort_start_date_button)                            // sort by start date button
         sortFinishDateBtn = findViewById(R.id.sort_finish_date_button)                          // sort by finish date button
@@ -89,6 +96,23 @@ class MainActivity : ComponentActivity() {
                 shinyHuntRecyclerView.scrollToPosition(position)
             }
         }
+
+        // set the margins of the floating sort button and sort menu
+        val sortBtnParams = sortBtn.layoutParams as FrameLayout.LayoutParams
+        val sortMenuParams = sortMenuLayout.layoutParams as FrameLayout.LayoutParams
+
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // set margins for landscape
+            sortBtnParams.setMargins(0, 0, 150, 50)
+            sortMenuParams.setMargins(0, 0, 150, 0)
+        } else {
+            // set margins for portrait
+            sortBtnParams.setMargins(0, 0, 20, 150)
+            sortMenuParams.setMargins(0, 0, 0, 0)
+        }
+
+        sortBtn.layoutParams = sortBtnParams
+        sortMenuLayout.layoutParams = sortMenuParams
 
         // handle visibility of the no hunts message and the recycler view
         if (hunts.isEmpty()) {
@@ -178,35 +202,6 @@ class MainActivity : ComponentActivity() {
             Log.d("MainActivity", "closeSortMenu() completed")
         }
 
-        // Helper function to unselect the current sort method
-        fun unselectCurrentSortMethod() {
-            Log.d("MainActivity", "unselectCurrentSortMethod() started")
-
-            // find the currently selected button. set its background transparent and remove arrow from the text
-            if (currentSortMethodIndex == 0) {  // default
-                sortDefaultBtn.setBackgroundResource(0x00000000)
-                sortDefaultBtn.text = "Default"
-            }
-            else if (currentSortMethodIndex == 1) { // by start date
-                sortStartDateBtn.setBackgroundResource(0x00000000)
-                sortStartDateBtn.text = "Start Date"
-            }
-            else if (currentSortMethodIndex == 2) { // by finish date
-                sortFinishDateBtn.setBackgroundResource(0x00000000)
-                sortFinishDateBtn.text = "Finish Date"
-            }
-            else if (currentSortMethodIndex == 3) { // by name
-                sortNameBtn.setBackgroundResource(0x00000000)
-                sortNameBtn.text = "Name"
-            }
-            else {  // by generation
-                sortGenerationBtn.setBackgroundResource(0x00000000)
-                sortGenerationBtn.text = "Generation"
-            }
-
-            Log.d("MainActivity", "unselectCurrentSortMethod() completed")
-        }
-
         // on click listener for the floating sort button
         sortBtn.setOnClickListener {
             Log.d("MainActivity", "Floating sort button clicked")
@@ -255,6 +250,14 @@ class MainActivity : ComponentActivity() {
             // open the sort menu
             openSortMenu()
 
+        }
+
+        // on click listener for the sort menu back button
+        sortBackBtn.setOnClickListener {
+            Log.d("MainActivity", "Sort menu back button clicked. Closing the sort menu")
+
+            // simply close the sort menu
+            closeSortMenu()
         }
 
         // on click listener for the sort by default button
@@ -413,6 +416,41 @@ class MainActivity : ComponentActivity() {
         }
 
         Log.d("MainActivity", "onCreate() completed")
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        Log.d("MainActivity", "onConfigurationChanged() started")
+        super.onConfigurationChanged(newConfig)
+
+        // update the margins of the floating sort button
+        val sortBtnParams = sortBtn.layoutParams as FrameLayout.LayoutParams
+        val sortMenuParams = sortMenuLayout.layoutParams as FrameLayout.LayoutParams
+
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // set margins for landscape
+            sortBtnParams.setMargins(0, 0, 150, 50)
+            sortMenuParams.setMargins(0, 0, 150, 0)
+        } else {
+            // set margins for portrait
+            sortBtnParams.setMargins(0, 0, 20, 150)
+            sortMenuParams.setMargins(0, 0, 0, 0)
+        }
+
+        sortBtn.layoutParams = sortBtnParams
+        sortMenuLayout.layoutParams = sortMenuParams
+
+        val layoutManager = shinyHuntRecyclerView.layoutManager
+        if (layoutManager is GridLayoutManager) {
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                layoutManager.spanCount = 2
+                Log.d("MainActivity", "Orientation is LANDSCAPE, spanCount set to 2")
+            } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                layoutManager.spanCount = 1
+                Log.d("MainActivity", "Orientation is PORTRAIT, spanCount set to 1")
+            }
+        }
+
+        Log.d("MainActivity", "onConfigurationChanged() completed")
     }
 
 }

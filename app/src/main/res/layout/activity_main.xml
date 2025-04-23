@@ -93,8 +93,6 @@
         android:id="@+id/sort_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="50dp"
         android:layout_gravity="bottom|end"
         android:backgroundTint="@color/teal_700"
         android:visibility="visible"
@@ -102,98 +100,122 @@
         android:textSize="20sp"
         android:textColor="@color/white" />
 
-    <!--Sort Options-->
-    <LinearLayout
+    <!--Sort Menu-->
+    <FrameLayout
         android:id="@+id/sort_menu"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="bottom|end"
         android:background="@drawable/ui_gradient_sort"
         android:visibility="gone">
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/sort_menu_layout"
+            android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="32dp"
-            android:paddingBottom="15dp"
-            android:layout_gravity="bottom|end"
-            android:text="Sort By:"
-            android:textSize="32sp"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:layout_gravity="center|end">
 
-        <Button
-            android:id="@+id/sort_default_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:layout_gravity="bottom|end"
-            android:background="@drawable/ui_container_transparent"
-            android:text="Default ↓"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:textAllCaps="false" />
+            <!--Sort Menu Back Button-->
+            <Button
+                android:id="@+id/sort_back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="#00000000"
+                android:text="←"
+                android:textSize="50sp"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/sort_start_date_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:layout_gravity="bottom|end"
-            android:background="#00000000"
-            android:text="Start Date"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:textAllCaps="false" />
+            <!--Sort Menu Label-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="32dp"
+                android:paddingBottom="15dp"
+                android:layout_gravity="bottom|end"
+                android:text="Sort By:"
+                android:textSize="32sp"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/sort_finish_date_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:layout_gravity="bottom|end"
-            android:background="#00000000"
-            android:text="Finish Date"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:textAllCaps="false" />
+            <!--Sort By Default Button-->
+            <Button
+                android:id="@+id/sort_default_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:layout_gravity="bottom|end"
+                android:background="@drawable/ui_container_transparent"
+                android:text="Default ↓"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textAllCaps="false" />
 
-        <Button
-            android:id="@+id/sort_name_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:layout_gravity="bottom|end"
-            android:background="#00000000"
-            android:text="Name"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:textAllCaps="false" />
+            <!--Sort By Start Date Button-->
+            <Button
+                android:id="@+id/sort_start_date_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:layout_gravity="bottom|end"
+                android:background="#00000000"
+                android:text="Start Date"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textAllCaps="false" />
 
-        <Button
-            android:id="@+id/sort_generation_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="50dp"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:layout_gravity="bottom|end"
-            android:background="#00000000"
-            android:text="Generation"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:textAllCaps="false" />
+            <!--Sort By Finish Date Button-->
+            <Button
+                android:id="@+id/sort_finish_date_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:layout_gravity="bottom|end"
+                android:background="#00000000"
+                android:text="Finish Date"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textAllCaps="false" />
 
-    </LinearLayout>
+            <!--Sort By Name Button-->
+            <Button
+                android:id="@+id/sort_name_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:layout_gravity="bottom|end"
+                android:background="#00000000"
+                android:text="Name"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textAllCaps="false" />
+
+            <!--Sort By Generation Button-->
+            <Button
+                android:id="@+id/sort_generation_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:layout_gravity="bottom|end"
+                android:background="#00000000"
+                android:text="Generation"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textAllCaps="false" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </FrameLayout>

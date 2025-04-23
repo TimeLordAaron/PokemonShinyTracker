@@ -220,12 +220,7 @@ class ShinyHuntListAdapter(
 
             // commit to database
             val db = DBHelper(context, null)
-            // reverse the swap direction if sort order is ASC
-            if (currentSortOrder == SortOrder.ASC) {
-                db.swapHunts(secondHunt, firstHunt)
-            } else {
-                db.swapHunts(firstHunt, secondHunt)
-            }
+            db.swapHunts(firstHunt, secondHunt)
 
             // swap the defaultPosition values in the in-memory objects
             val tempPosition = firstHunt.defaultPosition
@@ -235,6 +230,7 @@ class ShinyHuntListAdapter(
             // swap items in the list (visual swap)
             Collections.swap(mutableHuntSet, fromPosition, toPosition)
 
+            // update the dataset of the recycler view
             submitList(mutableHuntSet.toList()) {
                 // force rebinding after the new list is committed
                 notifyItemChanged(fromPosition)
