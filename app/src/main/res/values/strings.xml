@@ -42,9 +42,21 @@
     <string name="search_pokemon">Search Pokémon</string>
     <string name="move_up">Button to move shiny hunt up</string>
     <string name="move_down">Button to move shiny hunt down</string>
-    <string name="edit">Button to edit shiny hunt</string>
+    <string name="edit">Edit</string>
     <string name="game_item_name_placeholder">Game</string>
     <string name="filter_label">Filter</string>
     <string name="clear_filters_label">Clear Filters</string>
     <string name="expand_all_label">Expand All</string>
+    <string name="low">Low</string>
+    <string name="high">High</string>
+    <string name="origin_games_label">Origin Games:</string>
+    <string name="completion_status_label">Completion Status:</string>
+    <string name="games_selected_default">0 games selected.</string>
+    <string name="pokemon_selected_default">0 Pokemon forms selected.</string>
+    <string name="in_progress_label">In Progress</string>
+    <string name="completed_label">Completed</string>
+    <string name="both_label">Both</string>
+    <string name="current_games_label">Current Games:</string>
+    <string name="to">to</string>
+    <string name="confirm_filters">Confirm Filters</string>
 </resources>

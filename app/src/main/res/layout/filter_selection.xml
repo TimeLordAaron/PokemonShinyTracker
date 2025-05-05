@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Filter Selection Scroll-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--Filter Selection Layout-->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:background="@drawable/ui_gradient_homepage">
+
+        <!--Clear Filters Button-->
+        <Button
+            android:id="@+id/clear_filters_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="@string/clear_filters_label"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:textAllCaps="false" />
+
+        <!--Pokemon-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="start">
+
+            <!--Pokemon Label-->
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="@string/pokemon_label"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAlignment="textEnd" />
+
+            <!--Pokemon Edit Button-->
+            <Button
+                android:id="@+id/edit_pokemon_button"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/edit"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAllCaps="false" />
+
+            <!--Pokemon Text-->
+            <TextView
+                android:id="@+id/pokemon_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pokemon_selected_default"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!--Origin Games-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="start">
+
+            <!--Origin Games Label-->
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="@string/origin_games_label"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAlignment="textEnd" />
+
+            <!--Origin Games Edit Button-->
+            <Button
+                android:id="@+id/edit_origin_games_button"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/edit"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAllCaps="false" />
+
+            <!--Origin Games Text-->
+            <TextView
+                android:id="@+id/origin_games_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/games_selected_default"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!--Completion Status Label-->
+        <TextView
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/completion_status_label"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:textAlignment="textEnd" />
+
+        <!--Completion Statuses-->
+        <RadioGroup
+            android:id="@+id/completion_statuses_radio_group"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="center">
+
+            <!--In Progress Radio Button-->
+            <RadioButton
+                android:id="@+id/in_progress_radio_button"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/in_progress_label"
+                android:textSize="12sp" />
+
+            <!--Completed Radio Button-->
+            <RadioButton
+                android:id="@+id/completed_radio_button"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/completed_label"
+                android:textSize="12sp" />
+
+            <!--Both Button-->
+            <RadioButton
+                android:id="@+id/both_radio_button"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/both_label"
+                android:textSize="12sp" />
+
+        </RadioGroup>
+
+        <!--Current Games-->
+        <LinearLayout
+            android:id="@+id/current_games_layout"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="start">
+
+            <!--Current Games Label-->
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="@string/current_games_label"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAlignment="textEnd" />
+
+            <!--Current Games Edit Button-->
+            <Button
+                android:id="@+id/edit_current_games_button"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/edit"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAllCaps="false" />
+
+            <!--Current Games Text-->
+            <TextView
+                android:id="@+id/current_games_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/games_selected_default"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!--Method-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="start">
+
+            <!--Method Label-->
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="@string/method_label"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAlignment="textEnd" />
+
+            <!--Method Textbox-->
+            <EditText
+                android:id="@+id/method"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:padding="10dp"
+                android:background="@drawable/ui_textbox"
+                android:hint="@string/method_hint"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:inputType="text"
+                android:importantForAutofill="no" />
+
+        </LinearLayout>
+
+        <!--Start Date-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="start">
+
+            <!--Start Date Label-->
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="@string/start_date_label"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAlignment="textEnd" />
+
+            <!--Start From Button-->
+            <Button
+                android:id="@+id/start_date_from_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="5dp"
+                android:text="2025-01-01"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAllCaps="false" />
+
+            <!--To Text-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/to"
+                android:textSize="12sp"
+                android:textColor="@color/black" />
+
+            <!--Start To Button-->
+            <Button
+                android:id="@+id/start_date_to_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2025-02-01"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAllCaps="false" />
+
+        </LinearLayout>
+
+        <!--Finish Date-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="start">
+
+            <!--Finish Date Label-->
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="@string/finish_date_label"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAlignment="textEnd" />
+
+            <!--Finish From Button-->
+            <Button
+                android:id="@+id/finish_date_from_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="5dp"
+                android:text="2025-01-01"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAllCaps="false" />
+
+            <!--To Text-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/to"
+                android:textSize="12sp"
+                android:textColor="@color/black" />
+
+            <!--Finish To Button-->
+            <Button
+                android:id="@+id/finish_date_to_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2025-02-01"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAllCaps="false" />
+
+        </LinearLayout>
+
+        <!--Counter-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="start">
+
+            <!--Counter Label-->
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="@string/counter_label"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAlignment="textEnd" />
+
+            <!--Counter Low Textbox-->
+            <EditText
+                android:id="@+id/counter_lo"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/ui_textbox"
+                android:hint="@string/low"
+                android:textSize="12sp"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:inputType="number"
+                android:importantForAutofill="no"/>
+
+            <!--To Text-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/to"
+                android:textSize="12sp"
+                android:textColor="@color/black" />
+
+            <!--Counter High Textbox-->
+            <EditText
+                android:id="@+id/counter_hi"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:background="@drawable/ui_textbox"
+                android:hint="@string/high"
+                android:textSize="12sp"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:inputType="number"
+                android:importantForAutofill="no"/>
+
+        </LinearLayout>
+
+        <!--Phase-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="start">
+
+            <!--Phase Label-->
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="@string/phase_label"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:textAlignment="textEnd" />
+
+            <!--Phase Low Textbox-->
+            <EditText
+                android:id="@+id/phase_lo"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/ui_textbox"
+                android:hint="@string/low"
+                android:textSize="12sp"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:inputType="number"
+                android:importantForAutofill="no" />
+
+            <!--To Text-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/to"
+                android:textSize="12sp"
+                android:textColor="@color/black" />
+
+            <!--Phase High Textbox-->
+            <EditText
+                android:id="@+id/phase_hi"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:background="@drawable/ui_textbox"
+                android:hint="@string/high"
+                android:textSize="12sp"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:inputType="number"
+                android:importantForAutofill="no" />
+
+        </LinearLayout>
+
+        <!--Confirm Filters Button-->
+        <Button
+            android:id="@+id/confirm_filters_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="center"
+            android:text="@string/confirm_filters"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+</ScrollView>
