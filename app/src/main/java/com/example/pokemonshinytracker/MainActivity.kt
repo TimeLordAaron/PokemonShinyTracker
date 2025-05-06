@@ -21,10 +21,8 @@ import androidx.core.text.isDigitsOnly
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doAfterTextChanged
-import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.w3c.dom.Text
 import java.util.Calendar
 
 class MainActivity : ComponentActivity() {
@@ -61,6 +59,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var method: EditText                       // method text field
     private lateinit var startDateFromBtn: Button               // start date from button
     private lateinit var startDateToBtn: Button                 // start date to button
+    private lateinit var finishDateLayout: LinearLayout         // finish date range layout
     private lateinit var finishDateFromBtn: Button              // finish date from button
     private lateinit var finishDateToBtn: Button                // finish date to button
     private lateinit var counterLo: EditText                    // counter (low bound) text field
@@ -69,40 +68,40 @@ class MainActivity : ComponentActivity() {
     private lateinit var phaseHi: EditText                      // phase (high bound) text field
     private lateinit var confirmFiltersBtn: Button              // confirm filters button
 
+    // initialize variables for tracking the current sort method
+    // 0: Default, 1: Start Date, 2: Finish Date, 3: Name, 4: Generation
+    private var currentSortMethod = SortMethod.DEFAULT
+    private var currentSortMethodIndex = 0
+    private var currentSortOrders =
+        arrayOf(SortOrder.DESC, SortOrder.DESC, SortOrder.DESC, SortOrder.ASC, SortOrder.ASC)
+
+    // initialize variables for tracking the selected filters
+    private var selectedPokemonForms: Set<Int> = emptySet()
+    private var selectedOriginGames: Set<Int> = emptySet()
+    private var selectedCompletionStatus: CompletionStatus? = null
+    private var selectedCurrentGames: Set<Int> = emptySet()
+    private var enteredMethod = ""
+    private var selectedStartDateFrom = ""
+    private var selectedStartDateTo = ""
+    private var selectedFinishDateFrom = ""
+    private var selectedFinishDateTo = ""
+    private var enteredCounterLo = ""
+    private var enteredCounterHi = ""
+    private var enteredPhaseLo = ""
+    private var enteredPhaseHi = ""
+
+    // access the database
+    val db = DBHelper(this, null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("MainActivity", "onCreate() started")
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // access the database
-        val db = DBHelper(this, null)
-        Log.d("MainActivity", "Database opened")
-
         // force update the database (for testing purposes)
         //db.forceUpgrade()
         //Log.d("MainActivity","Force updating the database")
-
-        // initialize variables for tracking the current sort method
-        // 0: Default, 1: Start Date, 2: Finish Date, 3: Name, 4: Generation
-        var currentSortMethodIndex = 0          // default sort method is DEFAULT
-        var currentSortOrders =
-            arrayOf(SortOrder.DESC, SortOrder.DESC, SortOrder.DESC, SortOrder.ASC, SortOrder.ASC)
-
-        // initialize variables for tracking the selected filters
-        var selectedPokemonForms: Set<Int> = emptySet()
-        var selectedOriginGames: Set<Int> = emptySet()
-        var selectedCompletionStatus: CompletionStatus? = null
-        var selectedCurrentGames: Set<Int> = emptySet()
-        var enteredMethod = ""
-        var selectedStartDateFrom = ""
-        var selectedStartDateTo = ""
-        var selectedFinishDateFrom = ""
-        var selectedFinishDateTo = ""
-        var enteredCounterLo = ""
-        var enteredCounterHi = ""
-        var enteredPhaseLo = ""
-        var enteredPhaseHi = ""
 
         // retrieve relevant data from database
         val pokemonList = db.getPokemon()   // list of all pokemon
@@ -255,6 +254,14 @@ class MainActivity : ComponentActivity() {
         fun setStartDateFrom() { startDateFromBtn.text = selectedStartDateFrom }
         // start date to
         fun setStartDateTo() { startDateToBtn.text = selectedStartDateTo }
+        // finish date layout
+        fun setFinishDateLayout() {
+            if (selectedCompletionStatus == null || selectedCompletionStatus == CompletionStatus.IN_PROGRESS) {
+                finishDateLayout.visibility = View.GONE
+            } else {
+                finishDateLayout.visibility = View.VISIBLE
+            }
+        }
         // finish date from
         fun setFinishDateFrom() { finishDateFromBtn.text = selectedFinishDateFrom }
         // finish date to
@@ -290,6 +297,7 @@ class MainActivity : ComponentActivity() {
             method = filterDialog.findViewById(R.id.method)                                 // method text field
             startDateFromBtn = filterDialog.findViewById(R.id.start_date_from_button)       // start date from button
             startDateToBtn = filterDialog.findViewById(R.id.start_date_to_button)           // start date to button
+            finishDateLayout = filterDialog.findViewById(R.id.finish_date_layout)           // finish date range layout
             finishDateFromBtn = filterDialog.findViewById(R.id.finish_date_from_button)     // finish date from button
             finishDateToBtn = filterDialog.findViewById(R.id.finish_date_to_button)         // finish date to button
             counterLo = filterDialog.findViewById(R.id.counter_lo)                          // counter (low bound) text field
@@ -306,6 +314,7 @@ class MainActivity : ComponentActivity() {
             setMethod()
             setStartDateFrom()
             setStartDateTo()
+            setFinishDateLayout()
             setFinishDateFrom()
             setFinishDateTo()
             setCounterLo()
@@ -343,6 +352,7 @@ class MainActivity : ComponentActivity() {
                 Log.d("MainActivity", "In Progress radio button clicked in the filter selection dialog")
                 selectedCompletionStatus = CompletionStatus.IN_PROGRESS
                 setCurrentGames()
+                setFinishDateLayout()
             }
 
             // on click listener for the completed radio button
@@ -350,6 +360,7 @@ class MainActivity : ComponentActivity() {
                 Log.d("MainActivity", "Completed radio button clicked in the filter selection dialog")
                 selectedCompletionStatus = CompletionStatus.COMPLETE
                 setCurrentGames()
+                setFinishDateLayout()
             }
 
             // on click listener for the both radio button
@@ -357,6 +368,7 @@ class MainActivity : ComponentActivity() {
                 Log.d("MainActivity", "Both radio button clicked in the filter selection dialog")
                 selectedCompletionStatus = CompletionStatus.BOTH
                 setCurrentGames()
+                setFinishDateLayout()
             }
 
             // on click listener for the edit current games button
@@ -567,26 +579,10 @@ class MainActivity : ComponentActivity() {
                     Log.d("MainActivity", "completionStatus: $selectedCompletionStatus")
 
                     // get the new shiny hunt data set
-                    val sortedHunts = db.getHunts(
-                        sortMethod = SortMethod.DEFAULT,
-                        sortOrder = currentSortOrders[0],
-                        formIDs = selectedPokemonForms.toList(),
-                        originGameIDs = selectedOriginGames.toList(),
-                        currentGameIDs = selectedCurrentGames.toList(),
-                        method = if (enteredMethod.isNullOrBlank()) null else enteredMethod,
-                        startedFrom = if (selectedStartDateFrom.isNullOrBlank()) null else selectedStartDateFrom,
-                        startedTo = if (selectedStartDateTo.isNullOrBlank()) null else selectedStartDateTo,
-                        finishedFrom = if (selectedFinishDateFrom.isNullOrBlank()) null else selectedFinishDateFrom,
-                        finishedTo = if (selectedFinishDateTo.isNullOrBlank()) null else selectedFinishDateTo,
-                        counterLo = if (enteredCounterLo.isDigitsOnly() && enteredCounterLo.isNotEmpty()) enteredCounterLo.toInt() else null,
-                        counterHi = if (enteredCounterHi.isDigitsOnly() && enteredCounterHi.isNotEmpty()) enteredCounterHi.toInt() else null,
-                        phaseLo = if (enteredPhaseLo.isDigitsOnly() && enteredPhaseLo.isNotEmpty()) enteredPhaseLo.toInt() else null,
-                        phaseHi = if (enteredPhaseHi.isDigitsOnly() && enteredPhaseHi.isNotEmpty()) enteredPhaseHi.toInt() else null,
-                        completionStatus = selectedCompletionStatus!!
-                    )
+                    val filteredHunts = getFilteredAndSortedHunts()
 
                     // update the recycler view
-                    shinyHuntListAdapter.submitList(sortedHunts) {
+                    shinyHuntListAdapter.submitList(filteredHunts) {
                         shinyHuntRecyclerView.scrollToPosition(0)
                     }
                 }
@@ -692,11 +688,12 @@ class MainActivity : ComponentActivity() {
         sortDefaultBtn.setOnClickListener {
             Log.d("MainActivity", "Sort by default button clicked")
 
-            // invert the sort order if current sort method is default (0)
-            if (currentSortMethodIndex == 0) {
+            // invert the sort order if current sort method is DEFAULT (0)
+            if (currentSortMethod == SortMethod.DEFAULT) {
                 currentSortOrders[0] = if (currentSortOrders[0] == SortOrder.DESC) SortOrder.ASC else SortOrder.DESC
             } else {
-                // set the current method index
+                // set the current method to DEFAULT (0)
+                currentSortMethod = SortMethod.DEFAULT
                 currentSortMethodIndex = 0
             }
 
@@ -707,7 +704,7 @@ class MainActivity : ComponentActivity() {
             closeSortMenu()
 
             // get the new shiny hunt data set
-            val sortedHunts = db.getHunts(sortMethod = SortMethod.DEFAULT, sortOrder = currentSortOrders[0])
+            val sortedHunts = getFilteredAndSortedHunts()
 
             // update the sort method and order in the adapter
             shinyHuntListAdapter.updateSortMethod(SortMethod.DEFAULT, currentSortOrders[0])
@@ -723,11 +720,12 @@ class MainActivity : ComponentActivity() {
         sortStartDateBtn.setOnClickListener {
             Log.d("MainActivity", "Sort by start date button clicked")
 
-            // invert the sort order if current sort method is by start date (1)
+            // invert the sort order if current sort method is by DATE_STARTED (1)
             if (currentSortMethodIndex == 1) {
                 currentSortOrders[1] = if (currentSortOrders[1] == SortOrder.DESC) SortOrder.ASC else SortOrder.DESC
             } else {
-                // set the current method index
+                // set the current method to DATE_STARTED (1)
+                currentSortMethod = SortMethod.DATE_STARTED
                 currentSortMethodIndex = 1
             }
 
@@ -738,7 +736,7 @@ class MainActivity : ComponentActivity() {
             closeSortMenu()
 
             // get the new shiny hunt data set
-            val sortedHunts = db.getHunts(sortMethod = SortMethod.DATE_STARTED, sortOrder = currentSortOrders[1])
+            val sortedHunts = getFilteredAndSortedHunts()
 
             // update the sort method and order in the adapter
             shinyHuntListAdapter.updateSortMethod(SortMethod.DATE_STARTED, currentSortOrders[1])
@@ -754,11 +752,12 @@ class MainActivity : ComponentActivity() {
         sortFinishDateBtn.setOnClickListener {
             Log.d("MainActivity", "Sort by finish date button clicked")
 
-            // invert the sort order if current sort method is by finish date (2)
+            // invert the sort order if current sort method is by DATE_FINISHED (2)
             if (currentSortMethodIndex == 2) {
                 currentSortOrders[2] = if (currentSortOrders[2] == SortOrder.DESC) SortOrder.ASC else SortOrder.DESC
             } else {
-                // set the current method index
+                // set the current method to DATE_FINISHED (2)
+                currentSortMethod = SortMethod.DATE_FINISHED
                 currentSortMethodIndex = 2
             }
 
@@ -769,7 +768,7 @@ class MainActivity : ComponentActivity() {
             closeSortMenu()
 
             // get the new shiny hunt data set
-            val sortedHunts = db.getHunts(sortMethod = SortMethod.DATE_FINISHED, sortOrder = currentSortOrders[2])
+            val sortedHunts = getFilteredAndSortedHunts()
 
             // update the sort method and order in the adapter
             shinyHuntListAdapter.updateSortMethod(SortMethod.DATE_FINISHED, currentSortOrders[2])
@@ -785,11 +784,12 @@ class MainActivity : ComponentActivity() {
         sortNameBtn.setOnClickListener {
             Log.d("MainActivity", "Sort by name button clicked")
 
-            // invert the sort order if current sort method is by name (3)
+            // invert the sort order if current sort method is by NAME (3)
             if (currentSortMethodIndex == 3) {
                 currentSortOrders[3] = if (currentSortOrders[3] == SortOrder.DESC) SortOrder.ASC else SortOrder.DESC
             } else {
-                // set the current method index
+                // set the current method to NAME (3)
+                currentSortMethod = SortMethod.NAME
                 currentSortMethodIndex = 3
             }
 
@@ -800,7 +800,7 @@ class MainActivity : ComponentActivity() {
             closeSortMenu()
 
             // get the new shiny hunt data set
-            val sortedHunts = db.getHunts(sortMethod = SortMethod.NAME, sortOrder = currentSortOrders[3])
+            val sortedHunts = getFilteredAndSortedHunts()
 
             // update the sort method and order in the adapter
             shinyHuntListAdapter.updateSortMethod(SortMethod.NAME, currentSortOrders[3])
@@ -816,11 +816,12 @@ class MainActivity : ComponentActivity() {
         sortGenerationBtn.setOnClickListener {
             Log.d("MainActivity", "Sort by generation button clicked")
 
-            // invert the sort order if current sort method is by generation (4)
+            // invert the sort order if current sort method is by GENERATION (4)
             if (currentSortMethodIndex == 4) {
                 currentSortOrders[4] = if (currentSortOrders[4] == SortOrder.DESC) SortOrder.ASC else SortOrder.DESC
             } else {
-                // set the current method index
+                // set the current method to GENERATION (4)
+                currentSortMethod = SortMethod.GENERATION
                 currentSortMethodIndex = 4
             }
 
@@ -831,7 +832,7 @@ class MainActivity : ComponentActivity() {
             closeSortMenu()
 
             // get the new shiny hunt data set
-            val sortedHunts = db.getHunts(sortMethod = SortMethod.GENERATION, sortOrder = currentSortOrders[4])
+            val sortedHunts = getFilteredAndSortedHunts()
 
             // update the sort method and order in the adapter
             shinyHuntListAdapter.updateSortMethod(SortMethod.GENERATION, currentSortOrders[4])
@@ -879,6 +880,33 @@ class MainActivity : ComponentActivity() {
         }
 
         Log.d("MainActivity", "onConfigurationChanged() completed")
+    }
+
+    // Helper function for filtering/sorting the shiny hunts
+    fun getFilteredAndSortedHunts(): List<ShinyHunt> {
+        Log.d("MainActivity", "getFilteredAndSortedHunts() started")
+
+        // get shiny hunts from the database using the applied filters and sorting method
+        val hunts = db.getHunts(
+            sortMethod = currentSortMethod,
+            sortOrder = currentSortOrders[currentSortMethodIndex],
+            formIDs = selectedPokemonForms.toList(),
+            originGameIDs = selectedOriginGames.toList(),
+            currentGameIDs = if (selectedCompletionStatus == CompletionStatus.IN_PROGRESS) emptyList() else selectedCurrentGames.toList(),
+            method = if (enteredMethod.isNullOrBlank()) null else enteredMethod,
+            startedFrom = if (selectedStartDateFrom.isNullOrBlank()) null else selectedStartDateFrom,
+            startedTo = if (selectedStartDateTo.isNullOrBlank()) null else selectedStartDateTo,
+            finishedFrom = if (selectedFinishDateFrom.isNullOrBlank() || selectedCompletionStatus == CompletionStatus.IN_PROGRESS) null else selectedFinishDateFrom,
+            finishedTo = if (selectedFinishDateTo.isNullOrBlank() || selectedCompletionStatus == CompletionStatus.IN_PROGRESS) null else selectedFinishDateTo,
+            counterLo = if (enteredCounterLo.isDigitsOnly() && enteredCounterLo.isNotEmpty()) enteredCounterLo.toInt() else null,
+            counterHi = if (enteredCounterHi.isDigitsOnly() && enteredCounterHi.isNotEmpty()) enteredCounterHi.toInt() else null,
+            phaseLo = if (enteredPhaseLo.isDigitsOnly() && enteredPhaseLo.isNotEmpty()) enteredPhaseLo.toInt() else null,
+            phaseHi = if (enteredPhaseHi.isDigitsOnly() && enteredPhaseHi.isNotEmpty()) enteredPhaseHi.toInt() else null,
+            completionStatus = if (selectedCompletionStatus == null) CompletionStatus.BOTH else selectedCompletionStatus!!
+        )
+
+        Log.d("MainActivity", "getFilteredAndSortedHunts() completed. Returning the list of shiny hunts")
+        return hunts
     }
 
 }
