@@ -1,6 +1,7 @@
 package com.example.pokemonshinytracker
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -18,9 +19,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.w3c.dom.Text
+import java.util.Calendar
 
 class MainActivity : ComponentActivity() {
 
@@ -360,29 +364,170 @@ class MainActivity : ComponentActivity() {
                 Log.d("MainActivity", "Edit Current Games button clicked in the filter selection dialog")
             }
 
+            // text change listener for the method
+            method.doAfterTextChanged { enteredMethod = method.text.toString() }
+
             // on click listener for the start date from button
             startDateFromBtn.setOnClickListener {
-                // TODO: Implement start date from button logic
                 Log.d("MainActivity", "Start Date From button clicked in the filter selection dialog")
+
+                // create a calendar instance
+                val c = Calendar.getInstance()
+
+                // get the day, month, and year from the calendar
+                val year = c.get(Calendar.YEAR)
+                val month = c.get(Calendar.MONTH)
+                val day = c.get(Calendar.DAY_OF_MONTH)
+
+                // create a dialog for the date picker
+                Log.d("MainActivity", "Creating date picker dialog")
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        // format and set the text for the start date
+                        selectedStartDateFrom =
+                            (buildString {
+                                append(selectedYear.toString())
+                                append("-")
+                                append((selectedMonth + 1).toString())
+                                append("-")
+                                append(selectedDay.toString())
+                            })
+                        startDateFromBtn.text = selectedStartDateFrom
+                        Log.d("MainActivity", "Selected Start Date From: ${startDateFromBtn.text}")
+                    },
+                    // pass the year, month, and day for the selected date
+                    year,
+                    month,
+                    day
+                )
+
+                // display the date picker dialog
+                datePickerDialog.show()
             }
 
             // on click listener for the start date to button
             startDateToBtn.setOnClickListener {
-                // TODO: Implement start date to button logic
                 Log.d("MainActivity", "Start Date To button clicked in the filter selection dialog")
+
+                // create a calendar instance
+                val c = Calendar.getInstance()
+
+                // get the day, month, and year from the calendar
+                val year = c.get(Calendar.YEAR)
+                val month = c.get(Calendar.MONTH)
+                val day = c.get(Calendar.DAY_OF_MONTH)
+
+                // create a dialog for the date picker
+                Log.d("MainActivity", "Creating date picker dialog")
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        // format and set the text for the start date
+                        selectedStartDateTo =
+                            (buildString {
+                                append(selectedYear.toString())
+                                append("-")
+                                append((selectedMonth + 1).toString())
+                                append("-")
+                                append(selectedDay.toString())
+                            })
+                        startDateToBtn.text = selectedStartDateTo
+                        Log.d("MainActivity", "Selected Start Date To: ${startDateToBtn.text}")
+                    },
+                    // pass the year, month, and day for the selected date
+                    year,
+                    month,
+                    day
+                )
+
+                // display the date picker dialog
+                datePickerDialog.show()
             }
 
             // on click listener for the finish date from button
             finishDateFromBtn.setOnClickListener {
-                // TODO: Implement finish date from button logic
                 Log.d("MainActivity", "Finish Date From button clicked in the filter selection dialog")
+
+                // create a calendar instance
+                val c = Calendar.getInstance()
+
+                // get the day, month, and year from the calendar
+                val year = c.get(Calendar.YEAR)
+                val month = c.get(Calendar.MONTH)
+                val day = c.get(Calendar.DAY_OF_MONTH)
+
+                // create a dialog for the date picker
+                Log.d("MainActivity", "Creating date picker dialog")
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        // format and set the text for the finish date
+                        selectedFinishDateFrom =
+                            (buildString {
+                                append(selectedYear.toString())
+                                append("-")
+                                append((selectedMonth + 1).toString())
+                                append("-")
+                                append(selectedDay.toString())
+                            })
+                        finishDateFromBtn.text = selectedFinishDateFrom
+                        Log.d("MainActivity", "Selected Finish Date From: ${finishDateFromBtn.text}")
+                    },
+                    // pass the year, month, and day for the selected date
+                    year,
+                    month,
+                    day
+                )
+
+                // display the date picker dialog
+                datePickerDialog.show()
             }
 
             // on click listener for the finish date to button
             finishDateToBtn.setOnClickListener {
-                // TODO: Implement finish date to button logic
                 Log.d("MainActivity", "Finish Date To button clicked in the filter selection dialog")
+
+                // create a calendar instance
+                val c = Calendar.getInstance()
+
+                // get the day, month, and year from the calendar
+                val year = c.get(Calendar.YEAR)
+                val month = c.get(Calendar.MONTH)
+                val day = c.get(Calendar.DAY_OF_MONTH)
+
+                // create a dialog for the date picker
+                Log.d("MainActivity", "Creating date picker dialog")
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        // format and set the text for the finish date
+                        selectedFinishDateTo =
+                            (buildString {
+                                append(selectedYear.toString())
+                                append("-")
+                                append((selectedMonth + 1).toString())
+                                append("-")
+                                append(selectedDay.toString())
+                            })
+                        finishDateToBtn.text = selectedFinishDateTo
+                        Log.d("MainActivity", "Selected Finish Date To: ${finishDateToBtn.text}")
+                    },
+                    // pass the year, month, and day for the selected date
+                    year,
+                    month,
+                    day
+                )
+
+                // display the date picker dialog
+                datePickerDialog.show()
             }
+
+            // text change listeners for the counter and phase ranges
+            counterLo.doAfterTextChanged { enteredCounterLo = counterLo.text.toString() }
+            counterHi.doAfterTextChanged { enteredCounterHi = counterHi.text.toString() }
+            phaseLo.doAfterTextChanged { enteredPhaseLo = phaseLo.text.toString() }
+            phaseHi.doAfterTextChanged { enteredPhaseHi = phaseHi.text.toString() }
 
             // on click listener for the confirm filters button
             confirmFiltersBtn.setOnClickListener {
