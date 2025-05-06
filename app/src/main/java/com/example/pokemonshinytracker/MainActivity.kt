@@ -17,6 +17,7 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
+import androidx.core.text.isDigitsOnly
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doAfterTextChanged
@@ -313,7 +314,7 @@ class MainActivity : ComponentActivity() {
             setPhaseHi()
 
             // display the dialog
-            AlertDialog.Builder(this)
+            val dialog = AlertDialog.Builder(this)
                 .setTitle("Filters")
                 .setView(filterDialog)
                 .setPositiveButton("Close") { dialog, _ -> dialog.dismiss() }
@@ -533,6 +534,62 @@ class MainActivity : ComponentActivity() {
             confirmFiltersBtn.setOnClickListener {
                 // TODO: Implement the confirm filters button logic
                 Log.d("MainActivity", "Confirm Filters button clicked in the filter selection dialog")
+
+                // check if a completion status was selected
+                if (selectedCompletionStatus == null) {
+                    AlertDialog.Builder(this)
+                        .setTitle("Empty Field Detected")
+                        .setMessage("Please select a completion status!")
+                        .setPositiveButton("Okay") { errorDialog, _ ->
+                            // close the error dialog
+                            errorDialog.dismiss()
+                        }
+                        .show()
+                }
+                // otherwise, apply the filters
+                else {
+                    dialog.dismiss()
+
+                    Log.d("MainActivity", "sortMethod: $currentSortMethodIndex")
+                    Log.d("MainActivity", "sortOrder: ${currentSortOrders[0]}")
+                    Log.d("MainActivity", "formIDs: $selectedPokemonForms")
+                    Log.d("MainActivity", "originGameIDs: $selectedOriginGames")
+                    Log.d("MainActivity", "currentGameIDs: $selectedCurrentGames")
+                    Log.d("MainActivity", "method: $enteredMethod")
+                    Log.d("MainActivity", "startedFrom: $selectedStartDateFrom")
+                    Log.d("MainActivity", "startedTo: $selectedStartDateTo")
+                    Log.d("MainActivity", "finishedFrom: $selectedFinishDateFrom")
+                    Log.d("MainActivity", "finishedTo: $selectedFinishDateTo")
+                    Log.d("MainActivity", "counterLo: $enteredCounterLo")
+                    Log.d("MainActivity", "counterHi: $enteredCounterHi")
+                    Log.d("MainActivity", "phaseLo: $enteredPhaseLo")
+                    Log.d("MainActivity", "phaseHi: $enteredPhaseHi")
+                    Log.d("MainActivity", "completionStatus: $selectedCompletionStatus")
+
+                    // get the new shiny hunt data set
+                    val sortedHunts = db.getHunts(
+                        sortMethod = SortMethod.DEFAULT,
+                        sortOrder = currentSortOrders[0],
+                        formIDs = selectedPokemonForms.toList(),
+                        originGameIDs = selectedOriginGames.toList(),
+                        currentGameIDs = selectedCurrentGames.toList(),
+                        method = if (enteredMethod.isNullOrBlank()) null else enteredMethod,
+                        startedFrom = if (selectedStartDateFrom.isNullOrBlank()) null else selectedStartDateFrom,
+                        startedTo = if (selectedStartDateTo.isNullOrBlank()) null else selectedStartDateTo,
+                        finishedFrom = if (selectedFinishDateFrom.isNullOrBlank()) null else selectedFinishDateFrom,
+                        finishedTo = if (selectedFinishDateTo.isNullOrBlank()) null else selectedFinishDateTo,
+                        counterLo = if (enteredCounterLo.isDigitsOnly() && enteredCounterLo.isNotEmpty()) enteredCounterLo.toInt() else null,
+                        counterHi = if (enteredCounterHi.isDigitsOnly() && enteredCounterHi.isNotEmpty()) enteredCounterHi.toInt() else null,
+                        phaseLo = if (enteredPhaseLo.isDigitsOnly() && enteredPhaseLo.isNotEmpty()) enteredPhaseLo.toInt() else null,
+                        phaseHi = if (enteredPhaseHi.isDigitsOnly() && enteredPhaseHi.isNotEmpty()) enteredPhaseHi.toInt() else null,
+                        completionStatus = selectedCompletionStatus!!
+                    )
+
+                    // update the recycler view
+                    shinyHuntListAdapter.submitList(sortedHunts) {
+                        shinyHuntRecyclerView.scrollToPosition(0)
+                    }
+                }
             }
 
         }
