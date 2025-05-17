@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Pokemon Form Item (used in the Selected Pokemon Item's RecyclerView)-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/form_layout"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="1dp"
+    android:background="@drawable/ui_container_transparent">
+
+    <!--Form Image-->
+    <ImageView
+        android:id="@+id/form_image"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/etc_default" />
+
+    <!--Form Name-->
+    <TextView
+        android:id="@+id/form_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="(Mega)"
+        android:textSize="15sp"
+        android:textColor="@color/black"/>
+
+</LinearLayout>

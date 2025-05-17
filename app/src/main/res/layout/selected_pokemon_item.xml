@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Selected Pokemon Item Layout-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:padding="5dp"
+    android:background="@drawable/ui_container_incomplete_hunt">
+
+    <!--Header-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <!--Pokemon Name-->
+        <TextView
+            android:id="@+id/pokemon_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Blastoise"
+            android:textSize="15sp"
+            android:textColor="@color/white" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end|center_vertical">
+
+            <!--Select All Label-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/select_all_label"
+                android:textSize="15sp"
+                android:textColor="@color/white" />
+
+            <!--Select All Checkbox-->
+            <CheckBox
+                android:id="@+id/select_all_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <!--Dropdown Button-->
+            <ImageButton
+                android:id="@+id/dropdown_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_arrow_down"
+                android:contentDescription="@string/dropdown_button" />
+
+            <!--Unselect Pokemon Button-->
+            <ImageButton
+                android:id="@+id/unselect_pokemon_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|right"
+                android:background="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_x"
+                android:contentDescription="@string/dropdown_button" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!--Forms Recycler View-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pokemon_forms_recycler_view"
+        android:clipToPadding="false"
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

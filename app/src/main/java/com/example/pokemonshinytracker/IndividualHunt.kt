@@ -366,7 +366,7 @@ class IndividualHunt : ComponentActivity() {
                 .setPositiveButton("Close") { dialog, _ -> dialog.dismiss() }
                 .show()
 
-            pokemonRecyclerView.adapter = PokemonSelectionAdapter(groupedPokemonList) { selectedPokemon ->
+            pokemonRecyclerView.adapter = PokemonSelectionAdapter(0, groupedPokemonList, emptyList()) { selectedPokemon ->
                 val formName = selectedPokemon.forms.find { it.isDefaultForm }?.formName
                 val formImage = selectedPokemon.forms.find { it.isDefaultForm }!!.formImage
                 selectedPokemonName.text = selectedPokemon.pokemonName

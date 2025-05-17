@@ -16,6 +16,7 @@ object ShinyHuntData {
 
         val shinyHunts = mutableListOf<List<Any?>>()
 
+        /*
         // Mock Data Set #1: One hunt for every pokemon form
         for (formID in 1470 downTo 1) {
             val originGame = Random.nextInt(1, 21)
@@ -58,8 +59,9 @@ object ShinyHuntData {
                 )
             }
         }
+         */
 
-        /*
+
         // Mock Data Set #2: Some of my personal shiny hunts
         shinyHunts.add(listOf(740, 33, "Soft Resets", "2024-09-20", 3111, 0, 1, "2025-01-06", 37)) // Darkrai
         shinyHunts.add(listOf(341, 37, "Masuda Method", "", 319, 0, 1, "2025-01-17", 37))        // Gligar
@@ -75,8 +77,11 @@ object ShinyHuntData {
         shinyHunts.add(listOf(938, 27, "Soft Resets", "", 563, 0, 1, "", 38))                   // Landorus (Ultra Sun)
         shinyHunts.add(listOf(737, 28, "Soft Resets", "", 835, 0, 1, "", 38))                   // Cresselia
         shinyHunts.add(listOf(937, 28, "Soft Resets", "", 1414, 0, 1, "", 28))                  // Zekrom
-        shinyHunts.add(listOf(729, 27, "Soft Resets", "", 2015, 0, 0, "", null))                // Dialga (ongoing)
-        */
+        shinyHunts.add(listOf(1180, 28, "Soft Resets", "2025-5-12", 122, 0, 1, "2025-5-13", 28))// Pheromosa (Ultra Moon)
+        shinyHunts.add(listOf(729, 27, "Soft Resets", "", 3026, 0, 1, "2025-5-15", 27))         // Dialga
+        shinyHunts.add(listOf(952, 21, "Soft Resets", "2025-5-14", 113, 0, 0, "", null))        // Kalos Starter (X; ongoing)
+        shinyHunts.add(listOf(936, 27, "Soft Resets", "2025-5-16", 100, 0, 0, "", null))        // Reshiram (ongoing)
+
 
         // insert each shiny hunt into the database
         for (hunt in shinyHunts) {

@@ -5,6 +5,8 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -22,6 +24,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Calendar
 
@@ -47,6 +50,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var filterClearFiltersBtn: Button          // clear filters button (filter selection dialog)
     private lateinit var editPokemonBtn: Button                 // edit pokemon button
     private lateinit var pokemonTxt: TextView                   // selected pokemon text
+    private lateinit var selectedPokemonRecyclerView: RecyclerView  // selected pokemon recycler view
+    private lateinit var pokemonListRecyclerView: RecyclerView  // pokemon list recycler view
     private lateinit var editOriginGamesBtn: Button             // edit origin games button
     private lateinit var originGamesTxt: TextView               // selected origin games text
     private lateinit var completionStatusRadioGrp: RadioGroup   // completion status radio group
@@ -76,10 +81,11 @@ class MainActivity : ComponentActivity() {
         arrayOf(SortOrder.DESC, SortOrder.DESC, SortOrder.DESC, SortOrder.ASC, SortOrder.ASC)
 
     // initialize variables for tracking the selected filters
-    private var selectedPokemonForms: Set<Int> = emptySet()
-    private var selectedOriginGames: Set<Int> = emptySet()
+    private var selectedPokemon = mutableListOf<Pokemon>()           // dataset for the selected pokemon RecyclerView
+    private var selectedPokemonForms = mutableSetOf<Int>()           // formIDs of every selected Pokemon Form
+    private var selectedOriginGames = mutableListOf<Int>()           // gameIDs of every selected Origin Game
     private var selectedCompletionStatus: CompletionStatus? = null
-    private var selectedCurrentGames: Set<Int> = emptySet()
+    private var selectedCurrentGames = mutableListOf<Int>()           // gameIDs of every selected Current Game
     private var enteredMethod = ""
     private var selectedStartDateFrom = ""
     private var selectedStartDateTo = ""
@@ -89,6 +95,21 @@ class MainActivity : ComponentActivity() {
     private var enteredCounterHi = ""
     private var enteredPhaseLo = ""
     private var enteredPhaseHi = ""
+
+    // initialize variables for tracking the confirmed filters
+    private var confirmedPokemonFormsFilter = mutableSetOf<Int>()
+    private var confirmedOriginGamesFilter = mutableListOf<Int>()
+    private var confirmedCompletionStatusFilter: CompletionStatus? = null
+    private var confirmedCurrentGamesFilter = mutableListOf<Int>()
+    private var confirmedMethodFilter = ""
+    private var confirmedStartDateFromFilter = ""
+    private var confirmedStartDateToFilter = ""
+    private var confirmedFinishDateFromFilter = ""
+    private var confirmedFinishDateToFilter = ""
+    private var confirmedCounterLoFilter = ""
+    private var confirmedCounterHiFilter = ""
+    private var confirmedPhaseLoFilter = ""
+    private var confirmedPhaseHiFilter = ""
 
     // access the database
     val db = DBHelper(this, null)
@@ -123,7 +144,7 @@ class MainActivity : ComponentActivity() {
 
         // access the UI elements
         val noHuntsMessage = findViewById<TextView>(R.id.no_hunts_message)                      // message for when user has no saved hunts
-        shinyHuntRecyclerView = findViewById(R.id.shiny_hunts_recycler_view)  // recycler view that displays the user's saved hunts
+        shinyHuntRecyclerView = findViewById(R.id.shiny_hunts_recycler_view)                    // recycler view that displays the user's saved hunts
         newHuntBtn = findViewById(R.id.new_hunt_button)                                         // new hunt button
         filterBtn = findViewById(R.id.filter_button)                                            // filter button
         mainClearFiltersBtn = findViewById(R.id.clear_filters_button)                           // clear filters button (main page)
@@ -141,6 +162,7 @@ class MainActivity : ComponentActivity() {
         // instantiate an adapter for the shiny hunt recycler view
         val shinyHuntListAdapter = ShinyHuntListAdapter(this, pokemonList, gameList).apply {
             onScrollToPosition = { position ->
+                // when swapping shiny hunts, scroll to the position of the shiny hunt that initiated the swap
                 shinyHuntRecyclerView.scrollToPosition(position)
             }
         }
@@ -159,6 +181,7 @@ class MainActivity : ComponentActivity() {
             sortMenuParams.setMargins(0, 0, 0, 0)
         }
 
+        // apply margins to the sort button and sort menu
         sortBtn.layoutParams = sortBtnParams
         sortMenuLayout.layoutParams = sortMenuParams
 
@@ -339,6 +362,117 @@ class MainActivity : ComponentActivity() {
             editPokemonBtn.setOnClickListener {
                 // TODO: Implement edit pokemon button logic
                 Log.d("MainActivity", "Edit Pokemon button clicked in the filter selection dialog")
+
+                // inflate the pokemon selection dialog layout
+                val selectPokemonDialog = layoutInflater.inflate(R.layout.pokemon_selection, null)
+
+                // access the recycler views
+                selectedPokemonRecyclerView = selectPokemonDialog.findViewById(R.id.selected_pokemon_recycler_view)
+                pokemonListRecyclerView = selectPokemonDialog.findViewById(R.id.pokemon_recycler_view)
+
+                // show the selected Pokemon section
+                val selectedPokemonLayout = selectPokemonDialog.findViewById<LinearLayout>(R.id.selected_pokemon_layout)
+                selectedPokemonLayout.visibility = View.VISIBLE
+
+                // access the search bar
+                val searchBar = selectPokemonDialog.findViewById<EditText>(R.id.search_pokemon)
+
+                // set the span counts based on device orientation
+                selectedPokemonRecyclerView.layoutManager = LinearLayoutManager(this)
+                val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
+                pokemonListRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
+
+                val layoutManager = GridLayoutManager(this, spanCount)
+
+                // prepare dataset with headers
+                val groupedPokemonList = preparePokemonListWithHeaders(pokemonList)
+
+                // custom span size logic to make headers span full width
+                layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                    override fun getSpanSize(position: Int): Int {
+                        return when (groupedPokemonList[position]) {
+                            is PokemonListItem.HeaderItem -> spanCount  // header takes full row
+                            is PokemonListItem.PokemonItem -> 1         // Pokemon takes 1 column
+                        }
+                    }
+                }
+
+                pokemonListRecyclerView.layoutManager = layoutManager
+
+                // create and show the dialog
+                AlertDialog.Builder(this)
+                    .setTitle("Select Pokémon")
+                    .setView(selectPokemonDialog)
+                    .setPositiveButton("Close") { dialog, _ -> dialog.dismiss() }
+                    .show()
+
+                lateinit var selectedPokemonAdapter: SelectedPokemonAdapter
+                lateinit var pokemonListAdapter: PokemonSelectionAdapter
+
+                // create the adapter for the selected pokemon recycler view
+                selectedPokemonAdapter = SelectedPokemonAdapter(
+                    selectedPokemon,
+                    selectedPokemonForms,
+                    onPokemonUnselected = { removedPokemon ->
+                        selectedPokemon.removeAll { it.pokemonID == removedPokemon.pokemonID }
+                        removedPokemon.forms.forEach { selectedPokemonForms.remove(it.formID) }
+                        selectedPokemonAdapter.updateList(selectedPokemon)
+                        pokemonListAdapter.updateSelectedPokemon(selectedPokemon)
+                        pokemonListAdapter.notifyDataSetChanged()
+                        setPokemon()
+                    },
+                    onSelectionChanged = {
+                        setPokemon()
+                    }
+                )
+                selectedPokemonRecyclerView.adapter = selectedPokemonAdapter
+
+                // create the adapter for the main pokemon selection list
+                pokemonListAdapter = PokemonSelectionAdapter(1, groupedPokemonList, selectedPokemon) { returnedPokemon ->
+                    if (selectedPokemon.contains(returnedPokemon)) {
+                        selectedPokemon.remove(returnedPokemon)
+                        for (form in returnedPokemon.forms) {
+                            selectedPokemonForms.remove(form.formID)
+                        }
+                    } else {
+                        selectedPokemon.add(returnedPokemon)
+                        selectedPokemonForms.add(returnedPokemon.forms.sortedBy { it.formID }[0].formID)
+                    }
+                    selectedPokemonAdapter.updateList(selectedPokemon)
+                    setPokemon()
+                }
+                pokemonListRecyclerView.adapter = pokemonListAdapter
+
+
+                // filter Pokémon as the user types
+                searchBar.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {}
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                        val filteredList = groupedPokemonList
+                            .filterIsInstance<PokemonListItem.PokemonItem>()
+                            .filter { it.pokemon.pokemonName.contains(s.toString(), ignoreCase = true) }
+
+                        // keep headers and merge them back into the list
+                        val updatedList = preparePokemonListWithHeaders(filteredList.map { it.pokemon })
+
+                        // update adapter
+                        (pokemonListRecyclerView.adapter as PokemonSelectionAdapter).updateList(updatedList)
+
+                        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                            override fun getSpanSize(position: Int): Int {
+                                return when (updatedList[position]) {
+                                    is PokemonListItem.HeaderItem -> spanCount
+                                    is PokemonListItem.PokemonItem -> 1
+                                }
+                            }
+                        }
+
+
+                    }
+                })
             }
 
             // on click listener for the edit origin games button
@@ -562,21 +696,36 @@ class MainActivity : ComponentActivity() {
                 else {
                     dialog.dismiss()
 
+                    // set all of the confirmed filters
+                    confirmedPokemonFormsFilter = selectedPokemonForms
+                    confirmedOriginGamesFilter = selectedOriginGames
+                    confirmedCompletionStatusFilter = selectedCompletionStatus
+                    confirmedCurrentGamesFilter = selectedCurrentGames
+                    confirmedMethodFilter = enteredMethod
+                    confirmedStartDateFromFilter = selectedStartDateFrom
+                    confirmedStartDateToFilter = selectedStartDateTo
+                    confirmedFinishDateFromFilter = selectedFinishDateFrom
+                    confirmedFinishDateToFilter = selectedFinishDateTo
+                    confirmedCounterLoFilter = enteredCounterLo
+                    confirmedCounterHiFilter = enteredCounterHi
+                    confirmedPhaseLoFilter = enteredPhaseLo
+                    confirmedPhaseHiFilter = enteredPhaseHi
+
                     Log.d("MainActivity", "sortMethod: $currentSortMethodIndex")
                     Log.d("MainActivity", "sortOrder: ${currentSortOrders[0]}")
-                    Log.d("MainActivity", "formIDs: $selectedPokemonForms")
-                    Log.d("MainActivity", "originGameIDs: $selectedOriginGames")
-                    Log.d("MainActivity", "currentGameIDs: $selectedCurrentGames")
-                    Log.d("MainActivity", "method: $enteredMethod")
-                    Log.d("MainActivity", "startedFrom: $selectedStartDateFrom")
-                    Log.d("MainActivity", "startedTo: $selectedStartDateTo")
-                    Log.d("MainActivity", "finishedFrom: $selectedFinishDateFrom")
-                    Log.d("MainActivity", "finishedTo: $selectedFinishDateTo")
-                    Log.d("MainActivity", "counterLo: $enteredCounterLo")
-                    Log.d("MainActivity", "counterHi: $enteredCounterHi")
-                    Log.d("MainActivity", "phaseLo: $enteredPhaseLo")
-                    Log.d("MainActivity", "phaseHi: $enteredPhaseHi")
-                    Log.d("MainActivity", "completionStatus: $selectedCompletionStatus")
+                    Log.d("MainActivity", "formIDs: $confirmedPokemonFormsFilter")
+                    Log.d("MainActivity", "originGameIDs: $confirmedOriginGamesFilter")
+                    Log.d("MainActivity", "currentGameIDs: $confirmedCurrentGamesFilter")
+                    Log.d("MainActivity", "method: $confirmedMethodFilter")
+                    Log.d("MainActivity", "startedFrom: $confirmedStartDateFromFilter")
+                    Log.d("MainActivity", "startedTo: $confirmedStartDateToFilter")
+                    Log.d("MainActivity", "finishedFrom: $confirmedFinishDateFromFilter")
+                    Log.d("MainActivity", "finishedTo: $confirmedFinishDateToFilter")
+                    Log.d("MainActivity", "counterLo: $confirmedCounterLoFilter")
+                    Log.d("MainActivity", "counterHi: $confirmedCounterHiFilter")
+                    Log.d("MainActivity", "phaseLo: $confirmedPhaseLoFilter")
+                    Log.d("MainActivity", "phaseHi: $confirmedPhaseHiFilter")
+                    Log.d("MainActivity", "completionStatus: $confirmedCompletionStatusFilter")
 
                     // get the new shiny hunt data set
                     val filteredHunts = getFilteredAndSortedHunts()
@@ -883,26 +1032,26 @@ class MainActivity : ComponentActivity() {
     }
 
     // Helper function for filtering/sorting the shiny hunts
-    fun getFilteredAndSortedHunts(): List<ShinyHunt> {
+    private fun getFilteredAndSortedHunts(): List<ShinyHunt> {
         Log.d("MainActivity", "getFilteredAndSortedHunts() started")
 
         // get shiny hunts from the database using the applied filters and sorting method
         val hunts = db.getHunts(
             sortMethod = currentSortMethod,
             sortOrder = currentSortOrders[currentSortMethodIndex],
-            formIDs = selectedPokemonForms.toList(),
-            originGameIDs = selectedOriginGames.toList(),
-            currentGameIDs = if (selectedCompletionStatus == CompletionStatus.IN_PROGRESS) emptyList() else selectedCurrentGames.toList(),
-            method = if (enteredMethod.isNullOrBlank()) null else enteredMethod,
-            startedFrom = if (selectedStartDateFrom.isNullOrBlank()) null else selectedStartDateFrom,
-            startedTo = if (selectedStartDateTo.isNullOrBlank()) null else selectedStartDateTo,
-            finishedFrom = if (selectedFinishDateFrom.isNullOrBlank() || selectedCompletionStatus == CompletionStatus.IN_PROGRESS) null else selectedFinishDateFrom,
-            finishedTo = if (selectedFinishDateTo.isNullOrBlank() || selectedCompletionStatus == CompletionStatus.IN_PROGRESS) null else selectedFinishDateTo,
-            counterLo = if (enteredCounterLo.isDigitsOnly() && enteredCounterLo.isNotEmpty()) enteredCounterLo.toInt() else null,
-            counterHi = if (enteredCounterHi.isDigitsOnly() && enteredCounterHi.isNotEmpty()) enteredCounterHi.toInt() else null,
-            phaseLo = if (enteredPhaseLo.isDigitsOnly() && enteredPhaseLo.isNotEmpty()) enteredPhaseLo.toInt() else null,
-            phaseHi = if (enteredPhaseHi.isDigitsOnly() && enteredPhaseHi.isNotEmpty()) enteredPhaseHi.toInt() else null,
-            completionStatus = if (selectedCompletionStatus == null) CompletionStatus.BOTH else selectedCompletionStatus!!
+            formIDs = confirmedPokemonFormsFilter.toList(),
+            originGameIDs = confirmedOriginGamesFilter.toList(),
+            currentGameIDs = if (confirmedCompletionStatusFilter == CompletionStatus.IN_PROGRESS) emptyList() else confirmedCurrentGamesFilter.toList(),
+            method = confirmedMethodFilter.ifBlank { null },
+            startedFrom = confirmedStartDateFromFilter.ifBlank { null },
+            startedTo = confirmedStartDateToFilter.ifBlank { null },
+            finishedFrom = if (confirmedFinishDateFromFilter.isBlank() || confirmedCompletionStatusFilter == CompletionStatus.IN_PROGRESS) null else confirmedFinishDateFromFilter,
+            finishedTo = if (confirmedFinishDateToFilter.isBlank() || confirmedCompletionStatusFilter == CompletionStatus.IN_PROGRESS) null else confirmedFinishDateToFilter,
+            counterLo = if (confirmedCounterLoFilter.isDigitsOnly() && confirmedCounterLoFilter.isNotEmpty()) confirmedCounterLoFilter.toInt() else null,
+            counterHi = if (confirmedCounterHiFilter.isDigitsOnly() && confirmedCounterHiFilter.isNotEmpty()) confirmedCounterHiFilter.toInt() else null,
+            phaseLo = if (confirmedPhaseLoFilter.isDigitsOnly() && confirmedPhaseLoFilter.isNotEmpty()) confirmedPhaseLoFilter.toInt() else null,
+            phaseHi = if (confirmedPhaseHiFilter.isDigitsOnly() && confirmedPhaseHiFilter.isNotEmpty()) confirmedPhaseHiFilter.toInt() else null,
+            completionStatus = if (confirmedCompletionStatusFilter == null) CompletionStatus.BOTH else confirmedCompletionStatusFilter!!
         )
 
         Log.d("MainActivity", "getFilteredAndSortedHunts() completed. Returning the list of shiny hunts")

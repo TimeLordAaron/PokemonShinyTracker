@@ -34,7 +34,7 @@ class ShinyHuntListAdapter(
     private val gameSet: List<Game>
 ) : ListAdapter<ShinyHunt, ShinyHuntListAdapter.ViewHolder>(ShinyHuntDiffCallback()) {
 
-    private val expandedItems = mutableSetOf<Int>() // stores the positions of expanded items
+    private val expandedItems = mutableSetOf<Int>()                 // stores the positions of expanded items
     private var currentSortMethod: SortMethod = SortMethod.DEFAULT  // stores the current sort method
     private var currentSortOrder: SortOrder = SortOrder.DESC        // stores the current sort order
     var onScrollToPosition: ((Int) -> Unit)? = null                 // variable to scroll to position of the swapped hunt

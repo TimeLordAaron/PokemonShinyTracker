@@ -9,9 +9,18 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class PokemonSelectionAdapter(
+    private val mode: Int,
     private var pokemonListItems: List<PokemonListItem>,
+    private var preselectedPokemon: List<Pokemon>,
     private val onPokemonSelected: (Pokemon) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    init {
+        setHasStableIds(true)
+    }
+
+
+    private val selectedPokemonPositions = mutableSetOf<Int>()      // stores the positions of selected Pokemon in the list
 
     // constants to differentiate between Pokemon items and header items
     companion object {
@@ -23,9 +32,37 @@ class PokemonSelectionAdapter(
     inner class PokemonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val pokemonImage: ImageView = view.findViewById(R.id.pokemon_image)
 
-        fun bind(pokemon: Pokemon) {
+        fun bind(pokemon: Pokemon, position: Int) {
             pokemonImage.setImageResource(pokemon.forms.find { it.isDefaultForm }!!.formImage)
-            pokemonImage.setOnClickListener { onPokemonSelected(pokemon) }
+
+            // update background based on selection
+            if (mode == 1) {
+                pokemonImage.setBackgroundResource(
+                    if (preselectedPokemon.any { it.pokemonID == pokemon.pokemonID }) {
+                        selectedPokemonPositions.add(position)
+                        R.drawable.ui_pokemon_selected_item_border
+                    }
+                    else R.drawable.ui_pokemon_unselected_item_border
+                )
+            }
+
+            // on click listener for the image
+            pokemonImage.setOnClickListener {
+                // in filter mode (1), invert the background of the image
+                if (mode == 1) {
+                    if (selectedPokemonPositions.contains(position)) {
+                        selectedPokemonPositions.remove(position)
+                        pokemonImage.setBackgroundResource(R.drawable.ui_pokemon_unselected_item_border)
+                    } else {
+                        selectedPokemonPositions.add(position)
+                        pokemonImage.setBackgroundResource(R.drawable.ui_pokemon_selected_item_border)
+                    }
+                    notifyItemChanged(position) // refresh only the clicked item
+                }
+
+                // return the selected pokemon
+                onPokemonSelected(pokemon)
+            }
         }
     }
 
@@ -71,17 +108,52 @@ class PokemonSelectionAdapter(
 
         when (val item = pokemonListItems[position]) {
             is PokemonListItem.HeaderItem -> (holder as HeaderViewHolder).bind(item.generation)
-            is PokemonListItem.PokemonItem -> (holder as PokemonViewHolder).bind(item.pokemon)
+            is PokemonListItem.PokemonItem -> {
+                (holder as PokemonViewHolder).bind(item.pokemon, position)
+                // for filter mode (1), highlight the Pokemon if it was already selected
+                if (mode == 1) {
+                    holder.pokemonImage.setBackgroundResource(
+                        if (selectedPokemonPositions.contains(position)) R.drawable.ui_pokemon_selected_item_border
+                        else R.drawable.ui_pokemon_unselected_item_border)
+                }
+            }
         }
     }
 
     override fun getItemCount() = pokemonListItems.size
 
+    override fun getItemId(position: Int): Long {
+        return when (val item = pokemonListItems[position]) {
+            is PokemonListItem.PokemonItem -> item.pokemon.pokemonID.toLong()
+            is PokemonListItem.HeaderItem -> -position.toLong() // headers can use negative unique values
+        }
+    }
 
     // Function to update the Pokemon list
     fun updateList(newList: List<PokemonListItem>) {
         pokemonListItems = newList
+        selectedPokemonPositions.clear()
+
+        newList.forEachIndexed { index, item ->
+            if (item is PokemonListItem.PokemonItem && preselectedPokemon.contains(item.pokemon)) {
+                selectedPokemonPositions.add(index)
+            }
+        }
+
         notifyDataSetChanged()
+    }
+
+    fun updateSelectedPokemon(selected: List<Pokemon>) {
+        preselectedPokemon = selected
+        selectedPokemonPositions.clear()
+        pokemonListItems.forEachIndexed { index, item ->
+            if (item is PokemonListItem.PokemonItem && preselectedPokemon.any { it.pokemonID == item.pokemon.pokemonID }) {
+                selectedPokemonPositions.add(index)
+            }
+        }
+
+        notifyDataSetChanged()
+
     }
 
 }
