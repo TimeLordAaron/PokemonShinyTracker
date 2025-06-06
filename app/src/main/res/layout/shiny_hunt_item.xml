@@ -86,8 +86,8 @@
                             <!--Origin Game Icon-->
                             <ImageView
                                 android:id="@+id/origin_game_icon"
-                                android:layout_width="35dp"
-                                android:layout_height="35dp"
+                                android:layout_width="34dp"
+                                android:layout_height="34dp"
                                 android:layout_gravity="center"
                                 android:background="@drawable/ui_game_icon_border_origin"
                                 android:src="@drawable/etc_default"
@@ -110,8 +110,8 @@
                             <!--Current Game Icon-->
                             <ImageView
                                 android:id="@+id/current_game_icon"
-                                android:layout_width="35dp"
-                                android:layout_height="35dp"
+                                android:layout_width="34dp"
+                                android:layout_height="34dp"
                                 android:layout_gravity="center"
                                 android:background="@drawable/ui_game_icon_border_current"
                                 android:src="@drawable/etc_default"

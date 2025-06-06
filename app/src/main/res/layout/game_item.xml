@@ -19,14 +19,15 @@
         <!--Game Image (placed on top of the border)-->
         <ImageView
             android:id="@+id/game_image"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_gravity="center"
             android:background="@drawable/ui_game_icon_border_origin"
             android:src="@drawable/etc_default"
             android:contentDescription="@string/game_item_image_description"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:clipToOutline="true" />
 
     </FrameLayout>
 
