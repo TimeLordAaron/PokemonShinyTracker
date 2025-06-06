@@ -77,7 +77,7 @@ class PokemonSelectionAdapter(
 
     // Get the type of the view (invoked by the layout manager)
     override fun getItemViewType(position: Int): Int {
-        Log.d("PokemonSelectionAdapter", "getItemViewType() started")
+        //Log.d("PokemonSelectionAdapter", "getItemViewType() started")
 
         return when (pokemonListItems[position]) {
             is PokemonListItem.HeaderItem -> VIEW_TYPE_HEADER

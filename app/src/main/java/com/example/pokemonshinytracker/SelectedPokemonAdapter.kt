@@ -53,7 +53,9 @@ class SelectedPokemonAdapter(
             { selectedForm ->
                 Log.d("SelectedPokemonAdapter", "Clicked form: ${selectedForm.formName}")
             },
-            onSelectionChanged
+            onSelectedFormsChanged =  {
+                toggleSelectAll(holder, position)
+            }
         )
 
         // toggle visibility of the pokemon forms recycler view
@@ -69,10 +71,10 @@ class SelectedPokemonAdapter(
         // select all forms
         holder.selectAll.setOnCheckedChangeListener(null) // prevent recursion
         holder.selectAll.isChecked = forms.all { selectedPokemonForms.contains(it.formID) }
-        holder.selectAll.setOnCheckedChangeListener { _, isChecked ->
+        holder.selectAll.setOnClickListener {
             val formIDs = pokemon.forms.map { it.formID }
 
-            if (isChecked) {
+            if (holder.selectAll.isChecked) {
                 selectedPokemonForms.addAll(formIDs)
             } else {
                 selectedPokemonForms.removeAll(formIDs)
@@ -90,7 +92,7 @@ class SelectedPokemonAdapter(
             removed.forms.forEach { selectedPokemonForms.remove(it.formID) }
             notifyItemRemoved(position)
             notifyItemRangeChanged(position, selectedPokemon.size)
-            onPokemonUnselected(removed) // tell the outer list
+            onPokemonUnselected(removed) // notify the outer list
         }
 
     }
@@ -100,6 +102,19 @@ class SelectedPokemonAdapter(
     fun updateList(newList: MutableList<Pokemon>) {
         selectedPokemon = newList
         notifyDataSetChanged()
+    }
+
+    // Helper function to toggle the select all checkbox of a selected Pokemon
+    fun toggleSelectAll(holder: SelectedPokemonHolder, position: Int) {
+        Log.d("SelectedPokemonAdapter", "toggleSelectAll() started")
+
+        // check the select all checkbox if all of a selected Pokemon's forms are currently selected
+        holder.selectAll.isChecked = selectedPokemon[position].forms
+            .all { selectedPokemonForms.contains(it.formID) }
+
+        onSelectionChanged()
+
+        Log.d("SelectedPokemonAdapter", "toggleSelectAll() completed")
     }
 
 }

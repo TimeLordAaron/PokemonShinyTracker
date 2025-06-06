@@ -13,7 +13,7 @@ class PokemonFormAdapter(
     private val forms: List<PokemonForm>,
     private val selectedFormIds: MutableSet<Int>,
     private val onFormSelected: (PokemonForm) -> Unit,
-    private val onSelectionChanged: () -> Unit)
+    private val onSelectedFormsChanged: () -> Unit)
     : RecyclerView.Adapter<PokemonFormAdapter.PokemonFormHolder>()
 {
     class PokemonFormHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -54,7 +54,7 @@ class PokemonFormAdapter(
             }
             notifyItemChanged(position) // refresh background
             onFormSelected(form)
-            onSelectionChanged()
+            onSelectedFormsChanged()
         }
     }
 
