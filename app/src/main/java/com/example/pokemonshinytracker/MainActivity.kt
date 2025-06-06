@@ -165,6 +165,10 @@ class MainActivity : ComponentActivity() {
                 // when swapping shiny hunts, scroll to the position of the shiny hunt that initiated the swap
                 shinyHuntRecyclerView.scrollToPosition(position)
             }
+            onExpandStateChanged = { allExpanded ->
+                // check the expand all checkbox if all shiny hunts are currently expanded
+                expandAllCheckbox.isChecked = allExpanded
+            }
         }
 
         // set the margins of the floating sort button and sort menu
@@ -469,8 +473,6 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-
-
                     }
                 })
             }
@@ -746,7 +748,11 @@ class MainActivity : ComponentActivity() {
 
         // on click listener for the expand all checkbox
         expandAllCheckbox.setOnClickListener {
-            // TODO: Implement expand all checkbox logic
+            if (expandAllCheckbox.isChecked) {
+                shinyHuntListAdapter.expandAll()
+            } else {
+                shinyHuntListAdapter.collapseAll()
+            }
         }
 
         // Helper function to open the Sort Menu

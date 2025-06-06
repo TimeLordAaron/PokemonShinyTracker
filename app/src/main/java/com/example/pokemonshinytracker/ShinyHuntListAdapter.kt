@@ -34,10 +34,11 @@ class ShinyHuntListAdapter(
     private val gameSet: List<Game>
 ) : ListAdapter<ShinyHunt, ShinyHuntListAdapter.ViewHolder>(ShinyHuntDiffCallback()) {
 
-    private val expandedItems = mutableSetOf<Int>()                 // stores the positions of expanded items
-    private var currentSortMethod: SortMethod = SortMethod.DEFAULT  // stores the current sort method
-    private var currentSortOrder: SortOrder = SortOrder.DESC        // stores the current sort order
-    var onScrollToPosition: ((Int) -> Unit)? = null                 // variable to scroll to position of the swapped hunt
+    private val expandedItems = mutableSetOf<Int>()                     // stores the huntIDs of all currently expanded shiny hunts
+    private var currentSortMethod: SortMethod = SortMethod.DEFAULT      // stores the current sort method
+    private var currentSortOrder: SortOrder = SortOrder.DESC            // stores the current sort order
+    var onScrollToPosition: ((Int) -> Unit)? = null                     // variable to scroll to position of the swapped hunt
+    var onExpandStateChanged: ((allExpanded: Boolean) -> Unit)? = null  // variable to toggle the state of the expand all checkbox in MainActivity when an individual hunt is expand/collapsed
 
     // View holder for shiny hunts
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -118,6 +119,10 @@ class ShinyHuntListAdapter(
             holder.moveDownButton.visibility = if (position == itemCount - 1) View.INVISIBLE else View.VISIBLE
         }
 
+        // disable the increment/decrement counter buttons if the hunt is completed (so the user doesn't accidentally click them)
+        holder.counterIncrementBtn.isEnabled = !hunt.isComplete
+        holder.counterDecrementBtn.isEnabled = !hunt.isComplete
+
         // on click listener for the increment counter button
         holder.counterIncrementBtn.setOnClickListener {
             Log.d("ShinyHuntListAdapter", "Increment counter button clicked for shiny hunt: $hunt")
@@ -161,7 +166,12 @@ class ShinyHuntListAdapter(
                 expandedItems.add(hunt.huntID)
                 holder.longClickMenu.visibility = View.VISIBLE
             }
+
             notifyDataSetChanged()
+
+            // notify MainActivity whether all items are now expanded
+            onExpandStateChanged?.invoke(expandedItems.size == currentList.size)
+
             true
         }
 
@@ -242,4 +252,23 @@ class ShinyHuntListAdapter(
 
         Log.d("ShinyHuntListAdapter", "swapItems() completed")
     }
+
+    // Function for expanding all of the shiny hunts' long click menus
+    fun expandAll() {
+        expandedItems.clear()
+        currentList.forEach { hunt -> expandedItems.add(hunt.huntID) }
+        notifyDataSetChanged()
+    }
+
+    // Function for unexpanding all of the shiny hunts' long click menus
+    fun collapseAll() {
+        expandedItems.clear()
+        notifyDataSetChanged()
+    }
+
+    // Function to check if all shiny hunts' long click menus are currently expanded
+    fun areAllExpanded(): Boolean {
+        return expandedItems.size == currentList.size
+    }
+
 }
