@@ -80,6 +80,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     $START_DATE_COL TEXT,
                     $COUNTER_COL INTEGER,
                     $PHASE_COL INTEGER,
+                    $NOTES_COL TEXT,
                     $IS_COMPLETE_COL INTEGER,
                     $FINISH_DATE_COL TEXT,
                     $CURRENT_GAME_ID_COL INTEGER,
@@ -100,7 +101,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 PokemonData.insertPokemonData(db)
                 PokemonFormData.insertPokemonFormData(db)
                 GameData.insertGameData(db)
-                ShinyHuntData.insertShinyHuntData(db)
+                ShinyHuntData.insertShinyHuntData(db)   // mock data. for release, this line should be commented out
                 db.setTransactionSuccessful()   // mark the database transaction as successful
             } catch (e: Exception) {
                 Log.e("DBHelper", "Error inserting initial data: ${e.message}")
@@ -241,7 +242,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     // Function to add new shiny hunts to the database
     private fun addHunt(db: SQLiteDatabase, formID: Int?, originGameID: Int?, method: String, startDate: String?,
-                counter: Int, phase: Int, isComplete: Boolean, finishDate: String?, currentGameID: Int?, defaultPosition: Int?) {
+                counter: Int, phase: Int, notes: String, isComplete: Boolean, finishDate: String?, currentGameID: Int?, defaultPosition: Int?) {
         Log.d("DBHelper", "addHunt() started")
 
         val values = ContentValues().apply {
@@ -251,6 +252,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             put(START_DATE_COL, startDate)
             put(COUNTER_COL, counter)
             put(PHASE_COL, phase)
+            put(NOTES_COL, notes)
             put(IS_COMPLETE_COL, if (isComplete) 1 else 0)  // store as integer since SQLite doesn't support Boolean type
             put(FINISH_DATE_COL, finishDate)
             put(CURRENT_GAME_ID_COL, currentGameID)
@@ -329,7 +331,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     // Function to update a hunt in the database
     fun updateHunt(huntID: Int, formID: Int?, originGameID: Int?, method: String, startDate: String?,
-                   counter: Int, phase: Int, isComplete: Boolean, finishDate: String?, currentGameID: Int?, defaultPosition: Int?) {
+                   counter: Int, phase: Int, notes: String, isComplete: Boolean, finishDate: String?, currentGameID: Int?, defaultPosition: Int?) {
         Log.d("DBHelper", "updateHunt() started")
 
         var db: SQLiteDatabase? = null
@@ -357,6 +359,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     startDate,
                     counter,
                     phase,
+                    notes,
                     isComplete,
                     finishDate,
                     currentGameID,
@@ -376,6 +379,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     put(START_DATE_COL, startDate)
                     put(COUNTER_COL, counter)
                     put(PHASE_COL, phase)
+                    put(NOTES_COL, notes)
                     put(IS_COMPLETE_COL, if (isComplete) 1 else 0)      // store as integer since SQLite doesn't support Boolean type
                     put(FINISH_DATE_COL, finishDate)
                     put(CURRENT_GAME_ID_COL, currentGameID)
@@ -404,7 +408,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         Log.d("DBHelper", "updateHunt() completed")
     }
 
-    // Function to retrieve all shiny hunts from the database (by ID or all hunts if no ID is provided)
+    // Function to retrieve all shiny hunts from the database (supports various filters and sorting methods)
     fun getHunts(huntID: Int? = null, sortMethod: SortMethod = SortMethod.DEFAULT, sortOrder: SortOrder = SortOrder.DESC,
                  formIDs: List<Int> = emptyList(), originGameIDs: List<Int> = emptyList(), currentGameIDs: List<Int> = emptyList(),
                  method: String? = null, startedFrom: String? = null, startedTo: String? = null, finishedFrom: String? = null,
@@ -583,11 +587,12 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                             startDate = cursor.getString(4),
                             counter = cursor.getInt(5),
                             phase = cursor.getInt(6),
-                            isComplete = cursor.getInt(7) == 1, // Convert 0/1 to Boolean
-                            finishDate = cursor.getString(8),
-                            currentGameID = if (cursor.isNull(9)) null else cursor.getInt(9),
-                            defaultPosition = cursor.getInt(10),
-                            pokemonName = cursor.getString(11)
+                            notes = cursor.getString(7),
+                            isComplete = cursor.getInt(8) == 1, // Convert 0/1 to Boolean
+                            finishDate = cursor.getString(9),
+                            currentGameID = if (cursor.isNull(10)) null else cursor.getInt(10),
+                            defaultPosition = cursor.getInt(11),
+                            pokemonName = cursor.getString(12)
                         )
                         huntList.add(hunt)
                     } while (cursor.moveToNext())
@@ -807,7 +812,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
         // Database name and version
         const val DATABASE_NAME = "SHINY_TRACKER_DB"
-        const val DATABASE_VERSION = 4
+        const val DATABASE_VERSION = 5
 
         // Pokemon Table
         const val POKEMON_TABLE = "Pokemon"
@@ -838,6 +843,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         const val START_DATE_COL = "startDate"
         const val COUNTER_COL = "counter"
         const val PHASE_COL = "phase"
+        const val NOTES_COL = "notes"
         const val IS_COMPLETE_COL = "isComplete"
         const val FINISH_DATE_COL = "finishDate"
         const val CURRENT_GAME_ID_COL = "currentGameID"     // foreign key to Game Table

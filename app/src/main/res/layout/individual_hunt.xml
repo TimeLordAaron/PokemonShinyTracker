@@ -391,6 +391,30 @@
 
                 </LinearLayout>
 
+                <!--Notes Label-->
+                <TextView
+                    android:id="@+id/notes_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="@string/notes_label"
+                    android:textSize="18sp"
+                    android:textColor="@color/black" />
+
+                <!--Notes Text Field-->
+                <EditText
+                    android:id="@+id/notes_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_margin="10dp"
+                    android:gravity="top|start"
+                    android:padding="8dp"
+                    android:background="@drawable/ui_container_transparent"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:hint="@string/notes_hint"
+                    android:inputType="textMultiLine" />
+
                 <!--Hunt Completion Section-->
                 <LinearLayout
                     android:orientation="horizontal"

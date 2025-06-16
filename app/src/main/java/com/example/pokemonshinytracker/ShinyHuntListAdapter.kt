@@ -134,7 +134,7 @@ class ShinyHuntListAdapter(
             // update the database
             DBHelper(context, null).updateHunt(
                 hunt.huntID, hunt.formID, hunt.originGameID, hunt.method, hunt.startDate,
-                hunt.counter, hunt.phase, hunt.isComplete, hunt.finishDate, hunt.currentGameID, hunt.defaultPosition
+                hunt.counter, hunt.phase, hunt.notes, hunt.isComplete, hunt.finishDate, hunt.currentGameID, hunt.defaultPosition
             )
         }
 
@@ -151,7 +151,7 @@ class ShinyHuntListAdapter(
             // update the database
             DBHelper(context, null).updateHunt(
                 hunt.huntID, hunt.formID, hunt.originGameID, hunt.method, hunt.startDate,
-                hunt.counter, hunt.phase, hunt.isComplete, hunt.finishDate, hunt.currentGameID, hunt.defaultPosition
+                hunt.counter, hunt.phase, hunt.notes, hunt.isComplete, hunt.finishDate, hunt.currentGameID, hunt.defaultPosition
             )
         }
 

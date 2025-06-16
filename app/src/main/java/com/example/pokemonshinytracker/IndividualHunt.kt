@@ -99,6 +99,7 @@ class IndividualHunt : ComponentActivity() {
         val phase = findViewById<EditText>(R.id.phase)                                      // phase edit text
         decrementPhaseBtn = findViewById(R.id.decrement_phase_button)                       // phase decrement button
         incrementPhaseBtn = findViewById(R.id.increment_phase_button)                       // phase increment button
+        val notes = findViewById<EditText>(R.id.notes_text)                                 // notes edit text
         completionCheckbox = findViewById(R.id.hunt_complete_checkbox)                      // hunt completion checkbox
         val finishDateLayout = findViewById<LinearLayout>(R.id.finish_date_layout)          // finish date layout
         pickFinishDateBtn = findViewById(R.id.finish_date_button)                           // finish date button
@@ -183,6 +184,10 @@ class IndividualHunt : ComponentActivity() {
                 phase.setText(hunt.phase.toString())
                 Log.d("IndividualHunt", "Phase: ${phase.text}")
 
+                // update notes
+                notes.setText(hunt.notes)
+                Log.d("IndividualHunt", "Notes: ${notes.text}")
+
                 // update the finish date text (if not null)
                 if (hunt.finishDate != null) {
                     selectedFinishDate.text = hunt.finishDate
@@ -249,6 +254,7 @@ class IndividualHunt : ComponentActivity() {
                 selectedStartDate.text.toString(),
                 counter.text.toString().toInt(),
                 phase.text.toString().toInt(),
+                notes.text.toString(),
                 completionCheckbox.isChecked,
                 if (completionCheckbox.isChecked) selectedFinishDate.text.toString() else null,
                 if (completionCheckbox.isChecked) selectedCurrentGameID else null,
