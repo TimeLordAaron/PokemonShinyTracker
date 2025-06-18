@@ -37,6 +37,7 @@ class ShinyHuntListAdapter(
     private val expandedItems = mutableSetOf<Int>()                     // stores the huntIDs of all currently expanded shiny hunts
     private var currentSortMethod: SortMethod = SortMethod.DEFAULT      // stores the current sort method
     private var currentSortOrder: SortOrder = SortOrder.DESC            // stores the current sort order
+    private var moveButtonsEnabled: Boolean = true                      // used to toggle the move buttons
     var onScrollToPosition: ((Int) -> Unit)? = null                     // variable to scroll to position of the swapped hunt
     var onExpandStateChanged: ((allExpanded: Boolean) -> Unit)? = null  // variable to toggle the state of the expand all checkbox in MainActivity when an individual hunt is expand/collapsed
 
@@ -110,8 +111,8 @@ class ShinyHuntListAdapter(
         // ensure the longClickMenu visibility is correctly set based on the item's state
         holder.longClickMenu.visibility = if (expandedItems.contains(hunt.huntID)) View.VISIBLE else View.GONE
 
-        // set the move buttons' visibility (only enabled when sort method is DEFAULT)
-        if (currentSortMethod != SortMethod.DEFAULT) {
+        // set the move buttons' visibility (only enabled when sort method is DEFAULT and there are no filters being applied)
+        if (currentSortMethod != SortMethod.DEFAULT || !moveButtonsEnabled) {
             holder.moveUpButton.visibility = View.INVISIBLE
             holder.moveDownButton.visibility = View.INVISIBLE
         } else {
@@ -266,9 +267,10 @@ class ShinyHuntListAdapter(
         notifyDataSetChanged()
     }
 
-    // Function to check if all shiny hunts' long click menus are currently expanded
-    fun areAllExpanded(): Boolean {
-        return expandedItems.size == currentList.size
+    // Function to toggle the visibility of the move buttons
+    fun setMoveButtonsEnabled(enabled: Boolean) {
+        moveButtonsEnabled = enabled
+        notifyDataSetChanged()
     }
 
 }

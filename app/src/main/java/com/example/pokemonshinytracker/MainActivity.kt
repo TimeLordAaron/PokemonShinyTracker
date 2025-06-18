@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
     private var selectedPokemonForms = mutableSetOf<Int>()           // formIDs of every selected Pokemon Form
     private var selectedOriginGames = mutableListOf<Int>()           // gameIDs of every selected Origin Game
     private var selectedCompletionStatus: CompletionStatus? = null
-    private var selectedCurrentGames = mutableListOf<Int>()           // gameIDs of every selected Current Game
+    private var selectedCurrentGames = mutableListOf<Int>()          // gameIDs of every selected Current Game
     private var enteredMethod = ""
     private var selectedStartDateFrom = ""
     private var selectedStartDateTo = ""
@@ -358,8 +358,68 @@ class MainActivity : ComponentActivity() {
 
             // on click listener for the clear filters button (filter selection dialog)
             filterClearFiltersBtn.setOnClickListener {
-                // TODO: Implement clear filters button logic
                 Log.d("MainActivity", "Clear Filters button clicked in the filter selection dialog")
+
+                // create a confirmation dialog
+                AlertDialog.Builder(this)
+                    .setTitle("Clear All Filters?")
+                    .setMessage("Are you sure you want to clear all currently applied filters?")
+                    .setPositiveButton("Yes") { _, _ ->
+
+                        // reset all the filters (selected and confirmed)
+                        selectedPokemon.clear()
+                        selectedPokemonForms.clear()
+                        confirmedPokemonFormsFilter.clear()
+                        selectedOriginGames.clear()
+                        confirmedOriginGamesFilter.clear()
+                        selectedCompletionStatus = null
+                        confirmedCompletionStatusFilter = null
+                        selectedCurrentGames.clear()
+                        confirmedCurrentGamesFilter.clear()
+                        enteredMethod = ""
+                        confirmedMethodFilter = ""
+                        selectedStartDateFrom = ""
+                        confirmedStartDateFromFilter = ""
+                        selectedStartDateTo = ""
+                        confirmedStartDateToFilter = ""
+                        selectedFinishDateFrom = ""
+                        confirmedFinishDateFromFilter = ""
+                        selectedFinishDateTo = ""
+                        confirmedFinishDateToFilter = ""
+                        enteredCounterLo = ""
+                        confirmedCounterLoFilter = ""
+                        enteredCounterHi = ""
+                        confirmedCounterHiFilter = ""
+                        enteredPhaseLo = ""
+                        confirmedPhaseLoFilter = ""
+                        enteredPhaseHi = ""
+                        confirmedPhaseHiFilter = ""
+
+                        // get the unfiltered hunts
+                        val unfilteredHunts = getFilteredAndSortedHunts()
+
+                        // allow move buttons to be enabled
+                        shinyHuntListAdapter.setMoveButtonsEnabled(true)
+
+                        // automatically collapse all shiny hunts
+                        expandAllCheckbox.isChecked = false
+                        shinyHuntListAdapter.collapseAll()
+
+                        // update the recycler view
+                        shinyHuntListAdapter.submitList(unfilteredHunts) {
+                            shinyHuntRecyclerView.scrollToPosition(0)
+                        }
+
+                        Log.d("MainActivity", "Filters cleared after confirmation")
+                    }
+                    .setNegativeButton("Cancel") { dialog, _ ->
+                        dialog.dismiss()
+                        Log.d("MainActivity", "Clear Filters canceled by user")
+                    }
+                    .show()
+
+                // close the filter menu dialog
+                dialog.dismiss()
             }
 
             // on click listener for the edit pokemon button
@@ -680,7 +740,6 @@ class MainActivity : ComponentActivity() {
 
             // on click listener for the confirm filters button
             confirmFiltersBtn.setOnClickListener {
-                // TODO: Implement the confirm filters button logic
                 Log.d("MainActivity", "Confirm Filters button clicked in the filter selection dialog")
 
                 // check if a completion status was selected
@@ -696,8 +755,6 @@ class MainActivity : ComponentActivity() {
                 }
                 // otherwise, apply the filters
                 else {
-                    dialog.dismiss()
-
                     // set all of the confirmed filters
                     confirmedPokemonFormsFilter = selectedPokemonForms
                     confirmedOriginGamesFilter = selectedOriginGames
@@ -732,10 +789,15 @@ class MainActivity : ComponentActivity() {
                     // get the new shiny hunt data set
                     val filteredHunts = getFilteredAndSortedHunts()
 
+                    // disable the move buttons
+                    shinyHuntListAdapter.setMoveButtonsEnabled(false)
+
                     // update the recycler view
                     shinyHuntListAdapter.submitList(filteredHunts) {
                         shinyHuntRecyclerView.scrollToPosition(0)
                     }
+
+                    dialog.dismiss()
                 }
             }
 
@@ -743,7 +805,66 @@ class MainActivity : ComponentActivity() {
 
         // on click listener for the clear filters button (main page)
         mainClearFiltersBtn.setOnClickListener {
-            // TODO: Implement clear filters button logic
+            Log.d("MainActivity", "Clear Filters button clicked in the main page")
+
+            // create a confirmation dialog
+            AlertDialog.Builder(this)
+                .setTitle("Clear All Filters?")
+                .setMessage("Are you sure you want to clear all currently applied filters?")
+                .setPositiveButton("Yes") { _, _ ->
+
+                    // reset all the filters (selected and confirmed)
+                    selectedPokemon.clear()
+                    selectedPokemonForms.clear()
+                    confirmedPokemonFormsFilter.clear()
+                    selectedOriginGames.clear()
+                    confirmedOriginGamesFilter.clear()
+                    selectedCompletionStatus = null
+                    confirmedCompletionStatusFilter = null
+                    selectedCurrentGames.clear()
+                    confirmedCurrentGamesFilter.clear()
+                    enteredMethod = ""
+                    confirmedMethodFilter = ""
+                    selectedStartDateFrom = ""
+                    confirmedStartDateFromFilter = ""
+                    selectedStartDateTo = ""
+                    confirmedStartDateToFilter = ""
+                    selectedFinishDateFrom = ""
+                    confirmedFinishDateFromFilter = ""
+                    selectedFinishDateTo = ""
+                    confirmedFinishDateToFilter = ""
+                    enteredCounterLo = ""
+                    confirmedCounterLoFilter = ""
+                    enteredCounterHi = ""
+                    confirmedCounterHiFilter = ""
+                    enteredPhaseLo = ""
+                    confirmedPhaseLoFilter = ""
+                    enteredPhaseHi = ""
+                    confirmedPhaseHiFilter = ""
+
+                    // get the unfiltered hunts
+                    val unfilteredHunts = getFilteredAndSortedHunts()
+
+                    // allow move buttons to be enabled
+                    shinyHuntListAdapter.setMoveButtonsEnabled(true)
+
+                    // automatically collapse all hunts
+                    expandAllCheckbox.isChecked = false
+                    shinyHuntListAdapter.collapseAll()
+
+                    // update the recycler view
+                    shinyHuntListAdapter.submitList(unfilteredHunts) {
+                        shinyHuntRecyclerView.scrollToPosition(0)
+                    }
+
+                    Log.d("MainActivity", "Filters cleared after confirmation")
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                    Log.d("MainActivity", "Clear Filters canceled by user")
+                }
+                .show()
+
         }
 
         // on click listener for the expand all checkbox
