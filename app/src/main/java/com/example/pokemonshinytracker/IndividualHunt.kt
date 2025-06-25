@@ -237,36 +237,65 @@ class IndividualHunt : ComponentActivity() {
         backBtn.setOnClickListener {
             Log.d("IndividualHunt", "Back button clicked. Returning to MainActivity window")
 
-            // return to the MainActivity window
-            finish()
+            // check that a sub menu isn't currently open (so the user can't accidentally close the page by hitting the back button
+            if (!subMenuOpened) {
+                // return to the MainActivity window
+                finish()
+            }
         }
 
         // on click listener for the save button
         saveBtn.setOnClickListener {
             Log.d("IndividualHunt", "Save button clicked. Saving hunt to the database")
 
-            // call updateHunt with the values selected by the user
-            db.updateHunt(
-                selectedHuntID,
-                selectedFormID,
-                selectedOriginGameID,
-                method.text.toString(),
-                selectedStartDate.text.toString(),
-                counter.text.toString().toInt(),
-                phase.text.toString().toInt(),
-                notes.text.toString(),
-                completionCheckbox.isChecked,
-                if (completionCheckbox.isChecked) selectedFinishDate.text.toString() else null,
-                if (completionCheckbox.isChecked) selectedCurrentGameID else null,
-                selectedDefaultPosition
-            )
+            // check that a pokemon is selected
+            if (selectedPokemonID == null || selectedFormID == null) {
+                if (!subMenuOpened) {
+                    subMenuOpened = true
 
-            // return to MainActivity
-            Log.d("IndividualActivity", "Returning to Main window")
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
-            finish() // close IndividualHunt activity
+                    val errorDialog = AlertDialog.Builder(this)
+                        .setTitle("Pokemon Not Selected")
+                        .setMessage("Please select a Pokemon before saving!")
+                        .setPositiveButton("Okay") { dialog, _ ->
+                            // close the error dialog
+                            dialog.dismiss()
+                            subMenuOpened = false
+                        }
+
+                    // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                    errorDialog.setOnCancelListener { subMenuOpened = false }
+
+                    // listener for when user presses back or taps outside
+                    errorDialog.setOnDismissListener { subMenuOpened = false }
+
+                    // display the error dialog
+                    errorDialog.show()
+                }
+            } else {
+
+                // call updateHunt with the values selected by the user
+                db.updateHunt(
+                    selectedHuntID,
+                    selectedFormID,
+                    selectedOriginGameID,
+                    method.text.toString(),
+                    selectedStartDate.text.toString(),
+                    counter.text.toString().toInt(),
+                    phase.text.toString().toInt(),
+                    notes.text.toString(),
+                    completionCheckbox.isChecked,
+                    if (completionCheckbox.isChecked) selectedFinishDate.text.toString() else null,
+                    if (completionCheckbox.isChecked) selectedCurrentGameID else null,
+                    selectedDefaultPosition
+                )
+
+                // return to MainActivity
+                Log.d("IndividualActivity", "Returning to Main window")
+                val intent = Intent(this, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                finish() // close IndividualHunt activity
+            }
         }
 
         // on click listener for the delete button
@@ -543,8 +572,7 @@ class IndividualHunt : ComponentActivity() {
                 val selectGameDialog = layoutInflater.inflate(R.layout.game_selection, null)
                 gameRecyclerView = selectGameDialog.findViewById(R.id.game_recycler_view)
 
-                val spanCount =
-                    if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
+                val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
                 gameRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
 
                 // prepare dataset with headers
@@ -577,7 +605,7 @@ class IndividualHunt : ComponentActivity() {
                 }
 
                 gameRecyclerView.adapter =
-                    GameSelectionAdapter(0, groupedGameList) { selectedGame ->
+                    GameSelectionAdapter(0, groupedGameList, listOf(selectedOriginGameID)) { selectedGame ->
                         originGameIcon.setImageResource(selectedGame.gameImage)
                         originGameIconBorder.visibility = View.VISIBLE
                         originGameName.text = selectedGame.gameName
@@ -753,7 +781,7 @@ class IndividualHunt : ComponentActivity() {
                 }
 
                 gameRecyclerView.adapter =
-                    GameSelectionAdapter(1, groupedGameList) { selectedGame ->
+                    GameSelectionAdapter(1, groupedGameList, listOf(selectedCurrentGameID)) { selectedGame ->
                         currentGameIcon.setImageResource(selectedGame.gameImage)
                         currentGameIconBorder.visibility = View.VISIBLE
                         currentGameName.text = selectedGame.gameName

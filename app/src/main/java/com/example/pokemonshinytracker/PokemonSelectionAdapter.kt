@@ -19,7 +19,6 @@ class PokemonSelectionAdapter(
         setHasStableIds(true)
     }
 
-
     private val selectedPokemonPositions = mutableSetOf<Int>()      // stores the positions of selected Pokemon in the list
 
     // constants to differentiate between Pokemon items and header items

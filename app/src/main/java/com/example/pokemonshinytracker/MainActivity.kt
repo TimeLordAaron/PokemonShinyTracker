@@ -54,6 +54,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var pokemonListRecyclerView: RecyclerView  // pokemon list recycler view
     private lateinit var editOriginGamesBtn: Button             // edit origin games button
     private lateinit var originGamesTxt: TextView               // selected origin games text
+    private lateinit var originGamesRecyclerView: RecyclerView  // origin game recycler view
     private lateinit var completionStatusRadioGrp: RadioGroup   // completion status radio group
     private lateinit var inProgressRadioBtn: RadioButton        // in progress radio button (for completion status)
     private lateinit var completedRadioBtn: RadioButton         // completed radio button (for completion status)
@@ -61,6 +62,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var currentGamesLayout: LinearLayout       // current games layout
     private lateinit var editCurrentGamesBtn: Button            // edit current games button
     private lateinit var currentGamesTxt: TextView              // selected current games text
+    private lateinit var currentGamesRecyclerView: RecyclerView // current games recycler view
     private lateinit var method: EditText                       // method text field
     private lateinit var startDateFromBtn: Button               // start date from button
     private lateinit var startDateToBtn: Button                 // start date to button
@@ -110,6 +112,10 @@ class MainActivity : ComponentActivity() {
     private var confirmedCounterHiFilter = ""
     private var confirmedPhaseLoFilter = ""
     private var confirmedPhaseHiFilter = ""
+
+    // variables to track if a sub menu is currently open
+    private var filterMenuOpened = false
+    private var subMenuOpened = false
 
     // access the database
     val db = DBHelper(this, null)
@@ -306,62 +312,807 @@ class MainActivity : ComponentActivity() {
         filterBtn.setOnClickListener {
             Log.d("MainActivity", "Filter button clicked. Opening filters dialog")
 
-            val filterDialog = layoutInflater.inflate(R.layout.filter_selection, null)
+            // check if the filter menu is already open (to prevent the user from spamming open multiple copies of it)
+            if (!filterMenuOpened) {
+                filterMenuOpened = true
 
-            // access all the UI elements
-            filterClearFiltersBtn = filterDialog.findViewById(R.id.clear_filters_button)    // clear filters button (filter selection dialog)
-            editPokemonBtn = filterDialog.findViewById(R.id.edit_pokemon_button)            // edit pokemon button
-            pokemonTxt = filterDialog.findViewById(R.id.pokemon_text)                       // selected pokemon text
-            editOriginGamesBtn = filterDialog.findViewById(R.id.edit_origin_games_button)   // edit origin games button
-            originGamesTxt = filterDialog.findViewById(R.id.origin_games_text)              // selected origin games text
-            completionStatusRadioGrp = filterDialog.findViewById(R.id.completion_statuses_radio_group)  // completion status radio group
-            inProgressRadioBtn = filterDialog.findViewById(R.id.in_progress_radio_button)   // in progress radio button (for completion status)
-            completedRadioBtn = filterDialog.findViewById(R.id.completed_radio_button)      // completed radio button (for completion status)
-            bothRadioBtn = filterDialog.findViewById(R.id.both_radio_button)                // both radio button (for completion status)
-            currentGamesLayout = filterDialog.findViewById(R.id.current_games_layout)       // current games layout
-            editCurrentGamesBtn = filterDialog.findViewById(R.id.edit_current_games_button) // edit current games button
-            currentGamesTxt = filterDialog.findViewById(R.id.current_games_text)            // selected current games text
-            method = filterDialog.findViewById(R.id.method)                                 // method text field
-            startDateFromBtn = filterDialog.findViewById(R.id.start_date_from_button)       // start date from button
-            startDateToBtn = filterDialog.findViewById(R.id.start_date_to_button)           // start date to button
-            finishDateLayout = filterDialog.findViewById(R.id.finish_date_layout)           // finish date range layout
-            finishDateFromBtn = filterDialog.findViewById(R.id.finish_date_from_button)     // finish date from button
-            finishDateToBtn = filterDialog.findViewById(R.id.finish_date_to_button)         // finish date to button
-            counterLo = filterDialog.findViewById(R.id.counter_lo)                          // counter (low bound) text field
-            counterHi = filterDialog.findViewById(R.id.counter_hi)                          // counter (high bound) text field
-            phaseLo = filterDialog.findViewById(R.id.phase_lo)                              // phase (low bound) text field
-            phaseHi = filterDialog.findViewById(R.id.phase_hi)                              // phase (high bound) text field
-            confirmFiltersBtn = filterDialog.findViewById(R.id.confirm_filters_button)      // confirm filters button
+                val filterDialogLayout = layoutInflater.inflate(R.layout.filter_selection, null)
 
-            // initialize the UI based on the currently selected filters
-            setPokemon()
-            setOriginGames()
-            setCompletionStatus()
-            setCurrentGames()
-            setMethod()
-            setStartDateFrom()
-            setStartDateTo()
-            setFinishDateLayout()
-            setFinishDateFrom()
-            setFinishDateTo()
-            setCounterLo()
-            setCounterHi()
-            setPhaseLo()
-            setPhaseHi()
+                // access all the UI elements
+                filterClearFiltersBtn =
+                    filterDialogLayout.findViewById(R.id.clear_filters_button)    // clear filters button (filter selection dialog)
+                editPokemonBtn =
+                    filterDialogLayout.findViewById(R.id.edit_pokemon_button)            // edit pokemon button
+                pokemonTxt =
+                    filterDialogLayout.findViewById(R.id.pokemon_text)                       // selected pokemon text
+                editOriginGamesBtn =
+                    filterDialogLayout.findViewById(R.id.edit_origin_games_button)   // edit origin games button
+                originGamesTxt =
+                    filterDialogLayout.findViewById(R.id.origin_games_text)              // selected origin games text
+                completionStatusRadioGrp =
+                    filterDialogLayout.findViewById(R.id.completion_statuses_radio_group)  // completion status radio group
+                inProgressRadioBtn =
+                    filterDialogLayout.findViewById(R.id.in_progress_radio_button)   // in progress radio button (for completion status)
+                completedRadioBtn =
+                    filterDialogLayout.findViewById(R.id.completed_radio_button)      // completed radio button (for completion status)
+                bothRadioBtn =
+                    filterDialogLayout.findViewById(R.id.both_radio_button)                // both radio button (for completion status)
+                currentGamesLayout =
+                    filterDialogLayout.findViewById(R.id.current_games_layout)       // current games layout
+                editCurrentGamesBtn =
+                    filterDialogLayout.findViewById(R.id.edit_current_games_button) // edit current games button
+                currentGamesTxt =
+                    filterDialogLayout.findViewById(R.id.current_games_text)            // selected current games text
+                method =
+                    filterDialogLayout.findViewById(R.id.method)                                 // method text field
+                startDateFromBtn =
+                    filterDialogLayout.findViewById(R.id.start_date_from_button)       // start date from button
+                startDateToBtn =
+                    filterDialogLayout.findViewById(R.id.start_date_to_button)           // start date to button
+                finishDateLayout =
+                    filterDialogLayout.findViewById(R.id.finish_date_layout)           // finish date range layout
+                finishDateFromBtn =
+                    filterDialogLayout.findViewById(R.id.finish_date_from_button)     // finish date from button
+                finishDateToBtn =
+                    filterDialogLayout.findViewById(R.id.finish_date_to_button)         // finish date to button
+                counterLo =
+                    filterDialogLayout.findViewById(R.id.counter_lo)                          // counter (low bound) text field
+                counterHi =
+                    filterDialogLayout.findViewById(R.id.counter_hi)                          // counter (high bound) text field
+                phaseLo =
+                    filterDialogLayout.findViewById(R.id.phase_lo)                              // phase (low bound) text field
+                phaseHi =
+                    filterDialogLayout.findViewById(R.id.phase_hi)                              // phase (high bound) text field
+                confirmFiltersBtn =
+                    filterDialogLayout.findViewById(R.id.confirm_filters_button)      // confirm filters button
 
-            // display the dialog
-            val dialog = AlertDialog.Builder(this)
-                .setTitle("Filters")
-                .setView(filterDialog)
-                .setPositiveButton("Close") { dialog, _ -> dialog.dismiss() }
-                .show()
+                // initialize the UI based on the currently selected filters
+                setPokemon()
+                setOriginGames()
+                setCompletionStatus()
+                setCurrentGames()
+                setMethod()
+                setStartDateFrom()
+                setStartDateTo()
+                setFinishDateLayout()
+                setFinishDateFrom()
+                setFinishDateTo()
+                setCounterLo()
+                setCounterHi()
+                setPhaseLo()
+                setPhaseHi()
 
-            // on click listener for the clear filters button (filter selection dialog)
-            filterClearFiltersBtn.setOnClickListener {
-                Log.d("MainActivity", "Clear Filters button clicked in the filter selection dialog")
+                // display the dialog
+                val filterDialog = AlertDialog.Builder(this)
+                    .setTitle("Filters")
+                    .setView(filterDialogLayout)
+                    .setPositiveButton("Close") { dialog, _ ->
+                        dialog.dismiss()
+                        filterMenuOpened = false
+                    }
+                    .create()
+
+                // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                filterDialog.setOnCancelListener { filterMenuOpened = false }
+
+                // listener for when user presses back or taps outside
+                filterDialog.setOnDismissListener { filterMenuOpened = false }
+
+                // display the filter dialog
+                filterDialog.show()
+
+                // on click listener for the clear filters button (filter selection dialog)
+                filterClearFiltersBtn.setOnClickListener {
+                    Log.d("MainActivity", "Clear Filters button clicked in the filter selection dialog")
+
+                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    if (!subMenuOpened) {
+                        subMenuOpened = true
+
+                        // create a confirmation dialog
+                        val confirmDialog = AlertDialog.Builder(this)
+                            .setTitle("Clear All Filters?")
+                            .setMessage("Are you sure you want to clear all currently applied filters?")
+                            .setPositiveButton("Yes") { _, _ ->
+
+                                // reset all the filters (selected and confirmed)
+                                selectedPokemon.clear()
+                                selectedPokemonForms.clear()
+                                confirmedPokemonFormsFilter.clear()
+                                selectedOriginGames.clear()
+                                confirmedOriginGamesFilter.clear()
+                                selectedCompletionStatus = null
+                                confirmedCompletionStatusFilter = null
+                                selectedCurrentGames.clear()
+                                confirmedCurrentGamesFilter.clear()
+                                enteredMethod = ""
+                                confirmedMethodFilter = ""
+                                selectedStartDateFrom = ""
+                                confirmedStartDateFromFilter = ""
+                                selectedStartDateTo = ""
+                                confirmedStartDateToFilter = ""
+                                selectedFinishDateFrom = ""
+                                confirmedFinishDateFromFilter = ""
+                                selectedFinishDateTo = ""
+                                confirmedFinishDateToFilter = ""
+                                enteredCounterLo = ""
+                                confirmedCounterLoFilter = ""
+                                enteredCounterHi = ""
+                                confirmedCounterHiFilter = ""
+                                enteredPhaseLo = ""
+                                confirmedPhaseLoFilter = ""
+                                enteredPhaseHi = ""
+                                confirmedPhaseHiFilter = ""
+
+                                // get the unfiltered hunts
+                                val unfilteredHunts = getFilteredAndSortedHunts()
+
+                                // allow move buttons to be enabled
+                                shinyHuntListAdapter.setMoveButtonsEnabled(true)
+
+                                // automatically collapse all shiny hunts
+                                expandAllCheckbox.isChecked = false
+                                shinyHuntListAdapter.collapseAll()
+
+                                // update the recycler view
+                                shinyHuntListAdapter.submitList(unfilteredHunts) {
+                                    shinyHuntRecyclerView.scrollToPosition(0)
+                                }
+
+                                subMenuOpened = false
+
+                                // close the filter dialog
+                                filterDialog.dismiss()
+                                filterMenuOpened = false
+                                Log.d("MainActivity", "Filters cleared after confirmation")
+                            }
+                            .setNegativeButton("Cancel") { dialog, _ ->
+                                dialog.dismiss()
+                                subMenuOpened = false
+                                Log.d("MainActivity", "Clear Filters canceled by user")
+                            }
+
+                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                        confirmDialog.setOnCancelListener { subMenuOpened = false }
+
+                        // listener for when user presses back or taps outside
+                        confirmDialog.setOnDismissListener { subMenuOpened = false }
+
+                        // display the confirmation dialog
+                        confirmDialog.show()
+                    }
+                }
+
+
+                // on click listener for the edit pokemon button
+                editPokemonBtn.setOnClickListener {
+                    Log.d("MainActivity", "Edit Pokemon button clicked in the filter selection dialog")
+
+                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    if (!subMenuOpened) {
+                        subMenuOpened = true
+
+                        // inflate the pokemon selection dialog layout
+                        val selectPokemonDialogLayout = layoutInflater.inflate(R.layout.pokemon_selection, null)
+
+                        // access the recycler views
+                        selectedPokemonRecyclerView = selectPokemonDialogLayout.findViewById(R.id.selected_pokemon_recycler_view)
+                        pokemonListRecyclerView = selectPokemonDialogLayout.findViewById(R.id.pokemon_recycler_view)
+
+                        // show the selected Pokemon section
+                        val selectedPokemonLayout =
+                            selectPokemonDialogLayout.findViewById<LinearLayout>(R.id.selected_pokemon_layout)
+                        selectedPokemonLayout.visibility = View.VISIBLE
+
+                        // access the search bar
+                        val searchBar = selectPokemonDialogLayout.findViewById<EditText>(R.id.search_pokemon)
+
+                        // set the span counts based on device orientation
+                        selectedPokemonRecyclerView.layoutManager = LinearLayoutManager(this)
+                        val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
+                        pokemonListRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
+
+                        val layoutManager = GridLayoutManager(this, spanCount)
+
+                        // prepare dataset with headers
+                        val groupedPokemonList = preparePokemonListWithHeaders(pokemonList)
+
+                        // custom span size logic to make headers span full width
+                        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                            override fun getSpanSize(position: Int): Int {
+                                return when (groupedPokemonList[position]) {
+                                    is PokemonListItem.HeaderItem -> spanCount  // header takes full row
+                                    is PokemonListItem.PokemonItem -> 1         // Pokemon takes 1 column
+                                }
+                            }
+                        }
+
+                        pokemonListRecyclerView.layoutManager = layoutManager
+
+                        // create and show the dialog
+                        val selectPokemonDialog = AlertDialog.Builder(this)
+                            .setTitle("Select Pokémon")
+                            .setView(selectPokemonDialogLayout)
+                            .setPositiveButton("Close") { dialog, _ ->
+                                dialog.dismiss()
+                                subMenuOpened = false
+                            }
+
+                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                        selectPokemonDialog.setOnCancelListener { subMenuOpened = false }
+
+                        // listener for when user presses back or taps outside
+                        selectPokemonDialog.setOnDismissListener { subMenuOpened = false }
+
+                        // display the select Pokemon dialog
+                        selectPokemonDialog.show()
+
+                        lateinit var selectedPokemonAdapter: SelectedPokemonAdapter
+                        lateinit var pokemonListAdapter: PokemonSelectionAdapter
+
+                        // create the adapter for the selected pokemon recycler view
+                        selectedPokemonAdapter = SelectedPokemonAdapter(
+                            selectedPokemon,
+                            selectedPokemonForms,
+                            onPokemonUnselected = { removedPokemon ->
+                                selectedPokemon.removeAll { it.pokemonID == removedPokemon.pokemonID }
+                                removedPokemon.forms.forEach { selectedPokemonForms.remove(it.formID) }
+                                selectedPokemonAdapter.updateList(selectedPokemon)
+                                pokemonListAdapter.updateSelectedPokemon(selectedPokemon)
+                                pokemonListAdapter.notifyDataSetChanged()
+                                setPokemon()
+                            },
+                            onSelectionChanged = {
+                                setPokemon()
+                            }
+                        )
+                        selectedPokemonRecyclerView.adapter = selectedPokemonAdapter
+
+                        // create the adapter for the main pokemon selection list
+                        pokemonListAdapter = PokemonSelectionAdapter(
+                            1,
+                            groupedPokemonList,
+                            selectedPokemon
+                        ) { returnedPokemon ->
+                            if (selectedPokemon.contains(returnedPokemon)) {
+                                selectedPokemon.remove(returnedPokemon)
+                                for (form in returnedPokemon.forms) {
+                                    selectedPokemonForms.remove(form.formID)
+                                }
+                            } else {
+                                selectedPokemon.add(returnedPokemon)
+                                selectedPokemonForms.add(returnedPokemon.forms.sortedBy { it.formID }[0].formID)
+                            }
+                            selectedPokemonAdapter.updateList(selectedPokemon)
+                            setPokemon()
+                        }
+                        pokemonListRecyclerView.adapter = pokemonListAdapter
+
+
+                        // filter Pokémon as the user types
+                        searchBar.addTextChangedListener(object : TextWatcher {
+                            override fun afterTextChanged(s: Editable?) {}
+
+                            override fun beforeTextChanged(
+                                s: CharSequence?,
+                                start: Int,
+                                count: Int,
+                                after: Int
+                            ) {
+                            }
+
+                            override fun onTextChanged(
+                                s: CharSequence?,
+                                start: Int,
+                                before: Int,
+                                count: Int
+                            ) {
+                                val filteredList = groupedPokemonList
+                                    .filterIsInstance<PokemonListItem.PokemonItem>()
+                                    .filter {
+                                        it.pokemon.pokemonName.contains(
+                                            s.toString(),
+                                            ignoreCase = true
+                                        )
+                                    }
+
+                                // keep headers and merge them back into the list
+                                val updatedList =
+                                    preparePokemonListWithHeaders(filteredList.map { it.pokemon })
+
+                                // update adapter
+                                (pokemonListRecyclerView.adapter as PokemonSelectionAdapter).updateList(
+                                    updatedList
+                                )
+
+                                layoutManager.spanSizeLookup =
+                                    object : GridLayoutManager.SpanSizeLookup() {
+                                        override fun getSpanSize(position: Int): Int {
+                                            return when (updatedList[position]) {
+                                                is PokemonListItem.HeaderItem -> spanCount
+                                                is PokemonListItem.PokemonItem -> 1
+                                            }
+                                        }
+                                    }
+                            }
+                        })
+                    }
+                }
+
+                // on click listener for the edit origin games button
+                editOriginGamesBtn.setOnClickListener {
+                    Log.d("MainActivity", "Edit Origin Games button clicked in the filter selection dialog")
+
+                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    if (!subMenuOpened) {
+                        subMenuOpened = true
+
+                        // inflate the game selection dialog layout
+                        val originGamesDialogLayout = layoutInflater.inflate(R.layout.game_selection, null)
+
+                        // access the recycler view
+                        originGamesRecyclerView = originGamesDialogLayout.findViewById(R.id.game_recycler_view)
+
+                        // get and apply the span count based on orientation
+                        val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
+                        originGamesRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
+
+                        // prepare dataset with headers
+                        val groupedGameList = prepareGameListWithHeaders(gameList)
+
+                        // custom span size logic to make headers span full width
+                        (originGamesRecyclerView.layoutManager as GridLayoutManager).spanSizeLookup =
+                            object : GridLayoutManager.SpanSizeLookup() {
+                                override fun getSpanSize(position: Int): Int {
+                                    return when (groupedGameList[position]) {
+                                        is GameListItem.HeaderItem -> spanCount  // header takes full row
+                                        is GameListItem.GameItem -> 1            // game takes 1 column
+                                    }
+                                }
+                            }
+
+                        // create and show the dialog
+                        val originGamesDialog = AlertDialog.Builder(this)
+                            .setTitle("Select the Origin Games")
+                            .setView(originGamesDialogLayout)
+                            .setPositiveButton("Close") { dialog, _ ->
+                                dialog.dismiss()
+                                subMenuOpened = false
+                            }
+
+                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                        originGamesDialog.setOnCancelListener { subMenuOpened = false }
+
+                        // listener for when user presses back or taps outside
+                        originGamesDialog.setOnDismissListener { subMenuOpened = false }
+
+                        // display the origin games dialog
+                        originGamesDialog.show()
+
+                        originGamesRecyclerView.adapter =
+                            GameSelectionAdapter(
+                                2,
+                                groupedGameList,
+                                selectedOriginGames
+                            ) { selectedGame ->
+                                if (selectedOriginGames.contains(selectedGame.gameID - 1)) {    // gameIDs are one off
+                                    selectedOriginGames.remove(selectedGame.gameID - 1)
+                                } else {
+                                    selectedOriginGames.add(selectedGame.gameID - 1)
+                                }
+                                setOriginGames()
+                            }
+                    }
+                }
+
+                // on click listener for the in progress radio button
+                inProgressRadioBtn.setOnClickListener {
+                    Log.d("MainActivity", "In Progress radio button clicked in the filter selection dialog")
+                    selectedCompletionStatus = CompletionStatus.IN_PROGRESS
+                    setCurrentGames()
+                    setFinishDateLayout()
+                }
+
+                // on click listener for the completed radio button
+                completedRadioBtn.setOnClickListener {
+                    Log.d("MainActivity", "Completed radio button clicked in the filter selection dialog")
+                    selectedCompletionStatus = CompletionStatus.COMPLETE
+                    setCurrentGames()
+                    setFinishDateLayout()
+                }
+
+                // on click listener for the both radio button
+                bothRadioBtn.setOnClickListener {
+                    Log.d("MainActivity", "Both radio button clicked in the filter selection dialog")
+                    selectedCompletionStatus = CompletionStatus.BOTH
+                    setCurrentGames()
+                    setFinishDateLayout()
+                }
+
+                // on click listener for the edit current games button
+                editCurrentGamesBtn.setOnClickListener {
+                    Log.d("MainActivity", "Edit Current Games button clicked in the filter selection dialog")
+
+                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    if (!subMenuOpened) {
+                        subMenuOpened = true
+
+                        // inflate the game selection dialog layout
+                        val currentGamesDialogLayout = layoutInflater.inflate(R.layout.game_selection, null)
+
+                        // access the recycler view
+                        currentGamesRecyclerView = currentGamesDialogLayout.findViewById(R.id.game_recycler_view)
+
+                        // get and apply the span count based on orientation
+                        val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
+                        currentGamesRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
+
+                        // prepare dataset with headers
+                        val groupedGameList = prepareGameListWithHeaders(gameList)
+
+                        // custom span size logic to make headers span full width
+                        (currentGamesRecyclerView.layoutManager as GridLayoutManager).spanSizeLookup =
+                            object : GridLayoutManager.SpanSizeLookup() {
+                                override fun getSpanSize(position: Int): Int {
+                                    return when (groupedGameList[position]) {
+                                        is GameListItem.HeaderItem -> spanCount  // header takes full row
+                                        is GameListItem.GameItem -> 1            // game takes 1 column
+                                    }
+                                }
+                            }
+
+                        // create and show the dialog
+                        val currentGamesDialog = AlertDialog.Builder(this)
+                            .setTitle("Select the Current Games")
+                            .setView(currentGamesDialogLayout)
+                            .setPositiveButton("Close") { dialog, _ ->
+                                dialog.dismiss()
+                                subMenuOpened = false
+                            }
+
+                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                        currentGamesDialog.setOnCancelListener { subMenuOpened = false }
+
+                        // listener for when user presses back or taps outside
+                        currentGamesDialog.setOnDismissListener { subMenuOpened = false }
+
+                        // display the current games dialog
+                        currentGamesDialog.show()
+
+                        currentGamesRecyclerView.adapter =
+                            GameSelectionAdapter(
+                                3,
+                                groupedGameList,
+                                selectedCurrentGames
+                            ) { selectedGame ->
+                                if (selectedCurrentGames.contains(selectedGame.gameID - 1)) {    // gameIDs are one off
+                                    selectedCurrentGames.remove(selectedGame.gameID - 1)
+                                } else {
+                                    selectedCurrentGames.add(selectedGame.gameID - 1)
+                                }
+                                setCurrentGames()
+                            }
+                    }
+                }
+
+                // text change listener for the method
+                method.doAfterTextChanged { enteredMethod = method.text.toString() }
+
+                // on click listener for the start date from button
+                startDateFromBtn.setOnClickListener {
+                    Log.d("MainActivity", "Start Date From button clicked in the filter selection dialog")
+
+                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    if (!subMenuOpened) {
+                        subMenuOpened = true
+
+                        // create a calendar instance
+                        val c = Calendar.getInstance()
+
+                        // get the day, month, and year from the calendar
+                        val year = c.get(Calendar.YEAR)
+                        val month = c.get(Calendar.MONTH)
+                        val day = c.get(Calendar.DAY_OF_MONTH)
+
+                        // create a dialog for the date picker
+                        Log.d("MainActivity", "Creating date picker dialog")
+                        val datePickerDialog = DatePickerDialog(
+                            this,
+                            { _, selectedYear, selectedMonth, selectedDay ->
+                                // format and set the text for the start date
+                                selectedStartDateFrom =
+                                    (buildString {
+                                        append(selectedYear.toString())
+                                        append("-")
+                                        append((selectedMonth + 1).toString())
+                                        append("-")
+                                        append(selectedDay.toString())
+                                    })
+                                startDateFromBtn.text = selectedStartDateFrom
+                                Log.d(
+                                    "MainActivity",
+                                    "Selected Start Date From: ${startDateFromBtn.text}"
+                                )
+                                subMenuOpened = false
+                            },
+                            // pass the year, month, and day for the selected date
+                            year,
+                            month,
+                            day
+                        )
+
+                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                        datePickerDialog.setOnCancelListener { subMenuOpened = false }
+
+                        // listener for when user presses back or taps outside
+                        datePickerDialog.setOnDismissListener { subMenuOpened = false }
+
+                        // display the date picker dialog
+                        datePickerDialog.show()
+                    }
+                }
+
+                // on click listener for the start date to button
+                startDateToBtn.setOnClickListener {
+                    Log.d("MainActivity", "Start Date To button clicked in the filter selection dialog")
+
+                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    if (!subMenuOpened) {
+                        subMenuOpened = true
+
+                        // create a calendar instance
+                        val c = Calendar.getInstance()
+
+                        // get the day, month, and year from the calendar
+                        val year = c.get(Calendar.YEAR)
+                        val month = c.get(Calendar.MONTH)
+                        val day = c.get(Calendar.DAY_OF_MONTH)
+
+                        // create a dialog for the date picker
+                        Log.d("MainActivity", "Creating date picker dialog")
+                        val datePickerDialog = DatePickerDialog(
+                            this,
+                            { _, selectedYear, selectedMonth, selectedDay ->
+                                // format and set the text for the start date
+                                selectedStartDateTo =
+                                    (buildString {
+                                        append(selectedYear.toString())
+                                        append("-")
+                                        append((selectedMonth + 1).toString())
+                                        append("-")
+                                        append(selectedDay.toString())
+                                    })
+                                startDateToBtn.text = selectedStartDateTo
+                                Log.d(
+                                    "MainActivity",
+                                    "Selected Start Date To: ${startDateToBtn.text}"
+                                )
+                                subMenuOpened = false
+                            },
+                            // pass the year, month, and day for the selected date
+                            year,
+                            month,
+                            day
+                        )
+
+                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                        datePickerDialog.setOnCancelListener { subMenuOpened = false }
+
+                        // listener for when user presses back or taps outside
+                        datePickerDialog.setOnDismissListener { subMenuOpened = false }
+
+                        // display the date picker dialog
+                        datePickerDialog.show()
+                    }
+                }
+
+                // on click listener for the finish date from button
+                finishDateFromBtn.setOnClickListener {
+                    Log.d("MainActivity", "Finish Date From button clicked in the filter selection dialog")
+
+                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    if (!subMenuOpened) {
+                        subMenuOpened = true
+
+                        // create a calendar instance
+                        val c = Calendar.getInstance()
+
+                        // get the day, month, and year from the calendar
+                        val year = c.get(Calendar.YEAR)
+                        val month = c.get(Calendar.MONTH)
+                        val day = c.get(Calendar.DAY_OF_MONTH)
+
+                        // create a dialog for the date picker
+                        Log.d("MainActivity", "Creating date picker dialog")
+                        val datePickerDialog = DatePickerDialog(
+                            this,
+                            { _, selectedYear, selectedMonth, selectedDay ->
+                                // format and set the text for the finish date
+                                selectedFinishDateFrom =
+                                    (buildString {
+                                        append(selectedYear.toString())
+                                        append("-")
+                                        append((selectedMonth + 1).toString())
+                                        append("-")
+                                        append(selectedDay.toString())
+                                    })
+                                finishDateFromBtn.text = selectedFinishDateFrom
+                                Log.d(
+                                    "MainActivity",
+                                    "Selected Finish Date From: ${finishDateFromBtn.text}"
+                                )
+                                subMenuOpened = false
+                            },
+                            // pass the year, month, and day for the selected date
+                            year,
+                            month,
+                            day
+                        )
+
+                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                        datePickerDialog.setOnCancelListener { subMenuOpened = false }
+
+                        // listener for when user presses back or taps outside
+                        datePickerDialog.setOnDismissListener { subMenuOpened = false }
+
+                        // display the date picker dialog
+                        datePickerDialog.show()
+                    }
+                }
+
+                // on click listener for the finish date to button
+                finishDateToBtn.setOnClickListener {
+                    Log.d("MainActivity", "Finish Date To button clicked in the filter selection dialog")
+
+                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    if (!subMenuOpened) {
+                        subMenuOpened = true
+
+                        // create a calendar instance
+                        val c = Calendar.getInstance()
+
+                        // get the day, month, and year from the calendar
+                        val year = c.get(Calendar.YEAR)
+                        val month = c.get(Calendar.MONTH)
+                        val day = c.get(Calendar.DAY_OF_MONTH)
+
+                        // create a dialog for the date picker
+                        Log.d("MainActivity", "Creating date picker dialog")
+                        val datePickerDialog = DatePickerDialog(
+                            this,
+                            { _, selectedYear, selectedMonth, selectedDay ->
+                                // format and set the text for the finish date
+                                selectedFinishDateTo =
+                                    (buildString {
+                                        append(selectedYear.toString())
+                                        append("-")
+                                        append((selectedMonth + 1).toString())
+                                        append("-")
+                                        append(selectedDay.toString())
+                                    })
+                                finishDateToBtn.text = selectedFinishDateTo
+                                Log.d(
+                                    "MainActivity",
+                                    "Selected Finish Date To: ${finishDateToBtn.text}"
+                                )
+                                subMenuOpened = false
+                            },
+                            // pass the year, month, and day for the selected date
+                            year,
+                            month,
+                            day
+                        )
+
+                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                        datePickerDialog.setOnCancelListener { subMenuOpened = false }
+
+                        // listener for when user presses back or taps outside
+                        datePickerDialog.setOnDismissListener { subMenuOpened = false }
+
+                        // display the date picker dialog
+                        datePickerDialog.show()
+                    }
+                }
+
+                // text change listeners for the counter and phase ranges
+                counterLo.doAfterTextChanged { enteredCounterLo = counterLo.text.toString() }
+                counterHi.doAfterTextChanged { enteredCounterHi = counterHi.text.toString() }
+                phaseLo.doAfterTextChanged { enteredPhaseLo = phaseLo.text.toString() }
+                phaseHi.doAfterTextChanged { enteredPhaseHi = phaseHi.text.toString() }
+
+                // on click listener for the confirm filters button
+                confirmFiltersBtn.setOnClickListener {
+                    Log.d("MainActivity", "Confirm Filters button clicked in the filter selection dialog")
+
+                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    if (!subMenuOpened) {
+                        subMenuOpened = true
+
+                        // check if a completion status was selected
+                        if (selectedCompletionStatus == null) {
+                            val errorDialog = AlertDialog.Builder(this)
+                                .setTitle("Empty Field Detected")
+                                .setMessage("Please select a completion status!")
+                                .setPositiveButton("Okay") { dialog, _ ->
+                                    // close the error dialog
+                                    dialog.dismiss()
+                                    subMenuOpened = false
+                                }
+
+                            // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                            errorDialog.setOnCancelListener { subMenuOpened = false }
+
+                            // listener for when user presses back or taps outside
+                            errorDialog.setOnDismissListener { subMenuOpened = false }
+
+                            // display the error dialog
+                            errorDialog.show()
+                        }
+                        // otherwise, apply the filters
+                        else {
+                            // set all of the confirmed filters
+                            confirmedPokemonFormsFilter = selectedPokemonForms
+                            confirmedOriginGamesFilter = selectedOriginGames
+                            confirmedCompletionStatusFilter = selectedCompletionStatus
+                            confirmedCurrentGamesFilter = selectedCurrentGames
+                            confirmedMethodFilter = enteredMethod
+                            confirmedStartDateFromFilter = selectedStartDateFrom
+                            confirmedStartDateToFilter = selectedStartDateTo
+                            confirmedFinishDateFromFilter = selectedFinishDateFrom
+                            confirmedFinishDateToFilter = selectedFinishDateTo
+                            confirmedCounterLoFilter = enteredCounterLo
+                            confirmedCounterHiFilter = enteredCounterHi
+                            confirmedPhaseLoFilter = enteredPhaseLo
+                            confirmedPhaseHiFilter = enteredPhaseHi
+
+                            Log.d("MainActivity", "sortMethod: $currentSortMethodIndex")
+                            Log.d("MainActivity", "sortOrder: ${currentSortOrders[0]}")
+                            Log.d("MainActivity", "formIDs: $confirmedPokemonFormsFilter")
+                            Log.d("MainActivity", "originGameIDs: $confirmedOriginGamesFilter")
+                            Log.d("MainActivity", "currentGameIDs: $confirmedCurrentGamesFilter")
+                            Log.d("MainActivity", "method: $confirmedMethodFilter")
+                            Log.d("MainActivity", "startedFrom: $confirmedStartDateFromFilter")
+                            Log.d("MainActivity", "startedTo: $confirmedStartDateToFilter")
+                            Log.d("MainActivity", "finishedFrom: $confirmedFinishDateFromFilter")
+                            Log.d("MainActivity", "finishedTo: $confirmedFinishDateToFilter")
+                            Log.d("MainActivity", "counterLo: $confirmedCounterLoFilter")
+                            Log.d("MainActivity", "counterHi: $confirmedCounterHiFilter")
+                            Log.d("MainActivity", "phaseLo: $confirmedPhaseLoFilter")
+                            Log.d("MainActivity", "phaseHi: $confirmedPhaseHiFilter")
+                            Log.d("MainActivity", "completionStatus: $confirmedCompletionStatusFilter")
+
+                            // get the new shiny hunt data set
+                            val filteredHunts = getFilteredAndSortedHunts()
+
+                            // disable the move buttons
+                            shinyHuntListAdapter.setMoveButtonsEnabled(false)
+
+                            // update the recycler view
+                            shinyHuntListAdapter.submitList(filteredHunts) {
+                                shinyHuntRecyclerView.scrollToPosition(0)
+                            }
+
+                            subMenuOpened = false
+
+                            // close the filter dialog
+                            filterDialog.dismiss()
+                            filterMenuOpened = false
+                        }
+                    }
+                }
+            }
+        }
+
+        // on click listener for the clear filters button (main page)
+        mainClearFiltersBtn.setOnClickListener {
+            Log.d("MainActivity", "Clear Filters button clicked in the main page")
+
+            // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+            if (!subMenuOpened) {
+                subMenuOpened = true
 
                 // create a confirmation dialog
-                AlertDialog.Builder(this)
+                val confirmDialog = AlertDialog.Builder(this)
                     .setTitle("Clear All Filters?")
                     .setMessage("Are you sure you want to clear all currently applied filters?")
                     .setPositiveButton("Yes") { _, _ ->
@@ -401,7 +1152,7 @@ class MainActivity : ComponentActivity() {
                         // allow move buttons to be enabled
                         shinyHuntListAdapter.setMoveButtonsEnabled(true)
 
-                        // automatically collapse all shiny hunts
+                        // automatically collapse all hunts
                         expandAllCheckbox.isChecked = false
                         shinyHuntListAdapter.collapseAll()
 
@@ -410,461 +1161,28 @@ class MainActivity : ComponentActivity() {
                             shinyHuntRecyclerView.scrollToPosition(0)
                         }
 
+                        subMenuOpened = false
                         Log.d("MainActivity", "Filters cleared after confirmation")
                     }
                     .setNegativeButton("Cancel") { dialog, _ ->
                         dialog.dismiss()
+                        subMenuOpened = false
                         Log.d("MainActivity", "Clear Filters canceled by user")
                     }
-                    .show()
 
-                // close the filter menu dialog
-                dialog.dismiss()
-            }
-
-            // on click listener for the edit pokemon button
-            editPokemonBtn.setOnClickListener {
-                // TODO: Implement edit pokemon button logic
-                Log.d("MainActivity", "Edit Pokemon button clicked in the filter selection dialog")
-
-                // inflate the pokemon selection dialog layout
-                val selectPokemonDialog = layoutInflater.inflate(R.layout.pokemon_selection, null)
-
-                // access the recycler views
-                selectedPokemonRecyclerView = selectPokemonDialog.findViewById(R.id.selected_pokemon_recycler_view)
-                pokemonListRecyclerView = selectPokemonDialog.findViewById(R.id.pokemon_recycler_view)
-
-                // show the selected Pokemon section
-                val selectedPokemonLayout = selectPokemonDialog.findViewById<LinearLayout>(R.id.selected_pokemon_layout)
-                selectedPokemonLayout.visibility = View.VISIBLE
-
-                // access the search bar
-                val searchBar = selectPokemonDialog.findViewById<EditText>(R.id.search_pokemon)
-
-                // set the span counts based on device orientation
-                selectedPokemonRecyclerView.layoutManager = LinearLayoutManager(this)
-                val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
-                pokemonListRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
-
-                val layoutManager = GridLayoutManager(this, spanCount)
-
-                // prepare dataset with headers
-                val groupedPokemonList = preparePokemonListWithHeaders(pokemonList)
-
-                // custom span size logic to make headers span full width
-                layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                    override fun getSpanSize(position: Int): Int {
-                        return when (groupedPokemonList[position]) {
-                            is PokemonListItem.HeaderItem -> spanCount  // header takes full row
-                            is PokemonListItem.PokemonItem -> 1         // Pokemon takes 1 column
-                        }
-                    }
+                // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                confirmDialog.setOnCancelListener {
+                    subMenuOpened = false
                 }
 
-                pokemonListRecyclerView.layoutManager = layoutManager
-
-                // create and show the dialog
-                AlertDialog.Builder(this)
-                    .setTitle("Select Pokémon")
-                    .setView(selectPokemonDialog)
-                    .setPositiveButton("Close") { dialog, _ -> dialog.dismiss() }
-                    .show()
-
-                lateinit var selectedPokemonAdapter: SelectedPokemonAdapter
-                lateinit var pokemonListAdapter: PokemonSelectionAdapter
-
-                // create the adapter for the selected pokemon recycler view
-                selectedPokemonAdapter = SelectedPokemonAdapter(
-                    selectedPokemon,
-                    selectedPokemonForms,
-                    onPokemonUnselected = { removedPokemon ->
-                        selectedPokemon.removeAll { it.pokemonID == removedPokemon.pokemonID }
-                        removedPokemon.forms.forEach { selectedPokemonForms.remove(it.formID) }
-                        selectedPokemonAdapter.updateList(selectedPokemon)
-                        pokemonListAdapter.updateSelectedPokemon(selectedPokemon)
-                        pokemonListAdapter.notifyDataSetChanged()
-                        setPokemon()
-                    },
-                    onSelectionChanged = {
-                        setPokemon()
-                    }
-                )
-                selectedPokemonRecyclerView.adapter = selectedPokemonAdapter
-
-                // create the adapter for the main pokemon selection list
-                pokemonListAdapter = PokemonSelectionAdapter(1, groupedPokemonList, selectedPokemon) { returnedPokemon ->
-                    if (selectedPokemon.contains(returnedPokemon)) {
-                        selectedPokemon.remove(returnedPokemon)
-                        for (form in returnedPokemon.forms) {
-                            selectedPokemonForms.remove(form.formID)
-                        }
-                    } else {
-                        selectedPokemon.add(returnedPokemon)
-                        selectedPokemonForms.add(returnedPokemon.forms.sortedBy { it.formID }[0].formID)
-                    }
-                    selectedPokemonAdapter.updateList(selectedPokemon)
-                    setPokemon()
+                // listener for when user presses back or taps outside
+                confirmDialog.setOnDismissListener {
+                    subMenuOpened = false
                 }
-                pokemonListRecyclerView.adapter = pokemonListAdapter
 
-
-                // filter Pokémon as the user types
-                searchBar.addTextChangedListener(object : TextWatcher {
-                    override fun afterTextChanged(s: Editable?) {}
-
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                        val filteredList = groupedPokemonList
-                            .filterIsInstance<PokemonListItem.PokemonItem>()
-                            .filter { it.pokemon.pokemonName.contains(s.toString(), ignoreCase = true) }
-
-                        // keep headers and merge them back into the list
-                        val updatedList = preparePokemonListWithHeaders(filteredList.map { it.pokemon })
-
-                        // update adapter
-                        (pokemonListRecyclerView.adapter as PokemonSelectionAdapter).updateList(updatedList)
-
-                        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                            override fun getSpanSize(position: Int): Int {
-                                return when (updatedList[position]) {
-                                    is PokemonListItem.HeaderItem -> spanCount
-                                    is PokemonListItem.PokemonItem -> 1
-                                }
-                            }
-                        }
-                    }
-                })
+                // display the confirmation dialog
+                confirmDialog.show()
             }
-
-            // on click listener for the edit origin games button
-            editOriginGamesBtn.setOnClickListener {
-                // TODO: Implement edit origin games button logic
-                Log.d("MainActivity", "Edit Origin Games button clicked in the filter selection dialog")
-            }
-
-            // on click listener for the in progress radio button
-            inProgressRadioBtn.setOnClickListener {
-                Log.d("MainActivity", "In Progress radio button clicked in the filter selection dialog")
-                selectedCompletionStatus = CompletionStatus.IN_PROGRESS
-                setCurrentGames()
-                setFinishDateLayout()
-            }
-
-            // on click listener for the completed radio button
-            completedRadioBtn.setOnClickListener {
-                Log.d("MainActivity", "Completed radio button clicked in the filter selection dialog")
-                selectedCompletionStatus = CompletionStatus.COMPLETE
-                setCurrentGames()
-                setFinishDateLayout()
-            }
-
-            // on click listener for the both radio button
-            bothRadioBtn.setOnClickListener {
-                Log.d("MainActivity", "Both radio button clicked in the filter selection dialog")
-                selectedCompletionStatus = CompletionStatus.BOTH
-                setCurrentGames()
-                setFinishDateLayout()
-            }
-
-            // on click listener for the edit current games button
-            editCurrentGamesBtn.setOnClickListener {
-                // TODO: Implement edit current games button logic
-                Log.d("MainActivity", "Edit Current Games button clicked in the filter selection dialog")
-            }
-
-            // text change listener for the method
-            method.doAfterTextChanged { enteredMethod = method.text.toString() }
-
-            // on click listener for the start date from button
-            startDateFromBtn.setOnClickListener {
-                Log.d("MainActivity", "Start Date From button clicked in the filter selection dialog")
-
-                // create a calendar instance
-                val c = Calendar.getInstance()
-
-                // get the day, month, and year from the calendar
-                val year = c.get(Calendar.YEAR)
-                val month = c.get(Calendar.MONTH)
-                val day = c.get(Calendar.DAY_OF_MONTH)
-
-                // create a dialog for the date picker
-                Log.d("MainActivity", "Creating date picker dialog")
-                val datePickerDialog = DatePickerDialog(
-                    this,
-                    { _, selectedYear, selectedMonth, selectedDay ->
-                        // format and set the text for the start date
-                        selectedStartDateFrom =
-                            (buildString {
-                                append(selectedYear.toString())
-                                append("-")
-                                append((selectedMonth + 1).toString())
-                                append("-")
-                                append(selectedDay.toString())
-                            })
-                        startDateFromBtn.text = selectedStartDateFrom
-                        Log.d("MainActivity", "Selected Start Date From: ${startDateFromBtn.text}")
-                    },
-                    // pass the year, month, and day for the selected date
-                    year,
-                    month,
-                    day
-                )
-
-                // display the date picker dialog
-                datePickerDialog.show()
-            }
-
-            // on click listener for the start date to button
-            startDateToBtn.setOnClickListener {
-                Log.d("MainActivity", "Start Date To button clicked in the filter selection dialog")
-
-                // create a calendar instance
-                val c = Calendar.getInstance()
-
-                // get the day, month, and year from the calendar
-                val year = c.get(Calendar.YEAR)
-                val month = c.get(Calendar.MONTH)
-                val day = c.get(Calendar.DAY_OF_MONTH)
-
-                // create a dialog for the date picker
-                Log.d("MainActivity", "Creating date picker dialog")
-                val datePickerDialog = DatePickerDialog(
-                    this,
-                    { _, selectedYear, selectedMonth, selectedDay ->
-                        // format and set the text for the start date
-                        selectedStartDateTo =
-                            (buildString {
-                                append(selectedYear.toString())
-                                append("-")
-                                append((selectedMonth + 1).toString())
-                                append("-")
-                                append(selectedDay.toString())
-                            })
-                        startDateToBtn.text = selectedStartDateTo
-                        Log.d("MainActivity", "Selected Start Date To: ${startDateToBtn.text}")
-                    },
-                    // pass the year, month, and day for the selected date
-                    year,
-                    month,
-                    day
-                )
-
-                // display the date picker dialog
-                datePickerDialog.show()
-            }
-
-            // on click listener for the finish date from button
-            finishDateFromBtn.setOnClickListener {
-                Log.d("MainActivity", "Finish Date From button clicked in the filter selection dialog")
-
-                // create a calendar instance
-                val c = Calendar.getInstance()
-
-                // get the day, month, and year from the calendar
-                val year = c.get(Calendar.YEAR)
-                val month = c.get(Calendar.MONTH)
-                val day = c.get(Calendar.DAY_OF_MONTH)
-
-                // create a dialog for the date picker
-                Log.d("MainActivity", "Creating date picker dialog")
-                val datePickerDialog = DatePickerDialog(
-                    this,
-                    { _, selectedYear, selectedMonth, selectedDay ->
-                        // format and set the text for the finish date
-                        selectedFinishDateFrom =
-                            (buildString {
-                                append(selectedYear.toString())
-                                append("-")
-                                append((selectedMonth + 1).toString())
-                                append("-")
-                                append(selectedDay.toString())
-                            })
-                        finishDateFromBtn.text = selectedFinishDateFrom
-                        Log.d("MainActivity", "Selected Finish Date From: ${finishDateFromBtn.text}")
-                    },
-                    // pass the year, month, and day for the selected date
-                    year,
-                    month,
-                    day
-                )
-
-                // display the date picker dialog
-                datePickerDialog.show()
-            }
-
-            // on click listener for the finish date to button
-            finishDateToBtn.setOnClickListener {
-                Log.d("MainActivity", "Finish Date To button clicked in the filter selection dialog")
-
-                // create a calendar instance
-                val c = Calendar.getInstance()
-
-                // get the day, month, and year from the calendar
-                val year = c.get(Calendar.YEAR)
-                val month = c.get(Calendar.MONTH)
-                val day = c.get(Calendar.DAY_OF_MONTH)
-
-                // create a dialog for the date picker
-                Log.d("MainActivity", "Creating date picker dialog")
-                val datePickerDialog = DatePickerDialog(
-                    this,
-                    { _, selectedYear, selectedMonth, selectedDay ->
-                        // format and set the text for the finish date
-                        selectedFinishDateTo =
-                            (buildString {
-                                append(selectedYear.toString())
-                                append("-")
-                                append((selectedMonth + 1).toString())
-                                append("-")
-                                append(selectedDay.toString())
-                            })
-                        finishDateToBtn.text = selectedFinishDateTo
-                        Log.d("MainActivity", "Selected Finish Date To: ${finishDateToBtn.text}")
-                    },
-                    // pass the year, month, and day for the selected date
-                    year,
-                    month,
-                    day
-                )
-
-                // display the date picker dialog
-                datePickerDialog.show()
-            }
-
-            // text change listeners for the counter and phase ranges
-            counterLo.doAfterTextChanged { enteredCounterLo = counterLo.text.toString() }
-            counterHi.doAfterTextChanged { enteredCounterHi = counterHi.text.toString() }
-            phaseLo.doAfterTextChanged { enteredPhaseLo = phaseLo.text.toString() }
-            phaseHi.doAfterTextChanged { enteredPhaseHi = phaseHi.text.toString() }
-
-            // on click listener for the confirm filters button
-            confirmFiltersBtn.setOnClickListener {
-                Log.d("MainActivity", "Confirm Filters button clicked in the filter selection dialog")
-
-                // check if a completion status was selected
-                if (selectedCompletionStatus == null) {
-                    AlertDialog.Builder(this)
-                        .setTitle("Empty Field Detected")
-                        .setMessage("Please select a completion status!")
-                        .setPositiveButton("Okay") { errorDialog, _ ->
-                            // close the error dialog
-                            errorDialog.dismiss()
-                        }
-                        .show()
-                }
-                // otherwise, apply the filters
-                else {
-                    // set all of the confirmed filters
-                    confirmedPokemonFormsFilter = selectedPokemonForms
-                    confirmedOriginGamesFilter = selectedOriginGames
-                    confirmedCompletionStatusFilter = selectedCompletionStatus
-                    confirmedCurrentGamesFilter = selectedCurrentGames
-                    confirmedMethodFilter = enteredMethod
-                    confirmedStartDateFromFilter = selectedStartDateFrom
-                    confirmedStartDateToFilter = selectedStartDateTo
-                    confirmedFinishDateFromFilter = selectedFinishDateFrom
-                    confirmedFinishDateToFilter = selectedFinishDateTo
-                    confirmedCounterLoFilter = enteredCounterLo
-                    confirmedCounterHiFilter = enteredCounterHi
-                    confirmedPhaseLoFilter = enteredPhaseLo
-                    confirmedPhaseHiFilter = enteredPhaseHi
-
-                    Log.d("MainActivity", "sortMethod: $currentSortMethodIndex")
-                    Log.d("MainActivity", "sortOrder: ${currentSortOrders[0]}")
-                    Log.d("MainActivity", "formIDs: $confirmedPokemonFormsFilter")
-                    Log.d("MainActivity", "originGameIDs: $confirmedOriginGamesFilter")
-                    Log.d("MainActivity", "currentGameIDs: $confirmedCurrentGamesFilter")
-                    Log.d("MainActivity", "method: $confirmedMethodFilter")
-                    Log.d("MainActivity", "startedFrom: $confirmedStartDateFromFilter")
-                    Log.d("MainActivity", "startedTo: $confirmedStartDateToFilter")
-                    Log.d("MainActivity", "finishedFrom: $confirmedFinishDateFromFilter")
-                    Log.d("MainActivity", "finishedTo: $confirmedFinishDateToFilter")
-                    Log.d("MainActivity", "counterLo: $confirmedCounterLoFilter")
-                    Log.d("MainActivity", "counterHi: $confirmedCounterHiFilter")
-                    Log.d("MainActivity", "phaseLo: $confirmedPhaseLoFilter")
-                    Log.d("MainActivity", "phaseHi: $confirmedPhaseHiFilter")
-                    Log.d("MainActivity", "completionStatus: $confirmedCompletionStatusFilter")
-
-                    // get the new shiny hunt data set
-                    val filteredHunts = getFilteredAndSortedHunts()
-
-                    // disable the move buttons
-                    shinyHuntListAdapter.setMoveButtonsEnabled(false)
-
-                    // update the recycler view
-                    shinyHuntListAdapter.submitList(filteredHunts) {
-                        shinyHuntRecyclerView.scrollToPosition(0)
-                    }
-
-                    dialog.dismiss()
-                }
-            }
-
-        }
-
-        // on click listener for the clear filters button (main page)
-        mainClearFiltersBtn.setOnClickListener {
-            Log.d("MainActivity", "Clear Filters button clicked in the main page")
-
-            // create a confirmation dialog
-            AlertDialog.Builder(this)
-                .setTitle("Clear All Filters?")
-                .setMessage("Are you sure you want to clear all currently applied filters?")
-                .setPositiveButton("Yes") { _, _ ->
-
-                    // reset all the filters (selected and confirmed)
-                    selectedPokemon.clear()
-                    selectedPokemonForms.clear()
-                    confirmedPokemonFormsFilter.clear()
-                    selectedOriginGames.clear()
-                    confirmedOriginGamesFilter.clear()
-                    selectedCompletionStatus = null
-                    confirmedCompletionStatusFilter = null
-                    selectedCurrentGames.clear()
-                    confirmedCurrentGamesFilter.clear()
-                    enteredMethod = ""
-                    confirmedMethodFilter = ""
-                    selectedStartDateFrom = ""
-                    confirmedStartDateFromFilter = ""
-                    selectedStartDateTo = ""
-                    confirmedStartDateToFilter = ""
-                    selectedFinishDateFrom = ""
-                    confirmedFinishDateFromFilter = ""
-                    selectedFinishDateTo = ""
-                    confirmedFinishDateToFilter = ""
-                    enteredCounterLo = ""
-                    confirmedCounterLoFilter = ""
-                    enteredCounterHi = ""
-                    confirmedCounterHiFilter = ""
-                    enteredPhaseLo = ""
-                    confirmedPhaseLoFilter = ""
-                    enteredPhaseHi = ""
-                    confirmedPhaseHiFilter = ""
-
-                    // get the unfiltered hunts
-                    val unfilteredHunts = getFilteredAndSortedHunts()
-
-                    // allow move buttons to be enabled
-                    shinyHuntListAdapter.setMoveButtonsEnabled(true)
-
-                    // automatically collapse all hunts
-                    expandAllCheckbox.isChecked = false
-                    shinyHuntListAdapter.collapseAll()
-
-                    // update the recycler view
-                    shinyHuntListAdapter.submitList(unfilteredHunts) {
-                        shinyHuntRecyclerView.scrollToPosition(0)
-                    }
-
-                    Log.d("MainActivity", "Filters cleared after confirmation")
-                }
-                .setNegativeButton("Cancel") { dialog, _ ->
-                    dialog.dismiss()
-                    Log.d("MainActivity", "Clear Filters canceled by user")
-                }
-                .show()
-
         }
 
         // on click listener for the expand all checkbox

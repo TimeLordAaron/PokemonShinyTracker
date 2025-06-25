@@ -1,19 +1,31 @@
 package com.example.pokemonshinytracker
 
+/* 4 MODES */
+// 0 = Individual Hunt (selecting origin game)
+// 1 = Individual Hunt (selecting current game)
+// 2 = Filter Menu (selecting origin games)
+// 3 = Filter Menu (selecting current games)
+
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class GameSelectionAdapter(
     private val mode: Int,
     private val gameListItems: List<GameListItem>,
+    private var preselectedGames: List<Int?>,
     private val onGameSelected: (Game) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+
+
+    private val selectedGamePositions = mutableSetOf<Int>()      // stores the positions of selected Games in the list
 
     // constants to differentiate between game items and header items
     companion object {
@@ -23,24 +35,56 @@ class GameSelectionAdapter(
 
     // class for game view holders
     inner class GameViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val gameLayout: LinearLayout = view.findViewById(R.id.game_layout)
         private val gameIconBorder: FrameLayout = view.findViewById(R.id.game_icon_border)
         private val gameImage: ImageView = view.findViewById(R.id.game_image)
         private val gameName: TextView = view.findViewById(R.id.game_name)
 
         fun bind(game: Game) {
-            // mode 0 = selecting origin game
-            if (mode == 0) {
+            // set the background and image of the game
+            // mode 0/2 = selecting origin game(s)
+            if (mode == 0 || mode == 2) {
                 gameIconBorder.setBackgroundResource(R.drawable.ui_game_icon_border_origin)
                 gameImage.setBackgroundResource(R.drawable.ui_game_icon_border_origin)
             }
-            // mode 1 = selecting current game
+            // mode 1/3 = selecting current game(s)
             else {
                 gameIconBorder.setBackgroundResource(R.drawable.ui_game_icon_border_current)
                 gameImage.setBackgroundResource(R.drawable.ui_game_icon_border_current)
             }
+            // set game image and name
             gameImage.setImageResource(game.gameImage)
-            gameImage.setOnClickListener { onGameSelected(game) }
             gameName.text = game.gameName
+
+            // set background of the layout if the game is currently selected
+            if (preselectedGames.contains(game.gameID - 1)) {
+                selectedGamePositions.add(game.gameID - 1)
+                gameLayout.setBackgroundResource(R.drawable.ui_container_complete_hunt)     // selected game
+            } else {
+                gameLayout.setBackgroundResource(0)     // unselected game (reset the background)
+            }
+
+            gameImage.setOnClickListener {
+                onGameSelected(game)    // return the selected game
+
+                when (mode) {
+                    // Individual Hunt modes: clear the previous selection, and add the new selection
+                    0, 1 -> {
+                        selectedGamePositions.clear()
+                        selectedGamePositions.add(game.gameID)
+                    }
+                    // Filter modes: flip the selection state
+                    2, 3 -> {
+                        if (selectedGamePositions.contains(game.gameID)) {
+                            selectedGamePositions.remove(game.gameID)
+                        } else {
+                            selectedGamePositions.add(game.gameID)
+                        }
+                    }
+                }
+
+                notifyDataSetChanged()
+            }
         }
     }
 
