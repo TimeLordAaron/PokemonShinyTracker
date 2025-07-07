@@ -22,11 +22,12 @@
 
                         <!--Selected Pokemon Label-->
                         <TextView
+                            android:id="@+id/selected_pokemon_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
                             android:layout_gravity="center"
-                            android:text="Selected Pokemon:"
+                            android:text="@string/selected_pokemon_label"
                             android:textSize="20sp"
                             android:textColor="@color/black" />
 

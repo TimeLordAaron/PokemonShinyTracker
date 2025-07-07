@@ -14,6 +14,7 @@ import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import org.w3c.dom.Text
 import java.util.*
 
 class IndividualHunt : ComponentActivity() {
@@ -82,6 +83,7 @@ class IndividualHunt : ComponentActivity() {
         detailLayout = findViewById(R.id.individual_hunt_details)                           // detail layout
         previousFormBtn = findViewById(R.id.previous_form_button)                           // previous form button
         nextFormBtn = findViewById(R.id.next_form_button)                                   // next form button
+        var selectedPokemonLabel = findViewById<TextView>(R.id.selected_pokemon_label)      // selected pokemon label
         val selectedPokemonName = findViewById<TextView>(R.id.selected_pokemon_name)        // selected pokemon name
         val selectedPokemonForm = findViewById<TextView>(R.id.selected_pokemon_form)        // selected pokemon form
         val pokemonImage = findViewById<ImageView>(R.id.pokemon_image)                      // pokemon image
@@ -388,6 +390,10 @@ class IndividualHunt : ComponentActivity() {
 
                 val selectPokemonDialog = layoutInflater.inflate(R.layout.pokemon_selection, null)
                 pokemonRecyclerView = selectPokemonDialog.findViewById(R.id.pokemon_recycler_view)
+
+                // hide the "Selected Pokemon" label
+                selectedPokemonLabel = selectPokemonDialog.findViewById(R.id.selected_pokemon_label)
+                selectedPokemonLabel.visibility = View.GONE
 
                 val searchBar = selectPokemonDialog.findViewById<EditText>(R.id.search_pokemon)
 

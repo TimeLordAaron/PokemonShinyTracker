@@ -246,9 +246,9 @@ class MainActivity : ComponentActivity() {
         // selected pokemon
         fun setPokemon() {
             if (selectedPokemonForms.size == 1) {
-                pokemonTxt.text = "1 Pokemon form selected."
+                pokemonTxt.text = "1 Pokémon form selected."
             } else {
-                pokemonTxt.text = "${selectedPokemonForms.size} Pokemon forms selected."
+                pokemonTxt.text = "${selectedPokemonForms.size} Pokémon forms selected."
             }
         }
         // selected origin games

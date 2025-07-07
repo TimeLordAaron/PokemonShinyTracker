@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Pokemon Shiny Tracker</string>
-    <string name="pokemon_label">Pokemon:</string>
+    <string name="app_name">Pokémon Shiny Tracker</string>
+    <string name="pokemon_label">Pokémon:</string>
     <string name="origin_game_label">Hunting In:</string>
     <string name="start_date_label">Started:</string>
     <string name="na">N/A</string>
@@ -20,11 +20,11 @@
     <string name="origin_game_icon_desc">Origin Game Icon</string>
     <string name="current_game_icon_desc">Current Game Icon</string>
     <string name="default_counter">0</string>
-    <string name="pokemon_search_hint">Enter Pokemon Name</string>
-    <string name="pokemon_name_placeholder">Please select a Pokemon.</string>
+    <string name="pokemon_search_hint">Enter Pokémon Name</string>
+    <string name="pokemon_name_placeholder">Please select a Pokémon.</string>
     <string name="confirm_selection">Confirm Selection</string>
-    <string name="select_a_pokemon">Select a Pokemon</string>
-    <string name="pokemon_item_image_description">Pokemon Item Image Placeholder</string>
+    <string name="select_a_pokemon">Select a Pokémon</string>
+    <string name="pokemon_item_image_description">Pokémon Item Image Placeholder</string>
     <string name="generation_1_label">Generation 1</string>
     <string name="generation_2_label">Generation 2</string>
     <string name="generation_3_label">Generation 3</string>
@@ -36,7 +36,7 @@
     <string name="save_button_text">Save</string>
     <string name="delete_button_text">Delete</string>
     <string name="zero">0</string>
-    <string name="pokemon_image_description">Image of the selected Pokemon</string>
+    <string name="pokemon_image_description">Image of the selected Pokémon</string>
     <string name="left_button_text">◀</string>
     <string name="right_button_text">▶</string>
     <string name="search_pokemon">Search Pokémon</string>
@@ -52,7 +52,7 @@
     <string name="origin_games_label">Origin Games:</string>
     <string name="completion_status_label">Completion Status:</string>
     <string name="games_selected_default">0 games selected.</string>
-    <string name="pokemon_selected_default">0 Pokemon forms selected.</string>
+    <string name="pokemon_selected_default">0 Pokémon forms selected.</string>
     <string name="in_progress_label">In Progress</string>
     <string name="completed_label">Completed</string>
     <string name="both_label">Both</string>
@@ -60,7 +60,8 @@
     <string name="to">to</string>
     <string name="confirm_filters">Confirm Filters</string>
     <string name="select_all_label">Select All</string>
-    <string name="dropdown_button">Button to toggle visibility of Pokemon Forms</string>
+    <string name="dropdown_button">Button to toggle visibility of Pokémon Forms</string>
     <string name="notes_label">Notes:</string>
     <string name="notes_hint">Add notes here.</string>
+    <string name="selected_pokemon_label">Selected Pokémon:</string>
 </resources>
