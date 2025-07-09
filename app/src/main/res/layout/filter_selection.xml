@@ -7,10 +7,10 @@
     <!--Filter Selection Layout-->
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:background="@drawable/ui_gradient_homepage">
+        android:layout_gravity="center_horizontal"
+        android:padding="20dp">
 
         <!--Clear Filters Button-->
         <Button

@@ -30,22 +30,22 @@
                 android:textSize="15sp"
                 android:textColor="@color/black" />
 
+            <!--Sort Button-->
+            <Button
+                android:id="@+id/sort_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sort_label"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textAllCaps="false" />
+
             <!--Filter Button-->
             <Button
                 android:id="@+id/filter_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/filter_label"
-                android:textSize="15sp"
-                android:textColor="@color/black"
-                android:textAllCaps="false" />
-
-            <!--Clear Filters Button-->
-            <Button
-                android:id="@+id/clear_filters_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/clear_filters_label"
                 android:textSize="15sp"
                 android:textColor="@color/black"
                 android:textAllCaps="false" />
@@ -87,135 +87,5 @@
             android:layout_height="match_parent" />
 
     </LinearLayout>
-
-    <!--Floating Sort Button-->
-    <Button
-        android:id="@+id/sort_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:backgroundTint="@color/teal_700"
-        android:visibility="visible"
-        android:text="DF↓"
-        android:textSize="20sp"
-        android:textColor="@color/white" />
-
-    <!--Sort Menu-->
-    <FrameLayout
-        android:id="@+id/sort_menu"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/ui_gradient_sort"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:id="@+id/sort_menu_layout"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|end">
-
-            <!--Sort Menu Back Button-->
-            <Button
-                android:id="@+id/sort_back_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:background="#00000000"
-                android:text="←"
-                android:textSize="50sp"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
-
-            <!--Sort Menu Label-->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingEnd="32dp"
-                android:paddingBottom="15dp"
-                android:layout_gravity="bottom|end"
-                android:text="Sort By:"
-                android:textSize="32sp"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
-
-            <!--Sort By Default Button-->
-            <Button
-                android:id="@+id/sort_default_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:layout_gravity="bottom|end"
-                android:background="@drawable/ui_container_transparent"
-                android:text="Default ↓"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:textAllCaps="false" />
-
-            <!--Sort By Start Date Button-->
-            <Button
-                android:id="@+id/sort_start_date_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:layout_gravity="bottom|end"
-                android:background="#00000000"
-                android:text="Start Date"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:textAllCaps="false" />
-
-            <!--Sort By Finish Date Button-->
-            <Button
-                android:id="@+id/sort_finish_date_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:layout_gravity="bottom|end"
-                android:background="#00000000"
-                android:text="Finish Date"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:textAllCaps="false" />
-
-            <!--Sort By Name Button-->
-            <Button
-                android:id="@+id/sort_name_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:layout_gravity="bottom|end"
-                android:background="#00000000"
-                android:text="Name"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:textAllCaps="false" />
-
-            <!--Sort By Generation Button-->
-            <Button
-                android:id="@+id/sort_generation_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:layout_gravity="bottom|end"
-                android:background="#00000000"
-                android:text="Generation"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:textAllCaps="false" />
-
-        </LinearLayout>
-
-    </FrameLayout>
 
 </FrameLayout>

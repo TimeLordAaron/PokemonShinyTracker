@@ -9,13 +9,15 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
@@ -28,23 +30,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Calendar
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
     // lateinit UI declarations: main UI
     private lateinit var newHuntBtn: Button                     // new hunt button
+    private lateinit var sortBtn: Button                        // sort button
     private lateinit var filterBtn: Button                      // filter button
-    private lateinit var mainClearFiltersBtn: Button            // clear filters button (main page)
     private lateinit var expandAllCheckbox: CheckBox            // expand all checkbox
     private lateinit var shinyHuntRecyclerView: RecyclerView    // shiny hunt recycler view
-    private lateinit var sortBtn: Button                        // floating sort button
-    private lateinit var sortMenu: FrameLayout                  // sort menu
-    private lateinit var sortMenuLayout: LinearLayout           // sort menu linear layout
-    private lateinit var sortBackBtn: Button                    // sort menu back button
-    private lateinit var sortDefaultBtn: Button                 // sort by default button
-    private lateinit var sortStartDateBtn: Button               // sort by start date button
-    private lateinit var sortFinishDateBtn: Button              // sort by finish date button
-    private lateinit var sortNameBtn: Button                    // sort by name button
-    private lateinit var sortGenerationBtn: Button              // sort by generation button
+
+    // lateinit UI declarations: sort selection UI
+    private lateinit var sortMethodSpinner: Spinner             // sort method spinner
+    private lateinit var sortOrdersRadioGrp: RadioGroup         // sort orders radio group
+    private lateinit var ascendingOrderRadioBtn: RadioButton    // ascending order radio button
+    private lateinit var descendingOrderRadioBtn: RadioButton   // descending order radio button
+    private lateinit var confirmSortBtn: Button                 // confirm sort button
 
     // lateinit UI declarations: filter selection UI
     private lateinit var filterClearFiltersBtn: Button          // clear filters button (filter selection dialog)
@@ -79,8 +79,7 @@ class MainActivity : ComponentActivity() {
     // 0: Default, 1: Start Date, 2: Finish Date, 3: Name, 4: Generation
     private var currentSortMethod = SortMethod.DEFAULT
     private var currentSortMethodIndex = 0
-    private var currentSortOrders =
-        arrayOf(SortOrder.DESC, SortOrder.DESC, SortOrder.DESC, SortOrder.ASC, SortOrder.ASC)
+    private var currentSortOrder = SortOrder.DESC
 
     // initialize variables for tracking the selected filters
     private var selectedPokemon = mutableListOf<Pokemon>()           // dataset for the selected pokemon RecyclerView
@@ -114,11 +113,12 @@ class MainActivity : ComponentActivity() {
     private var confirmedPhaseHiFilter = ""
 
     // variables to track if a sub menu is currently open
+    private var sortMenuOpened = false
     private var filterMenuOpened = false
     private var subMenuOpened = false
 
     // access the database
-    val db = DBHelper(this, null)
+    private val db = DBHelper(this, null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("MainActivity", "onCreate() started")
@@ -153,17 +153,8 @@ class MainActivity : ComponentActivity() {
         shinyHuntRecyclerView = findViewById(R.id.shiny_hunts_recycler_view)                    // recycler view that displays the user's saved hunts
         newHuntBtn = findViewById(R.id.new_hunt_button)                                         // new hunt button
         filterBtn = findViewById(R.id.filter_button)                                            // filter button
-        mainClearFiltersBtn = findViewById(R.id.clear_filters_button)                           // clear filters button (main page)
         expandAllCheckbox = findViewById(R.id.expand_all_checkbox)                              // expand all checkbox
         sortBtn = findViewById(R.id.sort_button)                                                // floating sort button
-        sortMenu = findViewById(R.id.sort_menu)                                                 // sort menu
-        sortMenuLayout = findViewById(R.id.sort_menu_layout)                                    // sort menu linear layout
-        sortBackBtn = findViewById(R.id.sort_back_button)                                       // sort menu back button
-        sortDefaultBtn = findViewById(R.id.sort_default_button)                                 // sort by default button
-        sortStartDateBtn = findViewById(R.id.sort_start_date_button)                            // sort by start date button
-        sortFinishDateBtn = findViewById(R.id.sort_finish_date_button)                          // sort by finish date button
-        sortNameBtn = findViewById(R.id.sort_name_button)                                       // sort by name button
-        sortGenerationBtn = findViewById(R.id.sort_generation_button)                           // sort by generation button
 
         // instantiate an adapter for the shiny hunt recycler view
         val shinyHuntListAdapter = ShinyHuntListAdapter(this, pokemonList, gameList).apply {
@@ -176,24 +167,6 @@ class MainActivity : ComponentActivity() {
                 expandAllCheckbox.isChecked = allExpanded
             }
         }
-
-        // set the margins of the floating sort button and sort menu
-        val sortBtnParams = sortBtn.layoutParams as FrameLayout.LayoutParams
-        val sortMenuParams = sortMenuLayout.layoutParams as FrameLayout.LayoutParams
-
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // set margins for landscape
-            sortBtnParams.setMargins(0, 0, 150, 50)
-            sortMenuParams.setMargins(0, 0, 150, 0)
-        } else {
-            // set margins for portrait
-            sortBtnParams.setMargins(0, 0, 20, 150)
-            sortMenuParams.setMargins(0, 0, 0, 0)
-        }
-
-        // apply margins to the sort button and sort menu
-        sortBtn.layoutParams = sortBtnParams
-        sortMenuLayout.layoutParams = sortMenuParams
 
         // handle visibility of the no hunts message and the recycler view
         if (hunts.isEmpty()) {
@@ -240,6 +213,103 @@ class MainActivity : ComponentActivity() {
 
             // switch to IndividualHunt
             this.startActivity(intent)
+        }
+
+        // on click listener for the sort button
+        sortBtn.setOnClickListener {
+            Log.d("MainActivity", "Sort button clicked")
+
+            // check if the sort menu or filter menu are already open (to prevent the user from spamming open multiple copies of it)
+            if (!sortMenuOpened && !filterMenuOpened) {
+                sortMenuOpened = true
+
+                val sortDialogLayout = layoutInflater.inflate(R.layout.sort_selection, null)
+
+                // access all the UI elements
+                sortMethodSpinner =
+                    sortDialogLayout.findViewById(R.id.sort_method_spinner)                 // sort method spinner
+                sortOrdersRadioGrp =
+                    sortDialogLayout.findViewById(R.id.sort_orders_radio_group)            // sort orders radio group
+                ascendingOrderRadioBtn =
+                    sortDialogLayout.findViewById(R.id.ascending_radio_button)         // ascending radio button (for sort order)
+                descendingOrderRadioBtn =
+                    sortDialogLayout.findViewById(R.id.descending_radio_button)       // descending radio button (for sort order)
+                confirmSortBtn =
+                    sortDialogLayout.findViewById(R.id.confirm_sort_button)                    // confirm sort button
+
+                // create an adapter for the sort method spinner
+                ArrayAdapter.createFromResource(
+                    this,
+                    R.array.sort_methods_array,
+                    android.R.layout.simple_spinner_item
+                ).also { adapter ->
+                    // set the layout to use when the list of choices appears
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
+                    // apply the adapter to the spinner
+                    sortMethodSpinner.adapter = adapter
+                }
+
+                // apply the on item selected listener (which handles the logic for item selection in the spinner)
+                sortMethodSpinner.onItemSelectedListener = this
+
+                // set the current selection in the spinner with the current method
+                sortMethodSpinner.setSelection(currentSortMethodIndex)
+
+                // set the current selection in the sort orders radio button group
+                sortOrdersRadioGrp.check(
+                    if (currentSortOrder == SortOrder.ASC) R.id.ascending_radio_button else R.id.descending_radio_button
+                )
+
+                // on click listener for the ascending radio button
+                ascendingOrderRadioBtn.setOnClickListener { currentSortOrder = SortOrder.ASC }
+
+                // on click listener for the descending radio button
+                descendingOrderRadioBtn.setOnClickListener { currentSortOrder = SortOrder.DESC }
+
+                // build the dialog
+                val sortDialog = AlertDialog.Builder(this)
+                    .setTitle("Sort")
+                    .setView(sortDialogLayout)
+                    .setPositiveButton("Close") { dialog, _ ->
+                        dialog.dismiss()
+                        sortMenuOpened = false
+                    }
+                    .create()
+
+                // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                sortDialog.setOnCancelListener { sortMenuOpened = false }
+
+                // listener for when user presses back or taps outside
+                sortDialog.setOnDismissListener { sortMenuOpened = false }
+
+                // set the background of the dialog
+                sortDialog.window?.setBackgroundDrawableResource(R.drawable.ui_gradient_homepage)
+
+                // display the sort dialog
+                sortDialog.show()
+
+                // on click listener for the confirm sort button
+                confirmSortBtn.setOnClickListener {
+                    Log.d("MainActivity", "Confirm Sort button clicked")
+                    Log.d("MainActivity", "Sort Method: $currentSortMethod")
+                    Log.d("MainActivity", "Sort Order: $currentSortOrder")
+
+                    // get the new shiny hunt data set
+                    val sortedHunts = getFilteredAndSortedHunts()
+
+                    // update the sort method and order in the adapter
+                    shinyHuntListAdapter.updateSortMethod(currentSortMethod, currentSortOrder)
+
+                    // update the recycler view
+                    shinyHuntListAdapter.submitList(sortedHunts) {
+                        shinyHuntRecyclerView.scrollToPosition(0)
+                    }
+
+                    // close the dialog
+                    sortDialog.dismiss()
+                    sortMenuOpened = false
+                }
+            }
         }
 
         /* Helper functions for setting UI in the filter selection dialog */
@@ -312,59 +382,36 @@ class MainActivity : ComponentActivity() {
         filterBtn.setOnClickListener {
             Log.d("MainActivity", "Filter button clicked. Opening filters dialog")
 
-            // check if the filter menu is already open (to prevent the user from spamming open multiple copies of it)
-            if (!filterMenuOpened) {
+            // check if the sort menu or filter menu are already open (to prevent the user from spamming open multiple copies of it)
+            if (!sortMenuOpened && !filterMenuOpened) {
                 filterMenuOpened = true
 
                 val filterDialogLayout = layoutInflater.inflate(R.layout.filter_selection, null)
 
                 // access all the UI elements
-                filterClearFiltersBtn =
-                    filterDialogLayout.findViewById(R.id.clear_filters_button)    // clear filters button (filter selection dialog)
-                editPokemonBtn =
-                    filterDialogLayout.findViewById(R.id.edit_pokemon_button)            // edit pokemon button
-                pokemonTxt =
-                    filterDialogLayout.findViewById(R.id.pokemon_text)                       // selected pokemon text
-                editOriginGamesBtn =
-                    filterDialogLayout.findViewById(R.id.edit_origin_games_button)   // edit origin games button
-                originGamesTxt =
-                    filterDialogLayout.findViewById(R.id.origin_games_text)              // selected origin games text
-                completionStatusRadioGrp =
-                    filterDialogLayout.findViewById(R.id.completion_statuses_radio_group)  // completion status radio group
-                inProgressRadioBtn =
-                    filterDialogLayout.findViewById(R.id.in_progress_radio_button)   // in progress radio button (for completion status)
-                completedRadioBtn =
-                    filterDialogLayout.findViewById(R.id.completed_radio_button)      // completed radio button (for completion status)
-                bothRadioBtn =
-                    filterDialogLayout.findViewById(R.id.both_radio_button)                // both radio button (for completion status)
-                currentGamesLayout =
-                    filterDialogLayout.findViewById(R.id.current_games_layout)       // current games layout
-                editCurrentGamesBtn =
-                    filterDialogLayout.findViewById(R.id.edit_current_games_button) // edit current games button
-                currentGamesTxt =
-                    filterDialogLayout.findViewById(R.id.current_games_text)            // selected current games text
-                method =
-                    filterDialogLayout.findViewById(R.id.method)                                 // method text field
-                startDateFromBtn =
-                    filterDialogLayout.findViewById(R.id.start_date_from_button)       // start date from button
-                startDateToBtn =
-                    filterDialogLayout.findViewById(R.id.start_date_to_button)           // start date to button
-                finishDateLayout =
-                    filterDialogLayout.findViewById(R.id.finish_date_layout)           // finish date range layout
-                finishDateFromBtn =
-                    filterDialogLayout.findViewById(R.id.finish_date_from_button)     // finish date from button
-                finishDateToBtn =
-                    filterDialogLayout.findViewById(R.id.finish_date_to_button)         // finish date to button
-                counterLo =
-                    filterDialogLayout.findViewById(R.id.counter_lo)                          // counter (low bound) text field
-                counterHi =
-                    filterDialogLayout.findViewById(R.id.counter_hi)                          // counter (high bound) text field
-                phaseLo =
-                    filterDialogLayout.findViewById(R.id.phase_lo)                              // phase (low bound) text field
-                phaseHi =
-                    filterDialogLayout.findViewById(R.id.phase_hi)                              // phase (high bound) text field
-                confirmFiltersBtn =
-                    filterDialogLayout.findViewById(R.id.confirm_filters_button)      // confirm filters button
+                filterClearFiltersBtn = filterDialogLayout.findViewById(R.id.clear_filters_button)      // clear filters button (filter selection dialog)
+                editPokemonBtn = filterDialogLayout.findViewById(R.id.edit_pokemon_button)              // edit pokemon button
+                pokemonTxt = filterDialogLayout.findViewById(R.id.pokemon_text)                         // selected pokemon text
+                editOriginGamesBtn = filterDialogLayout.findViewById(R.id.edit_origin_games_button)     // edit origin games button
+                originGamesTxt = filterDialogLayout.findViewById(R.id.origin_games_text)                // selected origin games text
+                completionStatusRadioGrp = filterDialogLayout.findViewById(R.id.completion_statuses_radio_group)  // completion status radio group
+                inProgressRadioBtn = filterDialogLayout.findViewById(R.id.in_progress_radio_button)     // in progress radio button (for completion status)
+                completedRadioBtn = filterDialogLayout.findViewById(R.id.completed_radio_button)        // completed radio button (for completion status)
+                bothRadioBtn = filterDialogLayout.findViewById(R.id.both_radio_button)                  // both radio button (for completion status)
+                currentGamesLayout = filterDialogLayout.findViewById(R.id.current_games_layout)         // current games layout
+                editCurrentGamesBtn = filterDialogLayout.findViewById(R.id.edit_current_games_button)   // edit current games button
+                currentGamesTxt = filterDialogLayout.findViewById(R.id.current_games_text)              // selected current games text
+                method = filterDialogLayout.findViewById(R.id.method)                                   // method text field
+                startDateFromBtn = filterDialogLayout.findViewById(R.id.start_date_from_button)         // start date from button
+                startDateToBtn = filterDialogLayout.findViewById(R.id.start_date_to_button)             // start date to button
+                finishDateLayout = filterDialogLayout.findViewById(R.id.finish_date_layout)             // finish date range layout
+                finishDateFromBtn = filterDialogLayout.findViewById(R.id.finish_date_from_button)       // finish date from button
+                finishDateToBtn = filterDialogLayout.findViewById(R.id.finish_date_to_button)           // finish date to button
+                counterLo = filterDialogLayout.findViewById(R.id.counter_lo)                            // counter (low bound) text field
+                counterHi = filterDialogLayout.findViewById(R.id.counter_hi)                            // counter (high bound) text field
+                phaseLo = filterDialogLayout.findViewById(R.id.phase_lo)                                // phase (low bound) text field
+                phaseHi = filterDialogLayout.findViewById(R.id.phase_hi)                                // phase (high bound) text field
+                confirmFiltersBtn = filterDialogLayout.findViewById(R.id.confirm_filters_button)        // confirm filters button
 
                 // initialize the UI based on the currently selected filters
                 setPokemon()
@@ -382,7 +429,7 @@ class MainActivity : ComponentActivity() {
                 setPhaseLo()
                 setPhaseHi()
 
-                // display the dialog
+                // build the dialog
                 val filterDialog = AlertDialog.Builder(this)
                     .setTitle("Filters")
                     .setView(filterDialogLayout)
@@ -397,6 +444,9 @@ class MainActivity : ComponentActivity() {
 
                 // listener for when user presses back or taps outside
                 filterDialog.setOnDismissListener { filterMenuOpened = false }
+
+                // set the background of the dialog
+                filterDialog.window?.setBackgroundDrawableResource(R.drawable.ui_gradient_homepage)
 
                 // display the filter dialog
                 filterDialog.show()
@@ -1066,7 +1116,7 @@ class MainActivity : ComponentActivity() {
                             confirmedPhaseHiFilter = enteredPhaseHi
 
                             Log.d("MainActivity", "sortMethod: $currentSortMethodIndex")
-                            Log.d("MainActivity", "sortOrder: ${currentSortOrders[0]}")
+                            Log.d("MainActivity", "sortOrder: $currentSortOrder")
                             Log.d("MainActivity", "formIDs: $confirmedPokemonFormsFilter")
                             Log.d("MainActivity", "originGameIDs: $confirmedOriginGamesFilter")
                             Log.d("MainActivity", "currentGameIDs: $confirmedCurrentGamesFilter")
@@ -1103,88 +1153,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // on click listener for the clear filters button (main page)
-        mainClearFiltersBtn.setOnClickListener {
-            Log.d("MainActivity", "Clear Filters button clicked in the main page")
-
-            // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
-            if (!subMenuOpened) {
-                subMenuOpened = true
-
-                // create a confirmation dialog
-                val confirmDialog = AlertDialog.Builder(this)
-                    .setTitle("Clear All Filters?")
-                    .setMessage("Are you sure you want to clear all currently applied filters?")
-                    .setPositiveButton("Yes") { _, _ ->
-
-                        // reset all the filters (selected and confirmed)
-                        selectedPokemon.clear()
-                        selectedPokemonForms.clear()
-                        confirmedPokemonFormsFilter.clear()
-                        selectedOriginGames.clear()
-                        confirmedOriginGamesFilter.clear()
-                        selectedCompletionStatus = null
-                        confirmedCompletionStatusFilter = null
-                        selectedCurrentGames.clear()
-                        confirmedCurrentGamesFilter.clear()
-                        enteredMethod = ""
-                        confirmedMethodFilter = ""
-                        selectedStartDateFrom = ""
-                        confirmedStartDateFromFilter = ""
-                        selectedStartDateTo = ""
-                        confirmedStartDateToFilter = ""
-                        selectedFinishDateFrom = ""
-                        confirmedFinishDateFromFilter = ""
-                        selectedFinishDateTo = ""
-                        confirmedFinishDateToFilter = ""
-                        enteredCounterLo = ""
-                        confirmedCounterLoFilter = ""
-                        enteredCounterHi = ""
-                        confirmedCounterHiFilter = ""
-                        enteredPhaseLo = ""
-                        confirmedPhaseLoFilter = ""
-                        enteredPhaseHi = ""
-                        confirmedPhaseHiFilter = ""
-
-                        // get the unfiltered hunts
-                        val unfilteredHunts = getFilteredAndSortedHunts()
-
-                        // allow move buttons to be enabled
-                        shinyHuntListAdapter.setMoveButtonsEnabled(true)
-
-                        // automatically collapse all hunts
-                        expandAllCheckbox.isChecked = false
-                        shinyHuntListAdapter.collapseAll()
-
-                        // update the recycler view
-                        shinyHuntListAdapter.submitList(unfilteredHunts) {
-                            shinyHuntRecyclerView.scrollToPosition(0)
-                        }
-
-                        subMenuOpened = false
-                        Log.d("MainActivity", "Filters cleared after confirmation")
-                    }
-                    .setNegativeButton("Cancel") { dialog, _ ->
-                        dialog.dismiss()
-                        subMenuOpened = false
-                        Log.d("MainActivity", "Clear Filters canceled by user")
-                    }
-
-                // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                confirmDialog.setOnCancelListener {
-                    subMenuOpened = false
-                }
-
-                // listener for when user presses back or taps outside
-                confirmDialog.setOnDismissListener {
-                    subMenuOpened = false
-                }
-
-                // display the confirmation dialog
-                confirmDialog.show()
-            }
-        }
-
         // on click listener for the expand all checkbox
         expandAllCheckbox.setOnClickListener {
             if (expandAllCheckbox.isChecked) {
@@ -1193,274 +1161,37 @@ class MainActivity : ComponentActivity() {
                 shinyHuntListAdapter.collapseAll()
             }
         }
-
-        // Helper function to open the Sort Menu
-        fun openSortMenu() {
-            Log.d("MainActivity", "openSortMenu() started")
-
-            // hide the floating sort button
-            sortBtn.visibility = View.GONE
-
-            // show the sort menu
-            sortMenu.visibility = View.VISIBLE
-
-            Log.d("MainActivity", "openSortMenu() completed")
-        }
-
-        // Helper function to close the Sort Menu
-        fun closeSortMenu() {
-            Log.d("MainActivity", "closeSortMenu() started")
-
-            // hide the sort menu
-            sortMenu.visibility = View.GONE
-
-            // show the floating sort button
-            sortBtn.visibility = View.VISIBLE
-
-            Log.d("MainActivity", "closeSortMenu() completed")
-        }
-
-        // on click listener for the floating sort button
-        sortBtn.setOnClickListener {
-            Log.d("MainActivity", "Floating sort button clicked")
-
-            // Initialize the text and background for each of the sort buttons (append an up or down arrow to the current sort method)
-            if (currentSortMethodIndex == 0) {  // default
-                sortDefaultBtn.setBackgroundResource(R.drawable.ui_container_transparent)
-                sortDefaultBtn.text = if (currentSortOrders[0] == SortOrder.DESC) "Default ↓" else "Default ↑"
-            } else {
-                sortDefaultBtn.setBackgroundColor(0x00000000)
-                sortDefaultBtn.text = "Default"
-            }
-
-            if (currentSortMethodIndex == 1) {  // by start date
-                sortStartDateBtn.setBackgroundResource(R.drawable.ui_container_transparent)
-                sortStartDateBtn.text = if (currentSortOrders[1] == SortOrder.DESC) "Start Date ↓" else "Start Date ↑"
-            } else {
-                sortStartDateBtn.setBackgroundColor(0x00000000)
-                sortStartDateBtn.text = "Start Date"
-            }
-
-            if (currentSortMethodIndex == 2) {  // by finish date
-                sortFinishDateBtn.setBackgroundResource(R.drawable.ui_container_transparent)
-                sortFinishDateBtn.text = if (currentSortOrders[2] == SortOrder.DESC) "Finish Date ↓" else "Finish Date ↑"
-            } else {
-                sortFinishDateBtn.setBackgroundColor(0x00000000)
-                sortFinishDateBtn.text = "Finish Date"
-            }
-
-            if (currentSortMethodIndex == 3) {  // by name
-                sortNameBtn.setBackgroundResource(R.drawable.ui_container_transparent)
-                sortNameBtn.text = if (currentSortOrders[3] == SortOrder.DESC) "Name ↓" else "Name ↑"
-            } else {
-                sortNameBtn.setBackgroundColor(0x00000000)
-                sortNameBtn.text = "Name"
-            }
-
-            if (currentSortMethodIndex == 4) {  // by generation
-                sortGenerationBtn.setBackgroundResource(R.drawable.ui_container_transparent)
-                sortGenerationBtn.text = if (currentSortOrders[4] == SortOrder.DESC) "Generation ↓" else "Generation ↑"
-            } else {
-                sortGenerationBtn.setBackgroundColor(0x00000000)
-                sortGenerationBtn.text = "Generation"
-            }
-
-            // open the sort menu
-            openSortMenu()
-
-        }
-
-        // on click listener for the sort menu back button
-        sortBackBtn.setOnClickListener {
-            Log.d("MainActivity", "Sort menu back button clicked. Closing the sort menu")
-
-            // simply close the sort menu
-            closeSortMenu()
-        }
-
-        // on click listener for the sort by default button
-        sortDefaultBtn.setOnClickListener {
-            Log.d("MainActivity", "Sort by default button clicked")
-
-            // invert the sort order if current sort method is DEFAULT (0)
-            if (currentSortMethod == SortMethod.DEFAULT) {
-                currentSortOrders[0] = if (currentSortOrders[0] == SortOrder.DESC) SortOrder.ASC else SortOrder.DESC
-            } else {
-                // set the current method to DEFAULT (0)
-                currentSortMethod = SortMethod.DEFAULT
-                currentSortMethodIndex = 0
-            }
-
-            // set the text of the floating sort button
-            sortBtn.text = if (currentSortOrders[0] == SortOrder.DESC) "DF ↓" else "DF ↑"
-
-            // close the sort menu
-            closeSortMenu()
-
-            // get the new shiny hunt data set
-            val sortedHunts = getFilteredAndSortedHunts()
-
-            // update the sort method and order in the adapter
-            shinyHuntListAdapter.updateSortMethod(SortMethod.DEFAULT, currentSortOrders[0])
-
-            // update the recycler view
-            shinyHuntListAdapter.submitList(sortedHunts) {
-                shinyHuntRecyclerView.scrollToPosition(0)
-            }
-
-        }
-
-        // on click listener for the sort by start date button
-        sortStartDateBtn.setOnClickListener {
-            Log.d("MainActivity", "Sort by start date button clicked")
-
-            // invert the sort order if current sort method is by DATE_STARTED (1)
-            if (currentSortMethodIndex == 1) {
-                currentSortOrders[1] = if (currentSortOrders[1] == SortOrder.DESC) SortOrder.ASC else SortOrder.DESC
-            } else {
-                // set the current method to DATE_STARTED (1)
-                currentSortMethod = SortMethod.DATE_STARTED
-                currentSortMethodIndex = 1
-            }
-
-            // set the text of the floating sort button
-            sortBtn.text = if (currentSortOrders[1] == SortOrder.DESC) "SD ↓" else "SD ↑"
-
-            // close the sort menu
-            closeSortMenu()
-
-            // get the new shiny hunt data set
-            val sortedHunts = getFilteredAndSortedHunts()
-
-            // update the sort method and order in the adapter
-            shinyHuntListAdapter.updateSortMethod(SortMethod.DATE_STARTED, currentSortOrders[1])
-
-            // update the recycler view
-            shinyHuntListAdapter.submitList(sortedHunts) {
-                shinyHuntRecyclerView.scrollToPosition(0)
-            }
-
-        }
-
-        // on click listener for the sort by finish date button
-        sortFinishDateBtn.setOnClickListener {
-            Log.d("MainActivity", "Sort by finish date button clicked")
-
-            // invert the sort order if current sort method is by DATE_FINISHED (2)
-            if (currentSortMethodIndex == 2) {
-                currentSortOrders[2] = if (currentSortOrders[2] == SortOrder.DESC) SortOrder.ASC else SortOrder.DESC
-            } else {
-                // set the current method to DATE_FINISHED (2)
-                currentSortMethod = SortMethod.DATE_FINISHED
-                currentSortMethodIndex = 2
-            }
-
-            // set the text of the floating sort button
-            sortBtn.text = if (currentSortOrders[2] == SortOrder.DESC) "FD ↓" else "FD ↑"
-
-            // close the sort menu
-            closeSortMenu()
-
-            // get the new shiny hunt data set
-            val sortedHunts = getFilteredAndSortedHunts()
-
-            // update the sort method and order in the adapter
-            shinyHuntListAdapter.updateSortMethod(SortMethod.DATE_FINISHED, currentSortOrders[2])
-
-            // update the recycler view
-            shinyHuntListAdapter.submitList(sortedHunts) {
-                shinyHuntRecyclerView.scrollToPosition(0)
-            }
-
-        }
-
-        // on click listener for the sort by name button
-        sortNameBtn.setOnClickListener {
-            Log.d("MainActivity", "Sort by name button clicked")
-
-            // invert the sort order if current sort method is by NAME (3)
-            if (currentSortMethodIndex == 3) {
-                currentSortOrders[3] = if (currentSortOrders[3] == SortOrder.DESC) SortOrder.ASC else SortOrder.DESC
-            } else {
-                // set the current method to NAME (3)
-                currentSortMethod = SortMethod.NAME
-                currentSortMethodIndex = 3
-            }
-
-            // set the text of the floating sort button
-            sortBtn.text = if (currentSortOrders[3] == SortOrder.DESC) "NA ↓" else "NA ↑"
-
-            // close the sort menu
-            closeSortMenu()
-
-            // get the new shiny hunt data set
-            val sortedHunts = getFilteredAndSortedHunts()
-
-            // update the sort method and order in the adapter
-            shinyHuntListAdapter.updateSortMethod(SortMethod.NAME, currentSortOrders[3])
-
-            // update the recycler view
-            shinyHuntListAdapter.submitList(sortedHunts) {
-                shinyHuntRecyclerView.scrollToPosition(0)
-            }
-
-        }
-
-        // on click listener for the sort by generation button
-        sortGenerationBtn.setOnClickListener {
-            Log.d("MainActivity", "Sort by generation button clicked")
-
-            // invert the sort order if current sort method is by GENERATION (4)
-            if (currentSortMethodIndex == 4) {
-                currentSortOrders[4] = if (currentSortOrders[4] == SortOrder.DESC) SortOrder.ASC else SortOrder.DESC
-            } else {
-                // set the current method to GENERATION (4)
-                currentSortMethod = SortMethod.GENERATION
-                currentSortMethodIndex = 4
-            }
-
-            // set the text of the floating sort button
-            sortBtn.text = if (currentSortOrders[4] == SortOrder.DESC) "GE ↓" else "GE ↑"
-
-            // close the sort menu
-            closeSortMenu()
-
-            // get the new shiny hunt data set
-            val sortedHunts = getFilteredAndSortedHunts()
-
-            // update the sort method and order in the adapter
-            shinyHuntListAdapter.updateSortMethod(SortMethod.GENERATION, currentSortOrders[4])
-
-            // update the recycler view
-            shinyHuntListAdapter.submitList(sortedHunts) {
-                shinyHuntRecyclerView.scrollToPosition(0)
-            }
-
-        }
-
-        Log.d("MainActivity", "onCreate() completed")
     }
 
+    // Function that handles when a sort method is selected in the "Sort By" spinner
+    override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+        Log.d("MainActivity", "Item $position selected in the sort method spinner")
+
+        // set the current sort method index to the currently selected index in the spinner
+        currentSortMethodIndex = position
+
+        // using the current sort method index, set the current sort method to the corresponding sort method
+        // 0: Default, 1: Start Date, 2: Finish Date, 3: Name, 4: Generation
+        currentSortMethod =
+            when (currentSortMethodIndex) {
+                0 -> SortMethod.DEFAULT
+                1 -> SortMethod.DATE_STARTED
+                2 -> SortMethod.DATE_FINISHED
+                3 -> SortMethod.NAME
+                4 -> SortMethod.GENERATION
+                else -> SortMethod.DEFAULT      // if the index is somehow out of range, default to the DEFAULT sort method
+            }
+    }
+
+    // Function that handles when nothing is selected in the "Sort By" spinner
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        Log.d("MainActivity", "Nothing selected in the sort method spinner")
+    }
+
+    // Function for adjusting the UI layout when the screen is rotated
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.d("MainActivity", "onConfigurationChanged() started")
         super.onConfigurationChanged(newConfig)
-
-        // update the margins of the floating sort button
-        val sortBtnParams = sortBtn.layoutParams as FrameLayout.LayoutParams
-        val sortMenuParams = sortMenuLayout.layoutParams as FrameLayout.LayoutParams
-
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // set margins for landscape
-            sortBtnParams.setMargins(0, 0, 150, 50)
-            sortMenuParams.setMargins(0, 0, 150, 0)
-        } else {
-            // set margins for portrait
-            sortBtnParams.setMargins(0, 0, 20, 150)
-            sortMenuParams.setMargins(0, 0, 0, 0)
-        }
-
-        sortBtn.layoutParams = sortBtnParams
-        sortMenuLayout.layoutParams = sortMenuParams
 
         val layoutManager = shinyHuntRecyclerView.layoutManager
         if (layoutManager is GridLayoutManager) {
@@ -1483,7 +1214,7 @@ class MainActivity : ComponentActivity() {
         // get shiny hunts from the database using the applied filters and sorting method
         val hunts = db.getHunts(
             sortMethod = currentSortMethod,
-            sortOrder = currentSortOrders[currentSortMethodIndex],
+            sortOrder = currentSortOrder,
             formIDs = confirmedPokemonFormsFilter.toList(),
             originGameIDs = confirmedOriginGamesFilter.toList(),
             currentGameIDs = if (confirmedCompletionStatusFilter == CompletionStatus.IN_PROGRESS) emptyList() else confirmedCurrentGamesFilter.toList(),

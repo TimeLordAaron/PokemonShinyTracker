@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Filter Selection Scroll-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--Sort Selection Layout-->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="20dp">
+
+        <!--Sort Method Selection-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp">
+
+            <!--Sort Method Label-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sort_by"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:textAlignment="textEnd" />
+
+            <!--Sort Method-->
+            <Spinner
+                android:id="@+id/sort_method_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginStart="10dp" />
+
+        </LinearLayout>
+
+        <!--Sort Order Section-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <!--Sort Order Label-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|end"
+                android:text="@string/sort_order"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:textAlignment="textEnd" />
+
+            <!--Sort Orders-->
+            <RadioGroup
+                android:id="@+id/sort_orders_radio_group"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center">
+
+                <!--Descending Radio Button-->
+                <RadioButton
+                    android:id="@+id/descending_radio_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:text="@string/descending_label"
+                    android:textSize="16sp" />
+
+                <!--Ascending Radio Button-->
+                <RadioButton
+                    android:id="@+id/ascending_radio_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:text="@string/ascending_label"
+                    android:textSize="16sp" />
+
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <!--Confirm Sort Button-->
+        <Button
+            android:id="@+id/confirm_sort_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="center"
+            android:text="@string/confirm_sort"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+</ScrollView>

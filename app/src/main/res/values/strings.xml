@@ -64,4 +64,10 @@
     <string name="notes_label">Notes:</string>
     <string name="notes_hint">Add notes here.</string>
     <string name="selected_pokemon_label">Selected Pokémon:</string>
+    <string name="sort_label">Sort</string>
+    <string name="confirm_sort">Confirm Sort</string>
+    <string name="sort_by">Sort By:</string>
+    <string name="sort_order">Order:</string>
+    <string name="ascending_label">Ascending</string>
+    <string name="descending_label">Descending</string>
 </resources>
