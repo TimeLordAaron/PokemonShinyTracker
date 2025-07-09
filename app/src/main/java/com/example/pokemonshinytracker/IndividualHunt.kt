@@ -256,8 +256,8 @@ class IndividualHunt : ComponentActivity() {
                     subMenuOpened = true
 
                     val errorDialog = AlertDialog.Builder(this)
-                        .setTitle("Pokemon Not Selected")
-                        .setMessage("Please select a Pokemon before saving!")
+                        .setTitle("Pokémon Not Selected")
+                        .setMessage("Please select a Pokémon before saving!")
                         .setPositiveButton("Okay") { dialog, _ ->
                             // close the error dialog
                             dialog.dismiss()
