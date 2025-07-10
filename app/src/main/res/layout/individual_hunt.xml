@@ -189,7 +189,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:text="@string/na"
+                        android:text=""
                         android:textSize="18sp"
                         android:textColor="@color/black"
                         android:textAlignment="center" />
@@ -467,7 +467,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:text="@string/na"
+                        android:text=""
                         android:textSize="18sp"
                         android:textColor="@color/black"
                         android:textAlignment="center" />

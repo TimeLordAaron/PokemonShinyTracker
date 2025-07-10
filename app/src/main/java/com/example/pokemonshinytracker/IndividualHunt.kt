@@ -12,9 +12,9 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import android.view.View
 import android.widget.*
+import androidx.activity.addCallback
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.w3c.dom.Text
 import java.util.*
 
 class IndividualHunt : ComponentActivity() {
@@ -28,20 +28,35 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var nextFormBtn: Button                // next form button
     private lateinit var selectPokemonBtn: Button           // pokemon selection button
     private lateinit var pokemonRecyclerView: RecyclerView  // pokemon recycler view
+    private lateinit var selectedPokemonLabel: TextView     // selected pokemon label (will be hidden for the Individual Hunt page)
     private lateinit var selectPokemonDialog: View          // pokemon selection dialog
     private lateinit var pickStartDateBtn: Button           // start date button
     private lateinit var selectedStartDate: TextView        // start date text
     private lateinit var selectOriginGameBtn: Button        // origin game button
+    private lateinit var enteredMethod: EditText            // method text field
+    private lateinit var enteredCounter: EditText           // counter text field
     private lateinit var gameRecyclerView: RecyclerView     // game recycler view (used for origin game and current game)
     private lateinit var selectGameDialog: View             // game dialog (used for origin game and current game)
     private lateinit var decrementCounterBtn: Button        // decrement counter button
     private lateinit var incrementCounterBtn: Button        // increment counter button
+    private lateinit var enteredPhase: EditText             // phase text field
     private lateinit var decrementPhaseBtn: Button          // decrement phase button
     private lateinit var incrementPhaseBtn: Button          // increment phase button
+    private lateinit var enteredNotes: EditText             // notes text field
     private lateinit var completionCheckbox: CheckBox       // completion checkbox
     private lateinit var pickFinishDateBtn: Button          // finish date button
     private lateinit var selectedFinishDate: TextView       // finish date text
     private lateinit var selectCurrentGameBtn: Button       // current game button
+
+    // variable declarations for the selected hunt
+    private var selectedHuntID = 0
+    private lateinit var selectedHuntList: List<ShinyHunt>  // getHunts() function returns the shiny hunt as a list with 1 shiny hunt (or empty if this is a new hunt)
+    private var selectedHunt: ShinyHunt? = null             // will be assigned the hunt in selectedHuntList if it's not empty
+    private var selectedPokemonID: Int? = null
+    private var selectedFormID: Int? = null
+    private var selectedOriginGameID: Int? = null
+    private var selectedCurrentGameID: Int? = null
+    private var selectedDefaultPosition: Int? = null
 
     // variable to track if a sub menu is currently open
     private var subMenuOpened = false
@@ -52,14 +67,10 @@ class IndividualHunt : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.individual_hunt)
 
-        // variable declarations for the selected hunt
-        var selectedHuntID = 0
-        var selectedHunt: List<ShinyHunt>
-        var selectedPokemonID: Int? = null
-        var selectedFormID: Int? = null
-        var selectedOriginGameID: Int? = null
-        var selectedCurrentGameID: Int? = null
-        var selectedDefaultPosition: Int? = null
+        // set up detection for the user clicking the back button on their navigation bar
+        onBackPressedDispatcher.addCallback(this) {
+            handleBackNavigation()  // display confirmation dialog if there are unsaved changes
+        }
 
         // access the database
         val db = DBHelper(this, null)
@@ -83,7 +94,6 @@ class IndividualHunt : ComponentActivity() {
         detailLayout = findViewById(R.id.individual_hunt_details)                           // detail layout
         previousFormBtn = findViewById(R.id.previous_form_button)                           // previous form button
         nextFormBtn = findViewById(R.id.next_form_button)                                   // next form button
-        var selectedPokemonLabel = findViewById<TextView>(R.id.selected_pokemon_label)      // selected pokemon label
         val selectedPokemonName = findViewById<TextView>(R.id.selected_pokemon_name)        // selected pokemon name
         val selectedPokemonForm = findViewById<TextView>(R.id.selected_pokemon_form)        // selected pokemon form
         val pokemonImage = findViewById<ImageView>(R.id.pokemon_image)                      // pokemon image
@@ -94,14 +104,14 @@ class IndividualHunt : ComponentActivity() {
         val originGameIcon = findViewById<ImageView>(R.id.origin_game_icon)                 // origin game icon
         val originGameName = findViewById<TextView>(R.id.origin_game_name)                  // origin game name
         selectOriginGameBtn = findViewById(R.id.origin_game_button)                         // origin game select button
-        val method = findViewById<EditText>(R.id.method)                                    // method edit text
-        val counter = findViewById<EditText>(R.id.counter)                                  // counter edit text
+        enteredMethod = findViewById(R.id.method)                                    // method edit text
+        enteredCounter = findViewById(R.id.counter)                                  // counter edit text
         decrementCounterBtn = findViewById(R.id.decrement_counter_button)                   // counter decrement button
         incrementCounterBtn = findViewById(R.id.increment_counter_button)                   // counter increment button
-        val phase = findViewById<EditText>(R.id.phase)                                      // phase edit text
+        enteredPhase = findViewById(R.id.phase)                                      // phase edit text
         decrementPhaseBtn = findViewById(R.id.decrement_phase_button)                       // phase decrement button
         incrementPhaseBtn = findViewById(R.id.increment_phase_button)                       // phase increment button
-        val notes = findViewById<EditText>(R.id.notes_text)                                 // notes edit text
+        enteredNotes = findViewById(R.id.notes_text)                                 // notes edit text
         completionCheckbox = findViewById(R.id.hunt_complete_checkbox)                      // hunt completion checkbox
         val finishDateLayout = findViewById<LinearLayout>(R.id.finish_date_layout)          // finish date layout
         pickFinishDateBtn = findViewById(R.id.finish_date_button)                           // finish date button
@@ -119,18 +129,18 @@ class IndividualHunt : ComponentActivity() {
             Log.d("IndividualHunt", "Received Hunt ID: $selectedHuntID")
 
             // retrieve the hunt from the database using the hunt ID
-            selectedHunt = db.getHunts(selectedHuntID)
-            Log.d("IndividualHunt", "Hunt for ID $selectedHuntID: $selectedHunt")
+            selectedHuntList = db.getHunts(selectedHuntID)
+            Log.d("IndividualHunt", "Hunt for ID $selectedHuntID: $selectedHuntList")
 
             // check if a hunt was received from the database (should be empty if huntID was 0)
-            if (selectedHunt.isNotEmpty()) {
-                val hunt = selectedHunt[0]  // extracting the hunt from the returned list
-                Log.d("IndividualHunt", "Received Hunt: $hunt")
-                selectedFormID = hunt.formID
+            if (selectedHuntList.isNotEmpty()) {
+                selectedHunt = selectedHuntList[0]  // extracting the hunt from the returned list
+                Log.d("IndividualHunt", "Received Hunt: $selectedHunt")
+                selectedFormID = selectedHunt!!.formID
                 Log.d("IndividualHunt", "Form ID: $selectedFormID")
                 val pokemon = pokemonList.find { p -> p.forms.any { it.formID == selectedFormID } }!!
-                val formName = pokemon.forms.find { it.formID == hunt.formID }!!.formName
-                val formImage = pokemon.forms.find { it.formID == hunt.formID }!!.formImage
+                val formName = pokemon.forms.find { it.formID == selectedHunt!!.formID }!!.formName
+                val formImage = pokemon.forms.find { it.formID == selectedHunt!!.formID }!!.formImage
                 Log.d("IndividualHunt", "Received Pokemon: $pokemon")
                 if (selectedFormID != null) {
                     selectedPokemonID = pokemon.pokemonID
@@ -140,11 +150,11 @@ class IndividualHunt : ComponentActivity() {
                     }
                 }
                 Log.d("IndividualHunt", "Pokemon ID: $selectedPokemonID")
-                selectedOriginGameID = hunt.originGameID
+                selectedOriginGameID = selectedHunt!!.originGameID
                 Log.d("IndividualHunt", "Origin Game ID: $selectedOriginGameID")
-                selectedCurrentGameID = hunt.currentGameID
+                selectedCurrentGameID = selectedHunt!!.currentGameID
                 Log.d("IndividualHunt", "Current Game ID: $selectedCurrentGameID")
-                selectedDefaultPosition = hunt.defaultPosition
+                selectedDefaultPosition = selectedHunt!!.defaultPosition
                 Log.d("IndividualHunt", "Default Position: $selectedDefaultPosition")
 
                 // enable the delete button
@@ -162,53 +172,53 @@ class IndividualHunt : ComponentActivity() {
                 }
 
                 // update the start date text (if not null)
-                if (hunt.startDate != null) {
-                    selectedStartDate.text = hunt.startDate
+                if (selectedHunt!!.startDate != null) {
+                    selectedStartDate.text = selectedHunt!!.startDate
                 }
                 Log.d("IndividualHunt", "Start Date: ${selectedStartDate.text}")
 
                 // update the origin game icon and name
-                if (hunt.originGameID != null) {
-                    originGameIcon.setImageResource(gameList[hunt.originGameID!!].gameImage)
+                if (selectedHunt!!.originGameID != null) {
+                    originGameIcon.setImageResource(gameList[selectedHunt!!.originGameID!!].gameImage)
                     originGameIconBorder.visibility = View.VISIBLE
-                    originGameName.text = gameList[hunt.originGameID!!].gameName
+                    originGameName.text = gameList[selectedHunt!!.originGameID!!].gameName
                 }
 
                 // update the method text
-                method.setText(hunt.method)
-                Log.d("IndividualHunt", "Method: ${method.text}")
+                enteredMethod.setText(selectedHunt!!.method)
+                Log.d("IndividualHunt", "Method: ${enteredMethod.text}")
 
                 // update counter
-                counter.setText(hunt.counter.toString())
-                Log.d("IndividualHunt", "Counter: ${counter.text}")
+                enteredCounter.setText(selectedHunt!!.counter.toString())
+                Log.d("IndividualHunt", "Counter: ${enteredCounter.text}")
 
                 // update phase
-                phase.setText(hunt.phase.toString())
-                Log.d("IndividualHunt", "Phase: ${phase.text}")
+                enteredPhase.setText(selectedHunt!!.phase.toString())
+                Log.d("IndividualHunt", "Phase: ${enteredPhase.text}")
 
                 // update notes
-                notes.setText(hunt.notes)
-                Log.d("IndividualHunt", "Notes: ${notes.text}")
+                enteredNotes.setText(selectedHunt!!.notes)
+                Log.d("IndividualHunt", "Notes: ${enteredNotes.text}")
 
                 // update the finish date text (if not null)
-                if (hunt.finishDate != null) {
-                    selectedFinishDate.text = hunt.finishDate
+                if (selectedHunt!!.finishDate != null) {
+                    selectedFinishDate.text = selectedHunt!!.finishDate
                 }
                 Log.d("IndividualHunt", "Finish Date: ${selectedFinishDate.text}")
 
                 // update the current game icon and name
-                if (hunt.currentGameID != null) {
-                    currentGameIcon.setImageResource(gameList[hunt.currentGameID!!].gameImage)
+                if (selectedHunt!!.currentGameID != null) {
+                    currentGameIcon.setImageResource(gameList[selectedHunt!!.currentGameID!!].gameImage)
                     currentGameIconBorder.visibility = View.VISIBLE
-                    currentGameName.text = gameList[hunt.currentGameID!!].gameName
+                    currentGameName.text = gameList[selectedHunt!!.currentGameID!!].gameName
                 }
 
                 // update completion checkbox state
-                completionCheckbox.isChecked = hunt.isComplete
+                completionCheckbox.isChecked = selectedHunt!!.isComplete
                 Log.d("IndividualHunt", "Completion Status: ${completionCheckbox.isChecked}")
 
                 // update the background gradient
-                if (hunt.isComplete) {
+                if (selectedHunt!!.isComplete) {
                     mainLayout.setBackgroundResource(R.drawable.ui_gradient_complete_hunt)
                     finishDateLayout.visibility = View.VISIBLE
                     currentGameLayout.visibility = View.VISIBLE
@@ -237,13 +247,8 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the back button
         backBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Back button clicked. Returning to MainActivity window")
-
-            // check that a sub menu isn't currently open (so the user can't accidentally close the page by hitting the back button
-            if (!subMenuOpened) {
-                // return to the MainActivity window
-                finish()
-            }
+            Log.d("IndividualHunt", "Back button clicked")
+            handleBackNavigation()  // display confirmation dialog if there are unsaved changes
         }
 
         // on click listener for the save button
@@ -280,11 +285,11 @@ class IndividualHunt : ComponentActivity() {
                     selectedHuntID,
                     selectedFormID,
                     selectedOriginGameID,
-                    method.text.toString(),
+                    enteredMethod.text.toString(),
                     selectedStartDate.text.toString(),
-                    counter.text.toString().toInt(),
-                    phase.text.toString().toInt(),
-                    notes.text.toString(),
+                    enteredCounter.text.toString().toInt(),
+                    enteredPhase.text.toString().toInt(),
+                    enteredNotes.text.toString(),
                     completionCheckbox.isChecked,
                     if (completionCheckbox.isChecked) selectedFinishDate.text.toString() else null,
                     if (completionCheckbox.isChecked) selectedCurrentGameID else null,
@@ -625,40 +630,40 @@ class IndividualHunt : ComponentActivity() {
         // on click listener for the decrement counter button
         decrementCounterBtn.setOnClickListener {
             Log.d("IndividualHunt", "Decrement counter button clicked. Decrementing the counter")
-            val counterValue = counter.text.toString().toIntOrNull()
+            val counterValue = enteredCounter.text.toString().toIntOrNull()
             // decrement if value is greater than 0 and not null
             if (counterValue != null && counterValue > 0) {
-                counter.setText(String.format((counterValue - 1).toString()))
+                enteredCounter.setText(String.format((counterValue - 1).toString()))
             }
         }
 
         // on click listener for the increment counter button
         incrementCounterBtn.setOnClickListener {
             Log.d("IndividualHunt", "Increment counter button clicked. Incrementing the counter")
-            val counterValue = counter.text.toString().toIntOrNull()
+            val counterValue = enteredCounter.text.toString().toIntOrNull()
             // increment if value is not null
             if (counterValue != null) {
-                counter.setText(String.format((counterValue + 1).toString()))
+                enteredCounter.setText(String.format((counterValue + 1).toString()))
             }
         }
 
         // on click listener for the decrement phase button
         decrementPhaseBtn.setOnClickListener {
             Log.d("IndividualHunt", "Decrement phase button clicked. Decrementing the phase")
-            val phaseValue = phase.text.toString().toIntOrNull()
+            val phaseValue = enteredPhase.text.toString().toIntOrNull()
             // decrement if value is greater than 0 and not null
             if (phaseValue != null && phaseValue > 0) {
-                phase.setText(String.format((phaseValue - 1).toString()))
+                enteredPhase.setText(String.format((phaseValue - 1).toString()))
             }
         }
 
         // on click listener for the increment phase button
         incrementPhaseBtn.setOnClickListener {
             Log.d("IndividualHunt", "Increment phase button clicked. Incrementing the phase")
-            val phaseValue = phase.text.toString().toIntOrNull()
+            val phaseValue = enteredPhase.text.toString().toIntOrNull()
             // increment if value is not null
             if (phaseValue != null) {
-                phase.setText(String.format((phaseValue + 1).toString()))
+                enteredPhase.setText(String.format((phaseValue + 1).toString()))
             }
         }
 
@@ -801,7 +806,6 @@ class IndividualHunt : ComponentActivity() {
         Log.d("IndividualHunt", "onCreate() completed")
     }
 
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.d("IndividualHunt", "onConfigurationChanged() started")
         super.onConfigurationChanged(newConfig)
@@ -850,4 +854,77 @@ class IndividualHunt : ComponentActivity() {
         Log.d("IndividualHunt", "onConfigurationChanged() completed")
     }
 
+    // Helper function for detecting unsaved changes
+    private fun detectUnsavedChanges(): Boolean {
+        Log.d("IndividualHunt", "detectUnsavedChanges() started")
+
+        // extract all of the entered/selected fields
+        val formID = selectedFormID
+        val startDate = selectedStartDate.text
+        val originGameID = selectedOriginGameID
+        val methodText = enteredMethod.text.toString()
+        val counterText = enteredCounter.text.toString()
+        val phaseText = enteredPhase.text.toString()
+        val notesText = enteredNotes.text.toString()
+        val isComplete = completionCheckbox.isChecked
+        val finishDate = selectedFinishDate.text
+        val currentGameID = selectedCurrentGameID
+
+        // if editing a pre-existing hunt, return true if any of the fields are different from the original unedited hunt
+        selectedHunt?.let { hunt ->
+            return formID != hunt.formID ||
+                    startDate != hunt.startDate ||
+                    originGameID != hunt.originGameID ||
+                    methodText != hunt.method ||
+                    counterText != hunt.counter.toString() ||
+                    phaseText != hunt.phase.toString() ||
+                    notesText != hunt.notes ||
+                    isComplete != hunt.isComplete ||
+                    finishDate != hunt.finishDate ||
+                    currentGameID != hunt.currentGameID
+        }
+
+        // if creating a new hunt, return true if any of the fields are not their default value
+        return formID != null ||
+                startDate.isNotEmpty() ||
+                originGameID != null ||
+                methodText.isNotEmpty() ||
+                counterText != "0" ||
+                phaseText != "0" ||
+                notesText.isNotEmpty() ||
+                isComplete ||
+                finishDate.isNotEmpty() ||
+                currentGameID != null
+    }
+
+    // Function to display a confirmation dialog if the user has unsaved changes while trying to navigate back to the MainActivity window
+    private fun handleBackNavigation() {
+        Log.d("IndividualHunt", "Back navigation triggered")
+
+        // check that a sub menu isn't currently open (so the user can't accidentally close the page by hitting the back button
+        if (!subMenuOpened) {
+            subMenuOpened = true
+
+            // if unsaved changes are detected, open a confirmation dialog
+            if (detectUnsavedChanges()) {
+                AlertDialog.Builder(this)
+                    .setTitle("Unsaved Changes Detected")
+                    .setMessage("You have unsaved changes. Are you sure you want to return to the main menu without saving?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        // user decided to not save their changes
+                        Log.d("IndividualHunt", "User decided to not save their changes. Returning to Main Window")
+                        finish() // close IndividualHunt activity
+                    }
+                    .setNegativeButton("No") { dialog, _ ->
+                        // user canceled the Back button
+                        Log.d("IndividualHunt", "User canceled returning to the Main Window")
+                        dialog.dismiss()
+                        subMenuOpened = false
+                    }
+                    .show()
+            }
+            // if there are no detected changes, return to the MainActivity window
+            else { finish() }
+        }
+    }
 }
