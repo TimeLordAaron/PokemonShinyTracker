@@ -291,7 +291,7 @@ class IndividualHunt : ComponentActivity() {
                     enteredPhase.text.toString().toInt(),
                     enteredNotes.text.toString(),
                     completionCheckbox.isChecked,
-                    if (completionCheckbox.isChecked) selectedFinishDate.text.toString() else null,
+                    if (completionCheckbox.isChecked) selectedFinishDate.text.toString() else "",
                     if (completionCheckbox.isChecked) selectedCurrentGameID else null,
                     selectedDefaultPosition
                 )
