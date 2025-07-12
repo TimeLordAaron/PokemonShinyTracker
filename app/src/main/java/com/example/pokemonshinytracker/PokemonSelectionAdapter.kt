@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 
 class PokemonSelectionAdapter(
     private val mode: Int,
@@ -32,7 +33,7 @@ class PokemonSelectionAdapter(
         val pokemonImage: ImageView = view.findViewById(R.id.pokemon_image)
 
         fun bind(pokemon: Pokemon, position: Int) {
-            pokemonImage.setImageResource(pokemon.forms.find { it.isDefaultForm }!!.formImage)
+            pokemonImage.load(pokemon.forms.find { it.isDefaultForm }!!.formImage)
 
             // update background based on selection
             if (mode == 1) {

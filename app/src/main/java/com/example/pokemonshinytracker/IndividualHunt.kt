@@ -245,6 +245,10 @@ class IndividualHunt : ComponentActivity() {
         selectGameDialog = layoutInflater.inflate(R.layout.game_selection, null)
         gameRecyclerView = selectGameDialog.findViewById(R.id.game_recycler_view)
 
+        // set up a recycled view pool for the pokemon recycler view so it doesn't have to reinflate all the views each time the dialog is opened
+        val pokemonViewPool = RecyclerView.RecycledViewPool()
+        pokemonRecyclerView.setRecycledViewPool(pokemonViewPool)
+
         // on click listener for the back button
         backBtn.setOnClickListener {
             Log.d("IndividualHunt", "Back button clicked")
