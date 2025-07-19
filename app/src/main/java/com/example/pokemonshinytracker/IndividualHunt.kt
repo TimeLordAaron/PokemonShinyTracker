@@ -821,7 +821,6 @@ class IndividualHunt : ComponentActivity() {
             else
                 LinearLayout.VERTICAL
 
-
         // determine the number of columns based on orientation
         val pokemonSpanCount = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
         val gameSpanCount = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3

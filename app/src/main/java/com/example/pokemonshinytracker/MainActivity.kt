@@ -9,6 +9,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var pokemonListRecyclerView: RecyclerView  // pokemon list recycler view
     private lateinit var editOriginGamesBtn: Button             // edit origin games button
     private lateinit var originGamesTxt: TextView               // selected origin games text
-    private lateinit var originGamesRecyclerView: RecyclerView  // origin game recycler view
+    private lateinit var gamesRecyclerView: RecyclerView        // game recycler view (used for origin and current game)
     private lateinit var completionStatusRadioGrp: RadioGroup   // completion status radio group
     private lateinit var inProgressRadioBtn: RadioButton        // in progress radio button (for completion status)
     private lateinit var completedRadioBtn: RadioButton         // completed radio button (for completion status)
@@ -62,7 +63,6 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var currentGamesLayout: LinearLayout       // current games layout
     private lateinit var editCurrentGamesBtn: Button            // edit current games button
     private lateinit var currentGamesTxt: TextView              // selected current games text
-    private lateinit var currentGamesRecyclerView: RecyclerView // current games recycler view
     private lateinit var method: EditText                       // method text field
     private lateinit var startDateFromBtn: Button               // start date from button
     private lateinit var startDateToBtn: Button                 // start date to button
@@ -118,6 +118,10 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     private var subMenuOpened = false
     private var individualHuntOpening = false
 
+    // variables for inflating the selection dialogs in the filter menu
+    private lateinit var selectPokemonDialogLayout: View
+    private lateinit var selectGamesDialogLayout: View
+
     // access the database
     private val db = DBHelper(this, null)
 
@@ -140,16 +144,10 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         if (gameList.isEmpty()) {
             Log.d("MainActivity", "Failed to retrieve games from database")
         }
-        var hunts = db.getHunts()                                                 // gets all hunts
-        //val hunts = db.getHunts(formIDs = listOf(720, 721, 722, 723, 724, 725))   // filters for Rotom
-        //val hunts = db.getHunts(originGameIDs = listOf(12, 13, 14))               // filters for hunts in D/P/PL
-        //val hunts = db.getHunts(currentGameIDs = listOf(27, 28))                  // filters for shinies transferred to US/UM
-        //val hunts = db.getHunts(startedFrom = "2021-05-01", startedTo = "2021-07-01")   // filters for hunts started from May-July 2020 ( doesn't work yet >:( )
-        //val hunts = db.getHunts(counterLo = 0, counterHi = 100)     // filters for hunts completed in 100 encounters or less
-        //val hunts = db.getHunts(completionStatus = CompletionStatus.IN_PROGRESS, sortMethod = SortMethod.NAME, sortOrder = SortOrder.DESC)  // filters for in progress hunts, sorts by name in reverse alphabetical order
+        val hunts = db.getHunts()           // retrieve all saved shiny hunts from the database
         Log.d("MainActivity", "Retrieved ${hunts.size} shiny hunts from database")
 
-        // access the UI elements
+        // access the main UI elements
         val noHuntsMessage = findViewById<TextView>(R.id.no_hunts_message)                      // message for when user has no saved hunts
         shinyHuntRecyclerView = findViewById(R.id.shiny_hunts_recycler_view)                    // recycler view that displays the user's saved hunts
         newHuntBtn = findViewById(R.id.new_hunt_button)                                         // new hunt button
@@ -268,6 +266,24 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 insets
             }
         }
+
+        /* Filter Menu: Selection Dialogs */
+        // inflate layouts of the pokemon and game selection dialogs (for the filter menu)
+        selectPokemonDialogLayout = layoutInflater.inflate(R.layout.pokemon_selection, null)
+        selectGamesDialogLayout = layoutInflater.inflate(R.layout.game_selection, null)
+
+        // access the recycler views
+        selectedPokemonRecyclerView = selectPokemonDialogLayout.findViewById(R.id.selected_pokemon_recycler_view)
+        pokemonListRecyclerView = selectPokemonDialogLayout.findViewById(R.id.pokemon_recycler_view)
+        gamesRecyclerView = selectGamesDialogLayout.findViewById(R.id.game_recycler_view)
+
+        // set up a recycled view pool for the pokemon recycler view so it doesn't have to reinflate all the views each time the dialog is opened
+        val pokemonViewPool = RecyclerView.RecycledViewPool()
+        pokemonListRecyclerView.setRecycledViewPool(pokemonViewPool)
+
+        // show the selected Pokemon section
+        val selectedPokemonLayout = selectPokemonDialogLayout.findViewById<LinearLayout>(R.id.selected_pokemon_layout)
+        selectedPokemonLayout.visibility = View.VISIBLE
 
         // on click listener for the new hunt button
         newHuntBtn.setOnClickListener {
@@ -615,27 +631,12 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
-                        // inflate the pokemon selection dialog layout
-                        val selectPokemonDialogLayout = layoutInflater.inflate(R.layout.pokemon_selection, null)
-
-                        // access the recycler views
-                        selectedPokemonRecyclerView = selectPokemonDialogLayout.findViewById(R.id.selected_pokemon_recycler_view)
-                        pokemonListRecyclerView = selectPokemonDialogLayout.findViewById(R.id.pokemon_recycler_view)
-
-                        // show the selected Pokemon section
-                        val selectedPokemonLayout =
-                            selectPokemonDialogLayout.findViewById<LinearLayout>(R.id.selected_pokemon_layout)
-                        selectedPokemonLayout.visibility = View.VISIBLE
-
-                        // access the search bar
-                        val searchBar = selectPokemonDialogLayout.findViewById<EditText>(R.id.search_pokemon)
-
                         // set the span counts based on device orientation
                         selectedPokemonRecyclerView.layoutManager = LinearLayoutManager(this)
-                        val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
-                        pokemonListRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
+                        val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
+                        pokemonListRecyclerView.layoutManager = GridLayoutManager(this, pokemonSpanCount)
 
-                        val layoutManager = GridLayoutManager(this, spanCount)
+                        val layoutManager = GridLayoutManager(this, pokemonSpanCount)
 
                         // prepare dataset with headers
                         val groupedPokemonList = preparePokemonListWithHeaders(pokemonList)
@@ -644,13 +645,16 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                             override fun getSpanSize(position: Int): Int {
                                 return when (groupedPokemonList[position]) {
-                                    is PokemonListItem.HeaderItem -> spanCount  // header takes full row
+                                    is PokemonListItem.HeaderItem -> pokemonSpanCount  // header takes full row
                                     is PokemonListItem.PokemonItem -> 1         // Pokemon takes 1 column
                                 }
                             }
                         }
 
                         pokemonListRecyclerView.layoutManager = layoutManager
+
+                        // detach the dialog layout from any previous parent before reattaching
+                        (selectPokemonDialogLayout.parent as? ViewGroup)?.removeView(selectPokemonDialogLayout)
 
                         // create and show the dialog
                         val selectPokemonDialog = AlertDialog.Builder(this)
@@ -660,6 +664,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                                 dialog.dismiss()
                                 subMenuOpened = false
                             }
+                            .create()
 
                         // listener for when the dialog is dismissed (includes CANCEL and outside taps)
                         selectPokemonDialog.setOnCancelListener { subMenuOpened = false }
@@ -670,29 +675,25 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         // display the select Pokemon dialog
                         selectPokemonDialog.show()
 
-                        lateinit var selectedPokemonAdapter: SelectedPokemonAdapter
-                        lateinit var pokemonListAdapter: PokemonSelectionAdapter
-
                         // create the adapter for the selected pokemon recycler view
-                        selectedPokemonAdapter = SelectedPokemonAdapter(
+                        selectedPokemonRecyclerView.adapter = SelectedPokemonAdapter(
                             selectedPokemon,
                             selectedPokemonForms,
                             onPokemonUnselected = { removedPokemon ->
                                 selectedPokemon.removeAll { it.pokemonID == removedPokemon.pokemonID }
                                 removedPokemon.forms.forEach { selectedPokemonForms.remove(it.formID) }
-                                selectedPokemonAdapter.updateList(selectedPokemon)
-                                pokemonListAdapter.updateSelectedPokemon(selectedPokemon)
-                                pokemonListAdapter.notifyDataSetChanged()
+                                (selectedPokemonRecyclerView.adapter as SelectedPokemonAdapter).updateList(selectedPokemon)
+                                (pokemonListRecyclerView.adapter as PokemonSelectionAdapter).updateSelectedPokemon(selectedPokemon)
+                                (pokemonListRecyclerView.adapter as PokemonSelectionAdapter).notifyDataSetChanged()
                                 setPokemon()
                             },
                             onSelectionChanged = {
                                 setPokemon()
                             }
                         )
-                        selectedPokemonRecyclerView.adapter = selectedPokemonAdapter
 
                         // create the adapter for the main pokemon selection list
-                        pokemonListAdapter = PokemonSelectionAdapter(
+                        pokemonListRecyclerView.adapter = PokemonSelectionAdapter(
                             1,
                             groupedPokemonList,
                             selectedPokemon
@@ -706,11 +707,12 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                                 selectedPokemon.add(returnedPokemon)
                                 selectedPokemonForms.add(returnedPokemon.forms.sortedBy { it.formID }[0].formID)
                             }
-                            selectedPokemonAdapter.updateList(selectedPokemon)
+                            (selectedPokemonRecyclerView.adapter as SelectedPokemonAdapter).updateList(selectedPokemon)
                             setPokemon()
                         }
-                        pokemonListRecyclerView.adapter = pokemonListAdapter
 
+                        // access the search bar in the Pokemon selection dialog
+                        val searchBar = selectPokemonDialogLayout.findViewById<EditText>(R.id.search_pokemon)
 
                         // filter Pokémon as the user types
                         searchBar.addTextChangedListener(object : TextWatcher {
@@ -752,7 +754,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                                     object : GridLayoutManager.SpanSizeLookup() {
                                         override fun getSpanSize(position: Int): Int {
                                             return when (updatedList[position]) {
-                                                is PokemonListItem.HeaderItem -> spanCount
+                                                is PokemonListItem.HeaderItem -> pokemonSpanCount
                                                 is PokemonListItem.PokemonItem -> 1
                                             }
                                         }
@@ -770,38 +772,36 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
-                        // inflate the game selection dialog layout
-                        val originGamesDialogLayout = layoutInflater.inflate(R.layout.game_selection, null)
-
-                        // access the recycler view
-                        originGamesRecyclerView = originGamesDialogLayout.findViewById(R.id.game_recycler_view)
-
                         // get and apply the span count based on orientation
-                        val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
-                        originGamesRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
+                        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
+                        gamesRecyclerView.layoutManager = GridLayoutManager(this, gameSpanCount)
 
                         // prepare dataset with headers
                         val groupedGameList = prepareGameListWithHeaders(gameList)
 
                         // custom span size logic to make headers span full width
-                        (originGamesRecyclerView.layoutManager as GridLayoutManager).spanSizeLookup =
+                        (gamesRecyclerView.layoutManager as GridLayoutManager).spanSizeLookup =
                             object : GridLayoutManager.SpanSizeLookup() {
                                 override fun getSpanSize(position: Int): Int {
                                     return when (groupedGameList[position]) {
-                                        is GameListItem.HeaderItem -> spanCount  // header takes full row
+                                        is GameListItem.HeaderItem -> gameSpanCount  // header takes full row
                                         is GameListItem.GameItem -> 1            // game takes 1 column
                                     }
                                 }
                             }
 
+                        // detach the dialog layout from any previous parent before reattaching
+                        (selectGamesDialogLayout.parent as? ViewGroup)?.removeView(selectGamesDialogLayout)
+
                         // create and show the dialog
                         val originGamesDialog = AlertDialog.Builder(this)
                             .setTitle("Select the Origin Games")
-                            .setView(originGamesDialogLayout)
+                            .setView(selectGamesDialogLayout)
                             .setPositiveButton("Close") { dialog, _ ->
                                 dialog.dismiss()
                                 subMenuOpened = false
                             }
+                            .create()
 
                         // listener for when the dialog is dismissed (includes CANCEL and outside taps)
                         originGamesDialog.setOnCancelListener { subMenuOpened = false }
@@ -812,7 +812,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         // display the origin games dialog
                         originGamesDialog.show()
 
-                        originGamesRecyclerView.adapter =
+                        gamesRecyclerView.adapter =
                             GameSelectionAdapter(
                                 2,
                                 groupedGameList,
@@ -860,38 +860,36 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
-                        // inflate the game selection dialog layout
-                        val currentGamesDialogLayout = layoutInflater.inflate(R.layout.game_selection, null)
-
-                        // access the recycler view
-                        currentGamesRecyclerView = currentGamesDialogLayout.findViewById(R.id.game_recycler_view)
-
                         // get and apply the span count based on orientation
-                        val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
-                        currentGamesRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
+                        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
+                        gamesRecyclerView.layoutManager = GridLayoutManager(this, gameSpanCount)
 
                         // prepare dataset with headers
                         val groupedGameList = prepareGameListWithHeaders(gameList)
 
                         // custom span size logic to make headers span full width
-                        (currentGamesRecyclerView.layoutManager as GridLayoutManager).spanSizeLookup =
+                        (gamesRecyclerView.layoutManager as GridLayoutManager).spanSizeLookup =
                             object : GridLayoutManager.SpanSizeLookup() {
                                 override fun getSpanSize(position: Int): Int {
                                     return when (groupedGameList[position]) {
-                                        is GameListItem.HeaderItem -> spanCount  // header takes full row
+                                        is GameListItem.HeaderItem -> gameSpanCount  // header takes full row
                                         is GameListItem.GameItem -> 1            // game takes 1 column
                                     }
                                 }
                             }
 
+                        // detach the dialog layout from any previous parent before reattaching
+                        (selectGamesDialogLayout.parent as? ViewGroup)?.removeView(selectGamesDialogLayout)
+
                         // create and show the dialog
                         val currentGamesDialog = AlertDialog.Builder(this)
                             .setTitle("Select the Current Games")
-                            .setView(currentGamesDialogLayout)
+                            .setView(selectGamesDialogLayout)
                             .setPositiveButton("Close") { dialog, _ ->
                                 dialog.dismiss()
                                 subMenuOpened = false
                             }
+                            .create()
 
                         // listener for when the dialog is dismissed (includes CANCEL and outside taps)
                         currentGamesDialog.setOnCancelListener { subMenuOpened = false }
@@ -902,7 +900,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         // display the current games dialog
                         currentGamesDialog.show()
 
-                        currentGamesRecyclerView.adapter =
+                        gamesRecyclerView.adapter =
                             GameSelectionAdapter(
                                 3,
                                 groupedGameList,
@@ -1272,6 +1270,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         Log.d("MainActivity", "onConfigurationChanged() started")
         super.onConfigurationChanged(newConfig)
 
+        // update layout of the shiny hunt recycler view
         val layoutManager = shinyHuntRecyclerView.layoutManager
         if (layoutManager is GridLayoutManager) {
             if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -1282,6 +1281,40 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 Log.d("MainActivity", "Orientation is PORTRAIT, spanCount set to 1")
             }
         }
+
+        /* Filter Menu: Selection Dialogs */
+        // get span counts based on device orientation
+        val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
+        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
+
+        // reinitialize GridLayoutManagers with updated span counts
+        val pokemonGridLayoutManager = GridLayoutManager(this, pokemonSpanCount)
+        val gameGridLayoutManager = GridLayoutManager(this, gameSpanCount)
+
+        // reset spanSizeLookup to ensure headers take up the full row
+        pokemonGridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when ((pokemonListRecyclerView.adapter as? PokemonSelectionAdapter)?.getItemViewType(position)) {
+                    PokemonSelectionAdapter.VIEW_TYPE_HEADER -> pokemonSpanCount // header spans full row
+                    PokemonSelectionAdapter.VIEW_TYPE_POKEMON -> 1               // Pokemon takes 1 column
+                    else -> 1 // default fallback
+                }
+            }
+        }
+
+        gameGridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when ((gamesRecyclerView.adapter as? GameSelectionAdapter)?.getItemViewType(position)) {
+                    GameSelectionAdapter.VIEW_TYPE_HEADER -> gameSpanCount // header spans full row
+                    GameSelectionAdapter.VIEW_TYPE_GAME -> 1               // game takes 1 column
+                    else -> 1 // default fallback
+                }
+            }
+        }
+
+        // apply the updated layout managers
+        pokemonListRecyclerView.layoutManager = pokemonGridLayoutManager
+        gamesRecyclerView.layoutManager = gameGridLayoutManager
 
         Log.d("MainActivity", "onConfigurationChanged() completed")
     }
