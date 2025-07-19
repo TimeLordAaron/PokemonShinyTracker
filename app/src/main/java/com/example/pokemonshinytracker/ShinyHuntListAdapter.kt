@@ -38,8 +38,10 @@ class ShinyHuntListAdapter(
     private var currentSortMethod: SortMethod = SortMethod.DEFAULT      // stores the current sort method
     private var currentSortOrder: SortOrder = SortOrder.DESC            // stores the current sort order
     private var moveButtonsEnabled: Boolean = true                      // used to toggle the move buttons
-    var onScrollToPosition: ((Int) -> Unit)? = null                     // variable to scroll to position of the swapped hunt
-    var onExpandStateChanged: ((allExpanded: Boolean) -> Unit)? = null  // variable to toggle the state of the expand all checkbox in MainActivity when an individual hunt is expand/collapsed
+    var onScrollToPosition: ((Int) -> Unit)? = null                     // callback function to scroll to position of the swapped hunt
+    var onExpandStateChanged: ((allExpanded: Boolean) -> Unit)? = null  // callback function to toggle the state of the expand all checkbox in MainActivity when an individual hunt is expand/collapsed
+    var onEditHuntRequested: ((ShinyHunt) -> Unit)? = null              // callback function to handle request to edit a shiny hunt
+    var onDeleteHuntRequested: ((ShinyHunt) -> Unit)? = null            // callback function to display a deletion confirmation message for the selected hunt
 
     // View holder for shiny hunts
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -57,6 +59,7 @@ class ShinyHuntListAdapter(
         val moveUpButton: ImageButton = view.findViewById(R.id.move_up_button)
         val moveDownButton: ImageButton = view.findViewById(R.id.move_down_button)
         val editButton: ImageButton = view.findViewById(R.id.edit_button)
+        val deleteButton: ImageButton = view.findViewById(R.id.delete_button)
     }
 
     // Create new shiny hunt views (invoked by the layout manager)
@@ -200,13 +203,16 @@ class ShinyHuntListAdapter(
         holder.editButton.setOnClickListener {
             Log.d("ShinyHuntListAdapter", "Edit button clicked for shiny hunt: $hunt")
 
-            // switch to the detailed view of the shiny hunt
-            val intent = Intent(context, IndividualHunt::class.java).apply {
-                putExtra("hunt_id", hunt.huntID)
-            }
+            // invoke the onEditHuntRequested callback
+            onEditHuntRequested?.invoke(hunt)
+        }
 
-            Log.d("ShinyHuntListAdapter", "Created intent for selected hunt. Switching to Individual Hunt window")
-            context.startActivity(intent)
+        // on click listener for the delete button
+        holder.deleteButton.setOnClickListener {
+            Log.d("ShinyHuntListAdapter", "Delete button clicked for shiny hunt: $hunt")
+
+            // invoke the onDeleteHuntRequested callback
+            onDeleteHuntRequested?.invoke(hunt)
         }
 
         Log.d("ShinyHuntListAdapter", "onBindViewHolder() completed")

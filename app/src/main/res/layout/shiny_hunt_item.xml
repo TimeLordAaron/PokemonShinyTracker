@@ -192,7 +192,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <!--Move Up Button-->
             <ImageButton
@@ -223,6 +223,17 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_pencil"
                 android:contentDescription="@string/edit" />
+
+            <!--Delete Button-->
+            <ImageButton
+                android:id="@+id/delete_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_trash"
+                android:contentDescription="@string/edit" />
+
         </LinearLayout>
 
     </LinearLayout>

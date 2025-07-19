@@ -116,6 +116,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     private var sortMenuOpened = false
     private var filterMenuOpened = false
     private var subMenuOpened = false
+    private var individualHuntOpening = false
 
     // access the database
     private val db = DBHelper(this, null)
@@ -168,6 +169,73 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
             }
         }
 
+        // set up the callback functions of the adapter
+        shinyHuntListAdapter.onScrollToPosition = { position ->
+            // when swapping shiny hunts, scroll to the position of the shiny hunt that initiated the swap
+            shinyHuntRecyclerView.scrollToPosition(position)
+        }
+
+        shinyHuntListAdapter.onExpandStateChanged = { allExpanded ->
+            // check the expand all checkbox if all shiny hunts are currently expanded
+            expandAllCheckbox.isChecked = allExpanded
+        }
+
+        shinyHuntListAdapter.onEditHuntRequested = { huntToEdit ->
+            // check that a sub menu isn't currently open (to prevent the user from opening multiple dialogs at once)
+            if (!subMenuOpened && !sortMenuOpened && !filterMenuOpened && !individualHuntOpening) {
+                individualHuntOpening = true
+
+                // switch to the detailed view of the shiny hunt
+                val intent = Intent(this, IndividualHunt::class.java).apply {
+                    putExtra("hunt_id", huntToEdit.huntID)
+                }
+
+                Log.d("ShinyHuntListAdapter", "Created intent for selected hunt. Switching to Individual Hunt window")
+                this.startActivity(intent)
+            }
+        }
+
+        shinyHuntListAdapter.onDeleteHuntRequested = { huntToDelete ->
+            // check that a sub menu isn't currently open (to prevent the user from opening multiple dialogs at once)
+            if (!subMenuOpened && !sortMenuOpened && !filterMenuOpened && !individualHuntOpening) {
+                subMenuOpened = true
+
+                val pokemon = pokemonList.find { p -> p.forms.any { it.formID == huntToDelete.formID } }
+                val formName = pokemon?.pokemonName ?: "this Pokémon"
+
+                val deleteDialog = AlertDialog.Builder(this)
+                    .setTitle("Delete Shiny Hunt")
+                    .setMessage("Are you sure you want to delete the shiny hunt for $formName?")
+                    .setPositiveButton("Delete") { _, _ ->
+                        db.deleteHunt(huntToDelete.huntID)  // delete the hunt from the database
+
+                        val updatedList = shinyHuntListAdapter.currentList.toMutableList().apply {
+                            remove(huntToDelete)    // delete the hunt visually
+                        }
+                        shinyHuntListAdapter.submitList(updatedList)
+
+                        if (updatedList.isEmpty()) {
+                            noHuntsMessage.visibility = View.VISIBLE
+                            shinyHuntRecyclerView.visibility = View.GONE
+                        }
+                        subMenuOpened = false
+                    }
+                    .setNegativeButton("Cancel") { _, _ ->
+                        subMenuOpened = false
+                    }
+                    .create()
+
+                // listener for when the dialog is dismissed (includes CANCEL and outside taps)
+                deleteDialog.setOnCancelListener { subMenuOpened = false }
+
+                // listener for when user presses back or taps outside
+                deleteDialog.setOnDismissListener { subMenuOpened = false }
+
+                // display the deletion dialog
+                deleteDialog.show()
+            }
+        }
+
         // handle visibility of the no hunts message and the recycler view
         if (hunts.isEmpty()) {
             noHuntsMessage.visibility = View.VISIBLE
@@ -205,22 +273,27 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         newHuntBtn.setOnClickListener {
             Log.d("MainActivity", "New Hunt button clicked. Preparing to create a new shiny hunt")
 
-            // set up an intent (using 0 as a placeholder for the hunt ID)
-            val intent = Intent(this, IndividualHunt::class.java).apply {
-                putExtra("hunt_id", 0)
-            }
-            Log.d("MainActivity", "Created intent for a new hunt. Switching to IndividualHunt")
+            // don't navigate to the IndividualHunt page if a sub menu is opened
+            if (!subMenuOpened && !sortMenuOpened && !filterMenuOpened && !individualHuntOpening) {
+                individualHuntOpening = true
 
-            // switch to IndividualHunt
-            this.startActivity(intent)
+                // set up an intent (using 0 as a placeholder for the hunt ID)
+                val intent = Intent(this, IndividualHunt::class.java).apply {
+                    putExtra("hunt_id", 0)
+                }
+                Log.d("MainActivity", "Created intent for a new hunt. Switching to IndividualHunt")
+
+                // switch to IndividualHunt
+                this.startActivity(intent)
+            }
         }
 
         // on click listener for the sort button
         sortBtn.setOnClickListener {
             Log.d("MainActivity", "Sort button clicked")
 
-            // check if the sort menu or filter menu are already open (to prevent the user from spamming open multiple copies of it)
-            if (!sortMenuOpened && !filterMenuOpened) {
+            // check if a sub menu is already open (to prevent the user from spamming open multiple copies of it)
+            if (!subMenuOpened && !sortMenuOpened && !filterMenuOpened && !individualHuntOpening) {
                 sortMenuOpened = true
 
                 val sortDialogLayout = layoutInflater.inflate(R.layout.sort_selection, null)
@@ -382,8 +455,8 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         filterBtn.setOnClickListener {
             Log.d("MainActivity", "Filter button clicked. Opening filters dialog")
 
-            // check if the sort menu or filter menu are already open (to prevent the user from spamming open multiple copies of it)
-            if (!sortMenuOpened && !filterMenuOpened) {
+            // check if a sub menu is already open (to prevent the user from spamming open multiple copies of it)
+            if (!subMenuOpened && !sortMenuOpened && !filterMenuOpened && !individualHuntOpening) {
                 filterMenuOpened = true
 
                 val filterDialogLayout = layoutInflater.inflate(R.layout.filter_selection, null)
@@ -455,7 +528,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 filterClearFiltersBtn.setOnClickListener {
                     Log.d("MainActivity", "Clear Filters button clicked in the filter selection dialog")
 
-                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    // check if a sub menu is already open (to prevent the user from spamming open multiple copies of it)
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
@@ -538,7 +611,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 editPokemonBtn.setOnClickListener {
                     Log.d("MainActivity", "Edit Pokemon button clicked in the filter selection dialog")
 
-                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    // check if a sub menu is already open (to prevent the user from spamming open multiple copies of it)
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
@@ -693,7 +766,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 editOriginGamesBtn.setOnClickListener {
                     Log.d("MainActivity", "Edit Origin Games button clicked in the filter selection dialog")
 
-                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    // check if a sub menu is already open (to prevent the user from spamming open multiple copies of it)
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
@@ -783,7 +856,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 editCurrentGamesBtn.setOnClickListener {
                     Log.d("MainActivity", "Edit Current Games button clicked in the filter selection dialog")
 
-                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    // check if a sub menu is already open (to prevent the user from spamming open multiple copies of it)
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
@@ -852,7 +925,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 startDateFromBtn.setOnClickListener {
                     Log.d("MainActivity", "Start Date From button clicked in the filter selection dialog")
 
-                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    // check if a sub menu is already open (to prevent the user from spamming open multiple copies of it)
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
@@ -906,7 +979,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 startDateToBtn.setOnClickListener {
                     Log.d("MainActivity", "Start Date To button clicked in the filter selection dialog")
 
-                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    // check if a sub menu is already open (to prevent the user from spamming open multiple copies of it)
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
@@ -960,7 +1033,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 finishDateFromBtn.setOnClickListener {
                     Log.d("MainActivity", "Finish Date From button clicked in the filter selection dialog")
 
-                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    // check if a sub menu is already open (to prevent the user from spamming open multiple copies of it)
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
@@ -1014,7 +1087,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 finishDateToBtn.setOnClickListener {
                     Log.d("MainActivity", "Finish Date To button clicked in the filter selection dialog")
 
-                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    // check if a sub menu is already open (to prevent the user from spamming open multiple copies of it)
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
@@ -1074,7 +1147,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 confirmFiltersBtn.setOnClickListener {
                     Log.d("MainActivity", "Confirm Filters button clicked in the filter selection dialog")
 
-                    // check that a sub menu isn't currently open (to prevent the user from opening multiple modals at once)
+                    // check if a sub menu is already open (to prevent the user from spamming open multiple copies of it)
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
@@ -1186,6 +1259,12 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     // Function that handles when nothing is selected in the "Sort By" spinner
     override fun onNothingSelected(parent: AdapterView<*>?) {
         Log.d("MainActivity", "Nothing selected in the sort method spinner")
+    }
+
+    // Function that is called when this activity is resumed after returning from another activity
+    override fun onResume() {
+        super.onResume()
+        individualHuntOpening = false   // the IndividualHunt activity is now closed
     }
 
     // Function for adjusting the UI layout when the screen is rotated

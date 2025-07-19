@@ -81,12 +81,12 @@ object ShinyHuntData {
         shinyHunts.add(listOf(937, 28, "Soft Resets", "", 1414, 0, "", 1, "", 28))                      // Zekrom
         shinyHunts.add(listOf(1180, 28, "Soft Resets", "2025-5-12", 122, 0, "", 1, "2025-5-13", 28))    // Pheromosa (Ultra Moon)
         shinyHunts.add(listOf(729, 27, "Soft Resets", "", 3026, 0, "", 1, "2025-5-15", 27))             // Dialga
-        shinyHunts.add(listOf(958, 21, "Soft Resets", "2025-5-14", 3140, 0,
+        shinyHunts.add(listOf(958, 21, "Soft Resets", "2025-5-14", 3450, 0,
             "Pokemon X Shiny-Only Run\n" +
             "\n" +
             "- Hunting in both X and Y.\n" +
-            "- Alternating the starter every 10 encounters.", 0, "", null))           // Kalos Starter (X; ongoing)
-        shinyHunts.add(listOf(936, 27, "Soft Resets", "2025-5-16", 100, 0, "", 0, "", null))            // Reshiram (ongoing)
+            "- Alternating the starter every 10 encounters.", 0, "", null))                             // Kalos Starter (X; ongoing)
+        shinyHunts.add(listOf(936, 27, "Soft Resets", "2025-5-16", 200, 0, "", 0, "", null))            // Reshiram (ongoing)
 
 
         // insert each shiny hunt into the database
