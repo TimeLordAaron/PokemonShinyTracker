@@ -356,25 +356,9 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 descendingOrderRadioBtn.setOnClickListener { currentSortOrder = SortOrder.DESC }
 
                 // build the dialog
-                val sortDialog = AlertDialog.Builder(this)
-                    .setTitle("Sort")
-                    .setView(sortDialogLayout)
-                    .setPositiveButton("Close") { dialog, _ ->
-                        dialog.dismiss()
-                        sortMenuOpened = false
-                    }
-                    .create()
-
-                // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                sortDialog.setOnCancelListener { sortMenuOpened = false }
-
-                // listener for when user presses back or taps outside
-                sortDialog.setOnDismissListener { sortMenuOpened = false }
-
-                // set the background of the dialog
-                sortDialog.window?.setBackgroundDrawableResource(R.drawable.ui_gradient_homepage)
-
-                // display the sort dialog
+                val sortDialog = createDialogWithLayout("Sort", sortDialogLayout) {
+                    sortMenuOpened = false
+                }
                 sortDialog.show()
 
                 // on click listener for the confirm sort button
@@ -519,25 +503,9 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 setPhaseHi()
 
                 // build the dialog
-                val filterDialog = AlertDialog.Builder(this)
-                    .setTitle("Filters")
-                    .setView(filterDialogLayout)
-                    .setPositiveButton("Close") { dialog, _ ->
-                        dialog.dismiss()
-                        filterMenuOpened = false
-                    }
-                    .create()
-
-                // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                filterDialog.setOnCancelListener { filterMenuOpened = false }
-
-                // listener for when user presses back or taps outside
-                filterDialog.setOnDismissListener { filterMenuOpened = false }
-
-                // set the background of the dialog
-                filterDialog.window?.setBackgroundDrawableResource(R.drawable.ui_gradient_homepage)
-
-                // display the filter dialog
+                val filterDialog = createDialogWithLayout("Filters", filterDialogLayout) {
+                    filterMenuOpened = false
+                }
                 filterDialog.show()
 
                 // on click listener for the clear filters button (filter selection dialog)
@@ -657,22 +625,9 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         (selectPokemonDialogLayout.parent as? ViewGroup)?.removeView(selectPokemonDialogLayout)
 
                         // create and show the dialog
-                        val selectPokemonDialog = AlertDialog.Builder(this)
-                            .setTitle("Select Pokémon")
-                            .setView(selectPokemonDialogLayout)
-                            .setPositiveButton("Close") { dialog, _ ->
-                                dialog.dismiss()
-                                subMenuOpened = false
-                            }
-                            .create()
-
-                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                        selectPokemonDialog.setOnCancelListener { subMenuOpened = false }
-
-                        // listener for when user presses back or taps outside
-                        selectPokemonDialog.setOnDismissListener { subMenuOpened = false }
-
-                        // display the select Pokemon dialog
+                        val selectPokemonDialog = createDialogWithLayout("Select Pokémon", selectPokemonDialogLayout) {
+                            subMenuOpened = false
+                        }
                         selectPokemonDialog.show()
 
                         // create the adapter for the selected pokemon recycler view
@@ -794,22 +749,9 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         (selectGamesDialogLayout.parent as? ViewGroup)?.removeView(selectGamesDialogLayout)
 
                         // create and show the dialog
-                        val originGamesDialog = AlertDialog.Builder(this)
-                            .setTitle("Select the Origin Games")
-                            .setView(selectGamesDialogLayout)
-                            .setPositiveButton("Close") { dialog, _ ->
-                                dialog.dismiss()
-                                subMenuOpened = false
-                            }
-                            .create()
-
-                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                        originGamesDialog.setOnCancelListener { subMenuOpened = false }
-
-                        // listener for when user presses back or taps outside
-                        originGamesDialog.setOnDismissListener { subMenuOpened = false }
-
-                        // display the origin games dialog
+                        val originGamesDialog = createDialogWithLayout("Select the Origin Games", selectGamesDialogLayout) {
+                            subMenuOpened = false
+                        }
                         originGamesDialog.show()
 
                         gamesRecyclerView.adapter =
@@ -882,22 +824,9 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         (selectGamesDialogLayout.parent as? ViewGroup)?.removeView(selectGamesDialogLayout)
 
                         // create and show the dialog
-                        val currentGamesDialog = AlertDialog.Builder(this)
-                            .setTitle("Select the Current Games")
-                            .setView(selectGamesDialogLayout)
-                            .setPositiveButton("Close") { dialog, _ ->
-                                dialog.dismiss()
-                                subMenuOpened = false
-                            }
-                            .create()
-
-                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                        currentGamesDialog.setOnCancelListener { subMenuOpened = false }
-
-                        // listener for when user presses back or taps outside
-                        currentGamesDialog.setOnDismissListener { subMenuOpened = false }
-
-                        // display the current games dialog
+                        val currentGamesDialog = createDialogWithLayout("Select the Current Games", selectGamesDialogLayout) {
+                            subMenuOpened = false
+                        }
                         currentGamesDialog.show()
 
                         gamesRecyclerView.adapter =
@@ -1344,6 +1273,19 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
         Log.d("MainActivity", "getFilteredAndSortedHunts() completed. Returning the list of shiny hunts")
         return hunts
+    }
+
+    // Helper function to create dialogs with layouts
+    private fun createDialogWithLayout(title: String, layout: View, onClose: () -> Unit = {}): AlertDialog {
+        return AlertDialog.Builder(this)
+            .setTitle(title)
+            .setView(layout)
+            .setPositiveButton("Close") { dialog, _ -> dialog.dismiss(); onClose() }
+            .create().apply {
+                setOnCancelListener { onClose() }
+                setOnDismissListener { onClose() }
+                window?.setBackgroundDrawableResource(R.drawable.ui_gradient_homepage)
+            }
     }
 
 }
