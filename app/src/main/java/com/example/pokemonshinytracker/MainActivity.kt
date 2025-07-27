@@ -856,49 +856,12 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
-                        // create a calendar instance
-                        val c = Calendar.getInstance()
-
-                        // get the day, month, and year from the calendar
-                        val year = c.get(Calendar.YEAR)
-                        val month = c.get(Calendar.MONTH)
-                        val day = c.get(Calendar.DAY_OF_MONTH)
-
-                        // create a dialog for the date picker
-                        Log.d("MainActivity", "Creating date picker dialog")
-                        val datePickerDialog = DatePickerDialog(
-                            this,
-                            { _, selectedYear, selectedMonth, selectedDay ->
-                                // format and set the text for the start date
-                                selectedStartDateFrom =
-                                    (buildString {
-                                        append(selectedYear.toString())
-                                        append("-")
-                                        append((selectedMonth + 1).toString())
-                                        append("-")
-                                        append(selectedDay.toString())
-                                    })
-                                startDateFromBtn.text = selectedStartDateFrom
-                                Log.d(
-                                    "MainActivity",
-                                    "Selected Start Date From: ${startDateFromBtn.text}"
-                                )
-                                subMenuOpened = false
-                            },
-                            // pass the year, month, and day for the selected date
-                            year,
-                            month,
-                            day
-                        )
-
-                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                        datePickerDialog.setOnCancelListener { subMenuOpened = false }
-
-                        // listener for when user presses back or taps outside
-                        datePickerDialog.setOnDismissListener { subMenuOpened = false }
-
-                        // display the date picker dialog
-                        datePickerDialog.show()
+                        // display the date picker
+                        showDatePickerDialog {
+                            // use the returned date string
+                            selectedStartDateFrom = it
+                            startDateFromBtn.text = it
+                        }
                     }
                 }
 
@@ -910,49 +873,12 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
-                        // create a calendar instance
-                        val c = Calendar.getInstance()
-
-                        // get the day, month, and year from the calendar
-                        val year = c.get(Calendar.YEAR)
-                        val month = c.get(Calendar.MONTH)
-                        val day = c.get(Calendar.DAY_OF_MONTH)
-
-                        // create a dialog for the date picker
-                        Log.d("MainActivity", "Creating date picker dialog")
-                        val datePickerDialog = DatePickerDialog(
-                            this,
-                            { _, selectedYear, selectedMonth, selectedDay ->
-                                // format and set the text for the start date
-                                selectedStartDateTo =
-                                    (buildString {
-                                        append(selectedYear.toString())
-                                        append("-")
-                                        append((selectedMonth + 1).toString())
-                                        append("-")
-                                        append(selectedDay.toString())
-                                    })
-                                startDateToBtn.text = selectedStartDateTo
-                                Log.d(
-                                    "MainActivity",
-                                    "Selected Start Date To: ${startDateToBtn.text}"
-                                )
-                                subMenuOpened = false
-                            },
-                            // pass the year, month, and day for the selected date
-                            year,
-                            month,
-                            day
-                        )
-
-                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                        datePickerDialog.setOnCancelListener { subMenuOpened = false }
-
-                        // listener for when user presses back or taps outside
-                        datePickerDialog.setOnDismissListener { subMenuOpened = false }
-
-                        // display the date picker dialog
-                        datePickerDialog.show()
+                        // display the date picker
+                        showDatePickerDialog {
+                            // use the returned date string
+                            selectedStartDateTo = it
+                            startDateToBtn.text = it
+                        }
                     }
                 }
 
@@ -964,49 +890,12 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
-                        // create a calendar instance
-                        val c = Calendar.getInstance()
+                        // display the date picker
+                        showDatePickerDialog {// use the returned date string
 
-                        // get the day, month, and year from the calendar
-                        val year = c.get(Calendar.YEAR)
-                        val month = c.get(Calendar.MONTH)
-                        val day = c.get(Calendar.DAY_OF_MONTH)
-
-                        // create a dialog for the date picker
-                        Log.d("MainActivity", "Creating date picker dialog")
-                        val datePickerDialog = DatePickerDialog(
-                            this,
-                            { _, selectedYear, selectedMonth, selectedDay ->
-                                // format and set the text for the finish date
-                                selectedFinishDateFrom =
-                                    (buildString {
-                                        append(selectedYear.toString())
-                                        append("-")
-                                        append((selectedMonth + 1).toString())
-                                        append("-")
-                                        append(selectedDay.toString())
-                                    })
-                                finishDateFromBtn.text = selectedFinishDateFrom
-                                Log.d(
-                                    "MainActivity",
-                                    "Selected Finish Date From: ${finishDateFromBtn.text}"
-                                )
-                                subMenuOpened = false
-                            },
-                            // pass the year, month, and day for the selected date
-                            year,
-                            month,
-                            day
-                        )
-
-                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                        datePickerDialog.setOnCancelListener { subMenuOpened = false }
-
-                        // listener for when user presses back or taps outside
-                        datePickerDialog.setOnDismissListener { subMenuOpened = false }
-
-                        // display the date picker dialog
-                        datePickerDialog.show()
+                            selectedFinishDateFrom = it
+                            finishDateFromBtn.text = it
+                        }
                     }
                 }
 
@@ -1018,49 +907,12 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                     if (!subMenuOpened) {
                         subMenuOpened = true
 
-                        // create a calendar instance
-                        val c = Calendar.getInstance()
-
-                        // get the day, month, and year from the calendar
-                        val year = c.get(Calendar.YEAR)
-                        val month = c.get(Calendar.MONTH)
-                        val day = c.get(Calendar.DAY_OF_MONTH)
-
-                        // create a dialog for the date picker
-                        Log.d("MainActivity", "Creating date picker dialog")
-                        val datePickerDialog = DatePickerDialog(
-                            this,
-                            { _, selectedYear, selectedMonth, selectedDay ->
-                                // format and set the text for the finish date
-                                selectedFinishDateTo =
-                                    (buildString {
-                                        append(selectedYear.toString())
-                                        append("-")
-                                        append((selectedMonth + 1).toString())
-                                        append("-")
-                                        append(selectedDay.toString())
-                                    })
-                                finishDateToBtn.text = selectedFinishDateTo
-                                Log.d(
-                                    "MainActivity",
-                                    "Selected Finish Date To: ${finishDateToBtn.text}"
-                                )
-                                subMenuOpened = false
-                            },
-                            // pass the year, month, and day for the selected date
-                            year,
-                            month,
-                            day
-                        )
-
-                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                        datePickerDialog.setOnCancelListener { subMenuOpened = false }
-
-                        // listener for when user presses back or taps outside
-                        datePickerDialog.setOnDismissListener { subMenuOpened = false }
-
-                        // display the date picker dialog
-                        datePickerDialog.show()
+                        // display the date picker
+                        showDatePickerDialog {
+                            // use the returned date string
+                            selectedFinishDateTo = it
+                            finishDateToBtn.text = it
+                        }
                     }
                 }
 
@@ -1286,6 +1138,29 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 setOnDismissListener { onClose() }
                 window?.setBackgroundDrawableResource(R.drawable.ui_gradient_homepage)
             }
+    }
+
+    // Helper function to display date picker dialogs
+    private fun showDatePickerDialog(onDateSelected: (String) -> Unit) {
+        val c = Calendar.getInstance()
+
+        // create a dialog for the date picker
+        DatePickerDialog(
+            this,
+            { _, year, month, day ->
+                onDateSelected("$year-${month + 1}-$day")
+                subMenuOpened = false
+            },
+            // pass the year, month, and day for the selected date
+            c.get(Calendar.YEAR),
+            c.get(Calendar.MONTH),
+            c.get(Calendar.DAY_OF_MONTH)
+
+        ).apply {
+            setOnCancelListener { subMenuOpened = false }
+            setOnDismissListener { subMenuOpened = false }
+            show()
+        }
     }
 
 }
