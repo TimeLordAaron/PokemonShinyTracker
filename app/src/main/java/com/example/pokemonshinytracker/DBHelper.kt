@@ -12,7 +12,7 @@ import java.sql.SQLException
 class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
 
-    var whereClauseAdded = false    // global variable for use in getHunts() and addWhereOrAndClause()
+    private var whereClauseAdded = false    // global variable for use in getHunts() and addWhereOrAndClause()
 
     // Function to create the database
     override fun onCreate(db: SQLiteDatabase) {

@@ -72,9 +72,11 @@ class IndividualHunt : ComponentActivity() {
             handleBackNavigation()  // display confirmation dialog if there are unsaved changes
         }
 
-        // access the database
+        // database helper
         val db = DBHelper(this, null)
-        Log.d("IndividualHunt", "Database opened")
+
+        // dialog handler
+        val dh = DialogHandler()
 
         // retrieve relevant data from database
         val pokemonList = db.getPokemon()   // list of all pokemon
@@ -397,8 +399,8 @@ class IndividualHunt : ComponentActivity() {
             if (!subMenuOpened) {
                 subMenuOpened = true
 
-                val selectPokemonDialog = layoutInflater.inflate(R.layout.pokemon_selection, null)
-                pokemonRecyclerView = selectPokemonDialog.findViewById(R.id.pokemon_recycler_view)
+                val selectPokemonDialogLayout = layoutInflater.inflate(R.layout.pokemon_selection, null)
+                pokemonRecyclerView = selectPokemonDialogLayout.findViewById(R.id.pokemon_recycler_view)
 
                 // hide the "Selected Pokemon" label
                 selectedPokemonLabel = selectPokemonDialog.findViewById(R.id.selected_pokemon_label)
@@ -427,19 +429,9 @@ class IndividualHunt : ComponentActivity() {
 
                 pokemonRecyclerView.layoutManager = layoutManager
 
-                // create and show the dialog
-                val dialog = AlertDialog.Builder(this)
-                    .setTitle("Select a Pokémon")
-                    .setView(selectPokemonDialog)
-                    .setPositiveButton("Close") { dialog, _ ->
-                        dialog.dismiss()
-                        subMenuOpened = false
-                    }
-                    .show()
-
-                // listener for when user presses back or taps outside
-                dialog.setOnDismissListener {
-                    subMenuOpened = false
+                // create the pokemon selection dialog
+                val selectPokemonDialog = dh.createDialogWithLayout(this, "Select a Pokémon", selectPokemonDialogLayout) {
+                    subMenuOpened = false   // on close, unset subMenuOpened
                 }
 
                 pokemonRecyclerView.adapter =
@@ -459,7 +451,7 @@ class IndividualHunt : ComponentActivity() {
                             if (selectedPokemon.forms.size > 1) View.VISIBLE else View.INVISIBLE
                         nextFormBtn.visibility =
                             if (selectedPokemon.forms.size > 1) View.VISIBLE else View.INVISIBLE
-                        dialog.dismiss()
+                        selectPokemonDialog.dismiss()
                         subMenuOpened = false
                     }
 
@@ -522,49 +514,15 @@ class IndividualHunt : ComponentActivity() {
             if (!subMenuOpened) {
                 subMenuOpened = true
 
-                // create a calendar instance
-                val c = Calendar.getInstance()
-
-                // get the day, month, and year from the calendar
-                val year = c.get(Calendar.YEAR)
-                val month = c.get(Calendar.MONTH)
-                val day = c.get(Calendar.DAY_OF_MONTH)
-
-                // create a dialog for the date picker
-                Log.d("IndividualHunt", "Creating date picker dialog")
-                val datePickerDialog = DatePickerDialog(
-                    this,
-                    { _, selectedYear, selectedMonth, selectedDay ->
-                        // format and set the text for the start date
-                        selectedStartDate.text =
-                            (buildString {
-                                append(selectedYear.toString())
-                                append("-")
-                                append((selectedMonth + 1).toString())
-                                append("-")
-                                append(selectedDay.toString())
-                            })
-                        Log.d("IndividualHunt", "Selected Start Date: ${selectedStartDate.text}")
-                        subMenuOpened = false // OK was clicked
-                    },
-                    // pass the year, month, and day for the selected date
-                    year,
-                    month,
-                    day
-                )
-
-                // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                datePickerDialog.setOnCancelListener {
+                // display the date picker
+                dh.createDatePickerDialog(this, {
+                    // use the returned date string
+                    selectedStartDate.text = it
+                }, {
+                    // on close, unset subMenuOpened
                     subMenuOpened = false
-                }
+                })
 
-                // listener for when user presses back or taps outside
-                datePickerDialog.setOnDismissListener {
-                    subMenuOpened = false
-                }
-
-                // display the date picker dialog
-                datePickerDialog.show()
             }
         }
 
@@ -584,8 +542,8 @@ class IndividualHunt : ComponentActivity() {
             if (!subMenuOpened) {
                 subMenuOpened = true
 
-                val selectGameDialog = layoutInflater.inflate(R.layout.game_selection, null)
-                gameRecyclerView = selectGameDialog.findViewById(R.id.game_recycler_view)
+                val selectGameDialogLayout = layoutInflater.inflate(R.layout.game_selection, null)
+                gameRecyclerView = selectGameDialogLayout.findViewById(R.id.game_recycler_view)
 
                 val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
                 gameRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
@@ -604,19 +562,9 @@ class IndividualHunt : ComponentActivity() {
                         }
                     }
 
-                // create and show the dialog
-                val dialog = AlertDialog.Builder(this)
-                    .setTitle("Select the Origin Game")
-                    .setView(selectGameDialog)
-                    .setPositiveButton("Close") { dialog, _ ->
-                        dialog.dismiss()
-                        subMenuOpened = false
-                    }
-                    .show()
-
-                // listen for when user presses back or clicks out of the dialog
-                dialog.setOnDismissListener {
-                    subMenuOpened = false
+                // create the origin game selection dialog
+                val selectOriginGameDialog = dh.createDialogWithLayout(this, "Select the Origin Game", selectGameDialogLayout) {
+                    subMenuOpened = false   // on close, unset subMenuOpened
                 }
 
                 gameRecyclerView.adapter =
@@ -625,7 +573,7 @@ class IndividualHunt : ComponentActivity() {
                         originGameIconBorder.visibility = View.VISIBLE
                         originGameName.text = selectedGame.gameName
                         selectedOriginGameID = selectedGame.gameID - 1
-                        dialog.dismiss()
+                        selectOriginGameDialog.dismiss()
                         subMenuOpened = false
                     }
             }
@@ -698,49 +646,15 @@ class IndividualHunt : ComponentActivity() {
             if (!subMenuOpened) {
                 subMenuOpened = true
 
-                // create a calendar instance
-                val c = Calendar.getInstance()
-
-                // get the day, month, and year from the calendar
-                val year = c.get(Calendar.YEAR)
-                val month = c.get(Calendar.MONTH)
-                val day = c.get(Calendar.DAY_OF_MONTH)
-
-                // create a dialog for the date picker
-                Log.d("IndividualHunt", "Creating date picker dialog")
-                val datePickerDialog = DatePickerDialog(
-                    this,
-                    { _, selectedYear, selectedMonth, selectedDay ->
-                        // format and set the text for the finish date
-                        selectedFinishDate.text =
-                            (buildString {
-                                append(selectedYear.toString())
-                                append("-")
-                                append((selectedMonth + 1).toString())
-                                append("-")
-                                append(selectedDay.toString())
-                            })
-                        Log.d("IndividualHunt", "Selected Finish Date: ${selectedFinishDate.text}")
-                        subMenuOpened = false // OK was clicked
-                    },
-                    // pass the year, month, and day for the selected date
-                    year,
-                    month,
-                    day
-                )
-
-                // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                datePickerDialog.setOnCancelListener {
+                // display the date picker
+                dh.createDatePickerDialog(this, {
+                    // use the returned date string
+                    selectedFinishDate.text = it
+                }, {
+                    // on close, unset subMenuOpened
                     subMenuOpened = false
-                }
+                })
 
-                // listener for when user presses back or taps outside
-                datePickerDialog.setOnDismissListener {
-                    subMenuOpened = false
-                }
-
-                // display the date picker dialog
-                datePickerDialog.show()
             }
         }
 
@@ -760,8 +674,8 @@ class IndividualHunt : ComponentActivity() {
             if (!subMenuOpened) {
                 subMenuOpened = true
 
-                val selectGameDialog = layoutInflater.inflate(R.layout.game_selection, null)
-                gameRecyclerView = selectGameDialog.findViewById(R.id.game_recycler_view)
+                val selectGameDialogLayout = layoutInflater.inflate(R.layout.game_selection, null)
+                gameRecyclerView = selectGameDialogLayout.findViewById(R.id.game_recycler_view)
 
                 val spanCount =
                     if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
@@ -781,18 +695,9 @@ class IndividualHunt : ComponentActivity() {
                         }
                     }
 
-                // create and show the dialog
-                val dialog = AlertDialog.Builder(this)
-                    .setTitle("Select the Current Game")
-                    .setView(selectGameDialog)
-                    .setPositiveButton("Close") { dialog, _ ->
-                        dialog.dismiss()
-                        subMenuOpened = false
-                    }
-                    .show()
-
-                dialog.setOnCancelListener {
-                    subMenuOpened = false
+                // create the current game selection dialog
+                val selectCurrentGameDialog = dh.createDialogWithLayout(this, "Select the Current Game", selectGameDialogLayout) {
+                    subMenuOpened = false   // on close, unset subMenuOpened
                 }
 
                 gameRecyclerView.adapter =
@@ -801,7 +706,7 @@ class IndividualHunt : ComponentActivity() {
                         currentGameIconBorder.visibility = View.VISIBLE
                         currentGameName.text = selectedGame.gameName
                         selectedCurrentGameID = selectedGame.gameID - 1
-                        dialog.dismiss()
+                        selectCurrentGameDialog.dismiss()
                         subMenuOpened = false
                     }
             }

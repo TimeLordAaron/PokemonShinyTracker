@@ -122,8 +122,11 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var selectPokemonDialogLayout: View
     private lateinit var selectGamesDialogLayout: View
 
-    // access the database
+    // database helper
     private val db = DBHelper(this, null)
+
+    // dialog handler
+    private val dh = DialogHandler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("MainActivity", "onCreate() started")
@@ -355,11 +358,10 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 // on click listener for the descending radio button
                 descendingOrderRadioBtn.setOnClickListener { currentSortOrder = SortOrder.DESC }
 
-                // build the dialog
-                val sortDialog = createDialogWithLayout("Sort", sortDialogLayout) {
-                    sortMenuOpened = false
+                // create the sort menu dialog
+                val sortDialog = dh.createDialogWithLayout(this, "Sort", sortDialogLayout) {
+                    sortMenuOpened = false  // on close, unset sortMenuOpened
                 }
-                sortDialog.show()
 
                 // on click listener for the confirm sort button
                 confirmSortBtn.setOnClickListener {
@@ -502,11 +504,10 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 setPhaseLo()
                 setPhaseHi()
 
-                // build the dialog
-                val filterDialog = createDialogWithLayout("Filters", filterDialogLayout) {
-                    filterMenuOpened = false
+                // create the filter menu dialog
+                val filterDialog = dh.createDialogWithLayout(this, "Filters", filterDialogLayout) {
+                    filterMenuOpened = false    // on close, unset filterMenuOpened
                 }
-                filterDialog.show()
 
                 // on click listener for the clear filters button (filter selection dialog)
                 filterClearFiltersBtn.setOnClickListener {
@@ -624,11 +625,10 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         // detach the dialog layout from any previous parent before reattaching
                         (selectPokemonDialogLayout.parent as? ViewGroup)?.removeView(selectPokemonDialogLayout)
 
-                        // create and show the dialog
-                        val selectPokemonDialog = createDialogWithLayout("Select Pokémon", selectPokemonDialogLayout) {
-                            subMenuOpened = false
+                        // create the pokemon selection dialog
+                        dh.createDialogWithLayout(this, "Select Pokémon", selectPokemonDialogLayout) {
+                            subMenuOpened = false   // on close, unset subMenuOpened
                         }
-                        selectPokemonDialog.show()
 
                         // create the adapter for the selected pokemon recycler view
                         selectedPokemonRecyclerView.adapter = SelectedPokemonAdapter(
@@ -748,11 +748,10 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         // detach the dialog layout from any previous parent before reattaching
                         (selectGamesDialogLayout.parent as? ViewGroup)?.removeView(selectGamesDialogLayout)
 
-                        // create and show the dialog
-                        val originGamesDialog = createDialogWithLayout("Select the Origin Games", selectGamesDialogLayout) {
-                            subMenuOpened = false
+                        // create the origin games dialog
+                        dh.createDialogWithLayout(this, "Select the Origin Games", selectGamesDialogLayout) {
+                            subMenuOpened = false   // on close, unset subMenuOpened
                         }
-                        originGamesDialog.show()
 
                         gamesRecyclerView.adapter =
                             GameSelectionAdapter(
@@ -823,11 +822,10 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         // detach the dialog layout from any previous parent before reattaching
                         (selectGamesDialogLayout.parent as? ViewGroup)?.removeView(selectGamesDialogLayout)
 
-                        // create and show the dialog
-                        val currentGamesDialog = createDialogWithLayout("Select the Current Games", selectGamesDialogLayout) {
-                            subMenuOpened = false
+                        // create the current games dialog
+                        dh.createDialogWithLayout(this, "Select the Current Games", selectGamesDialogLayout) {
+                            subMenuOpened = false   // on close, unset subMenuOpened
                         }
-                        currentGamesDialog.show()
 
                         gamesRecyclerView.adapter =
                             GameSelectionAdapter(
@@ -857,11 +855,14 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // display the date picker
-                        showDatePickerDialog {
+                        dh.createDatePickerDialog(this, {
                             // use the returned date string
                             selectedStartDateFrom = it
                             startDateFromBtn.text = it
-                        }
+                        }, {
+                            // on close, unset subMenuOpened
+                            subMenuOpened = false
+                        })
                     }
                 }
 
@@ -874,11 +875,14 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // display the date picker
-                        showDatePickerDialog {
+                        dh.createDatePickerDialog(this, {
                             // use the returned date string
                             selectedStartDateTo = it
                             startDateToBtn.text = it
-                        }
+                        }, {
+                            // on close, unset subMenuOpened
+                            subMenuOpened = false
+                        })
                     }
                 }
 
@@ -891,11 +895,14 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // display the date picker
-                        showDatePickerDialog {// use the returned date string
-
+                        dh.createDatePickerDialog(this, {
+                            // use the returned date string
                             selectedFinishDateFrom = it
                             finishDateFromBtn.text = it
-                        }
+                        }, {
+                            // on close, unset subMenuOpened
+                            subMenuOpened = false
+                        })
                     }
                 }
 
@@ -908,11 +915,14 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // display the date picker
-                        showDatePickerDialog {
+                        dh.createDatePickerDialog(this, {
                             // use the returned date string
                             selectedFinishDateTo = it
                             finishDateToBtn.text = it
-                        }
+                        }, {
+                            // on close, unset subMenuOpened
+                            subMenuOpened = false
+                        })
                     }
                 }
 
@@ -1125,42 +1135,6 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
         Log.d("MainActivity", "getFilteredAndSortedHunts() completed. Returning the list of shiny hunts")
         return hunts
-    }
-
-    // Helper function to create dialogs with layouts
-    private fun createDialogWithLayout(title: String, layout: View, onClose: () -> Unit = {}): AlertDialog {
-        return AlertDialog.Builder(this)
-            .setTitle(title)
-            .setView(layout)
-            .setPositiveButton("Close") { dialog, _ -> dialog.dismiss(); onClose() }
-            .create().apply {
-                setOnCancelListener { onClose() }
-                setOnDismissListener { onClose() }
-                window?.setBackgroundDrawableResource(R.drawable.ui_gradient_homepage)
-            }
-    }
-
-    // Helper function to display date picker dialogs
-    private fun showDatePickerDialog(onDateSelected: (String) -> Unit) {
-        val c = Calendar.getInstance()
-
-        // create a dialog for the date picker
-        DatePickerDialog(
-            this,
-            { _, year, month, day ->
-                onDateSelected("$year-${month + 1}-$day")
-                subMenuOpened = false
-            },
-            // pass the year, month, and day for the selected date
-            c.get(Calendar.YEAR),
-            c.get(Calendar.MONTH),
-            c.get(Calendar.DAY_OF_MONTH)
-
-        ).apply {
-            setOnCancelListener { subMenuOpened = false }
-            setOnDismissListener { subMenuOpened = false }
-            show()
-        }
     }
 
 }
