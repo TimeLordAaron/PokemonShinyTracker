@@ -61,6 +61,12 @@ class IndividualHunt : ComponentActivity() {
     // variable to track if a sub menu is currently open
     private var subMenuOpened = false
 
+    // database helper
+    private val db = DBHelper(this, null)
+
+    // dialog handler
+    private val dh = DialogHandler()
+
     @SuppressLint("SetTextI18n", "InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("IndividualHunt", "onCreate() started")
@@ -71,12 +77,6 @@ class IndividualHunt : ComponentActivity() {
         onBackPressedDispatcher.addCallback(this) {
             handleBackNavigation()  // display confirmation dialog if there are unsaved changes
         }
-
-        // database helper
-        val db = DBHelper(this, null)
-
-        // dialog handler
-        val dh = DialogHandler()
 
         // retrieve relevant data from database
         val pokemonList = db.getPokemon()   // list of all pokemon
@@ -263,26 +263,15 @@ class IndividualHunt : ComponentActivity() {
 
             // check that a pokemon is selected
             if (selectedPokemonID == null || selectedFormID == null) {
+                // check if a sub menu is already open (to prevent the user from spamming open multiple copies of it)
                 if (!subMenuOpened) {
                     subMenuOpened = true
 
-                    val errorDialog = AlertDialog.Builder(this)
-                        .setTitle("Pokémon Not Selected")
-                        .setMessage("Please select a Pokémon before saving!")
-                        .setPositiveButton("Okay") { dialog, _ ->
-                            // close the error dialog
-                            dialog.dismiss()
-                            subMenuOpened = false
-                        }
+                    // create the error dialog
+                    dh.createErrorDialog(this, "Pokémon Not Selected", "Please select a Pokémon before saving!") {
+                        subMenuOpened = false   // on close, unset subMenuOpened
+                    }
 
-                    // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                    errorDialog.setOnCancelListener { subMenuOpened = false }
-
-                    // listener for when user presses back or taps outside
-                    errorDialog.setOnDismissListener { subMenuOpened = false }
-
-                    // display the error dialog
-                    errorDialog.show()
                 }
             } else {
 
@@ -318,34 +307,26 @@ class IndividualHunt : ComponentActivity() {
             // check that a sub menu isn't open yet (to prevent user from spamming buttons to open multiple menus at once)
             if (!subMenuOpened) {
                 subMenuOpened = true
-                AlertDialog.Builder(this)
-                    .setTitle("Confirm Deletion")
-                    .setMessage("Are you sure you want to delete this shiny hunt? This action cannot be undone.")
-                    .setPositiveButton("Yes") { _, _ ->
-                        // user confirmed deletion
-                        Log.d(
-                            "IndividualHunt",
-                            "User confirmed deletion. Deleting hunt from the database"
-                        )
 
+                // create a confirmation dialog
+                dh.createConfirmationDialog(
+                    this,
+                    "Confirm Deletion",
+                    "Are you sure you want to delete this shiny hunt? This action cannot be undone.",
+                    {
+                        // logic for Yes button
                         // call deleteHunt with the selectedHuntID as the parameter
                         db.deleteHunt(selectedHuntID)
 
-                        // return to MainActivity
-                        Log.d("IndividualActivity", "Returning to Main window")
                         val intent = Intent(this, MainActivity::class.java)
                         intent.flags =
                             Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                         startActivity(intent)
                         finish() // close IndividualHunt activity
-                    }
-                    .setNegativeButton("No") { dialog, _ ->
-                        // user canceled deletion
-                        Log.d("IndividualHunt", "User canceled deletion")
-                        dialog.dismiss()
-                        subMenuOpened = false
-                    }
-                    .show()
+                    },
+                    {
+                        subMenuOpened = false   // on close, unset subMenuOpened
+                    })
             }
         }
 
@@ -430,7 +411,7 @@ class IndividualHunt : ComponentActivity() {
                 pokemonRecyclerView.layoutManager = layoutManager
 
                 // create the pokemon selection dialog
-                val selectPokemonDialog = dh.createDialogWithLayout(this, "Select a Pokémon", selectPokemonDialogLayout) {
+                val selectPokemonDialog = dh.createLayoutDialog(this, "Select a Pokémon", selectPokemonDialogLayout) {
                     subMenuOpened = false   // on close, unset subMenuOpened
                 }
 
@@ -563,7 +544,7 @@ class IndividualHunt : ComponentActivity() {
                     }
 
                 // create the origin game selection dialog
-                val selectOriginGameDialog = dh.createDialogWithLayout(this, "Select the Origin Game", selectGameDialogLayout) {
+                val selectOriginGameDialog = dh.createLayoutDialog(this, "Select the Origin Game", selectGameDialogLayout) {
                     subMenuOpened = false   // on close, unset subMenuOpened
                 }
 
@@ -696,7 +677,7 @@ class IndividualHunt : ComponentActivity() {
                     }
 
                 // create the current game selection dialog
-                val selectCurrentGameDialog = dh.createDialogWithLayout(this, "Select the Current Game", selectGameDialogLayout) {
+                val selectCurrentGameDialog = dh.createLayoutDialog(this, "Select the Current Game", selectGameDialogLayout) {
                     subMenuOpened = false   // on close, unset subMenuOpened
                 }
 
@@ -815,21 +796,15 @@ class IndividualHunt : ComponentActivity() {
 
             // if unsaved changes are detected, open a confirmation dialog
             if (detectUnsavedChanges()) {
-                AlertDialog.Builder(this)
-                    .setTitle("Unsaved Changes Detected")
-                    .setMessage("You have unsaved changes. Are you sure you want to return to the main menu without saving?")
-                    .setPositiveButton("Yes") { _, _ ->
-                        // user decided to not save their changes
-                        Log.d("IndividualHunt", "User decided to not save their changes. Returning to Main Window")
+                dh.createConfirmationDialog(
+                    this,
+                    "Unsaved Changes Detected",
+                    "You have unsaved changes. Are you sure you want to return to the main menu without saving?", {
+                        // logic for Yes button
                         finish() // close IndividualHunt activity
-                    }
-                    .setNegativeButton("No") { dialog, _ ->
-                        // user canceled the Back button
-                        Log.d("IndividualHunt", "User canceled returning to the Main Window")
-                        dialog.dismiss()
-                        subMenuOpened = false
-                    }
-                    .show()
+                    }, {
+                        subMenuOpened = false   // on close, unset subMenuOpened
+                    })
             }
             // if there are no detected changes, return to the MainActivity window
             else { finish() }

@@ -29,7 +29,6 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.util.Calendar
 
 class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
@@ -359,7 +358,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 descendingOrderRadioBtn.setOnClickListener { currentSortOrder = SortOrder.DESC }
 
                 // create the sort menu dialog
-                val sortDialog = dh.createDialogWithLayout(this, "Sort", sortDialogLayout) {
+                val sortDialog = dh.createLayoutDialog(this, "Sort", sortDialogLayout) {
                     sortMenuOpened = false  // on close, unset sortMenuOpened
                 }
 
@@ -505,7 +504,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 setPhaseHi()
 
                 // create the filter menu dialog
-                val filterDialog = dh.createDialogWithLayout(this, "Filters", filterDialogLayout) {
+                val filterDialog = dh.createLayoutDialog(this, "Filters", filterDialogLayout) {
                     filterMenuOpened = false    // on close, unset filterMenuOpened
                 }
 
@@ -518,79 +517,62 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // create a confirmation dialog
-                        val confirmDialog = AlertDialog.Builder(this)
-                            .setTitle("Clear All Filters?")
-                            .setMessage("Are you sure you want to clear all currently applied filters?")
-                            .setPositiveButton("Yes") { _, _ ->
+                        dh.createConfirmationDialog(this, "Clear All Filters?", "Are you sure you want to clear all currently applied filters?", {
+                            // logic for Yes button
+                            // reset all the filters (selected and confirmed)
+                            selectedPokemon.clear()
+                            selectedPokemonForms.clear()
+                            confirmedPokemonFormsFilter.clear()
+                            selectedOriginGames.clear()
+                            confirmedOriginGamesFilter.clear()
+                            selectedCompletionStatus = null
+                            confirmedCompletionStatusFilter = null
+                            selectedCurrentGames.clear()
+                            confirmedCurrentGamesFilter.clear()
+                            enteredMethod = ""
+                            confirmedMethodFilter = ""
+                            selectedStartDateFrom = ""
+                            confirmedStartDateFromFilter = ""
+                            selectedStartDateTo = ""
+                            confirmedStartDateToFilter = ""
+                            selectedFinishDateFrom = ""
+                            confirmedFinishDateFromFilter = ""
+                            selectedFinishDateTo = ""
+                            confirmedFinishDateToFilter = ""
+                            enteredCounterLo = ""
+                            confirmedCounterLoFilter = ""
+                            enteredCounterHi = ""
+                            confirmedCounterHiFilter = ""
+                            enteredPhaseLo = ""
+                            confirmedPhaseLoFilter = ""
+                            enteredPhaseHi = ""
+                            confirmedPhaseHiFilter = ""
 
-                                // reset all the filters (selected and confirmed)
-                                selectedPokemon.clear()
-                                selectedPokemonForms.clear()
-                                confirmedPokemonFormsFilter.clear()
-                                selectedOriginGames.clear()
-                                confirmedOriginGamesFilter.clear()
-                                selectedCompletionStatus = null
-                                confirmedCompletionStatusFilter = null
-                                selectedCurrentGames.clear()
-                                confirmedCurrentGamesFilter.clear()
-                                enteredMethod = ""
-                                confirmedMethodFilter = ""
-                                selectedStartDateFrom = ""
-                                confirmedStartDateFromFilter = ""
-                                selectedStartDateTo = ""
-                                confirmedStartDateToFilter = ""
-                                selectedFinishDateFrom = ""
-                                confirmedFinishDateFromFilter = ""
-                                selectedFinishDateTo = ""
-                                confirmedFinishDateToFilter = ""
-                                enteredCounterLo = ""
-                                confirmedCounterLoFilter = ""
-                                enteredCounterHi = ""
-                                confirmedCounterHiFilter = ""
-                                enteredPhaseLo = ""
-                                confirmedPhaseLoFilter = ""
-                                enteredPhaseHi = ""
-                                confirmedPhaseHiFilter = ""
+                            // get the unfiltered hunts
+                            val unfilteredHunts = getFilteredAndSortedHunts()
 
-                                // get the unfiltered hunts
-                                val unfilteredHunts = getFilteredAndSortedHunts()
+                            // allow move buttons to be enabled
+                            shinyHuntListAdapter.setMoveButtonsEnabled(true)
 
-                                // allow move buttons to be enabled
-                                shinyHuntListAdapter.setMoveButtonsEnabled(true)
+                            // automatically collapse all shiny hunts
+                            expandAllCheckbox.isChecked = false
+                            shinyHuntListAdapter.collapseAll()
 
-                                // automatically collapse all shiny hunts
-                                expandAllCheckbox.isChecked = false
-                                shinyHuntListAdapter.collapseAll()
-
-                                // update the recycler view
-                                shinyHuntListAdapter.submitList(unfilteredHunts) {
-                                    shinyHuntRecyclerView.scrollToPosition(0)
-                                }
-
-                                subMenuOpened = false
-
-                                // close the filter dialog
-                                filterDialog.dismiss()
-                                filterMenuOpened = false
-                                Log.d("MainActivity", "Filters cleared after confirmation")
-                            }
-                            .setNegativeButton("Cancel") { dialog, _ ->
-                                dialog.dismiss()
-                                subMenuOpened = false
-                                Log.d("MainActivity", "Clear Filters canceled by user")
+                            // update the recycler view
+                            shinyHuntListAdapter.submitList(unfilteredHunts) {
+                                shinyHuntRecyclerView.scrollToPosition(0)
                             }
 
-                        // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                        confirmDialog.setOnCancelListener { subMenuOpened = false }
+                            subMenuOpened = false
 
-                        // listener for when user presses back or taps outside
-                        confirmDialog.setOnDismissListener { subMenuOpened = false }
-
-                        // display the confirmation dialog
-                        confirmDialog.show()
+                            // close the filter dialog
+                            filterDialog.dismiss()
+                            filterMenuOpened = false
+                        }, {
+                            subMenuOpened = false   // on close, unset subMenuOpened
+                        })
                     }
                 }
-
 
                 // on click listener for the edit pokemon button
                 editPokemonBtn.setOnClickListener {
@@ -626,7 +608,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         (selectPokemonDialogLayout.parent as? ViewGroup)?.removeView(selectPokemonDialogLayout)
 
                         // create the pokemon selection dialog
-                        dh.createDialogWithLayout(this, "Select Pokémon", selectPokemonDialogLayout) {
+                        dh.createLayoutDialog(this, "Select Pokémon", selectPokemonDialogLayout) {
                             subMenuOpened = false   // on close, unset subMenuOpened
                         }
 
@@ -749,7 +731,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         (selectGamesDialogLayout.parent as? ViewGroup)?.removeView(selectGamesDialogLayout)
 
                         // create the origin games dialog
-                        dh.createDialogWithLayout(this, "Select the Origin Games", selectGamesDialogLayout) {
+                        dh.createLayoutDialog(this, "Select the Origin Games", selectGamesDialogLayout) {
                             subMenuOpened = false   // on close, unset subMenuOpened
                         }
 
@@ -823,7 +805,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         (selectGamesDialogLayout.parent as? ViewGroup)?.removeView(selectGamesDialogLayout)
 
                         // create the current games dialog
-                        dh.createDialogWithLayout(this, "Select the Current Games", selectGamesDialogLayout) {
+                        dh.createLayoutDialog(this, "Select the Current Games", selectGamesDialogLayout) {
                             subMenuOpened = false   // on close, unset subMenuOpened
                         }
 
@@ -942,23 +924,10 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
                         // check if a completion status was selected
                         if (selectedCompletionStatus == null) {
-                            val errorDialog = AlertDialog.Builder(this)
-                                .setTitle("Empty Field Detected")
-                                .setMessage("Please select a completion status!")
-                                .setPositiveButton("Okay") { dialog, _ ->
-                                    // close the error dialog
-                                    dialog.dismiss()
-                                    subMenuOpened = false
-                                }
-
-                            // listener for when the dialog is dismissed (includes CANCEL and outside taps)
-                            errorDialog.setOnCancelListener { subMenuOpened = false }
-
-                            // listener for when user presses back or taps outside
-                            errorDialog.setOnDismissListener { subMenuOpened = false }
-
-                            // display the error dialog
-                            errorDialog.show()
+                            // create the error dialog
+                            dh.createErrorDialog(this, "Empty Field Detected", "Please select a completion status!") {
+                                subMenuOpened = false   // on close, unset subMenuOpened
+                            }
                         }
                         // otherwise, apply the filters
                         else {
