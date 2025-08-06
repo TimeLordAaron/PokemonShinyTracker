@@ -585,7 +585,6 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         // set the span counts based on device orientation
                         selectedPokemonRecyclerView.layoutManager = LinearLayoutManager(this)
                         val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
-                        pokemonListRecyclerView.layoutManager = GridLayoutManager(this, pokemonSpanCount)
 
                         val layoutManager = GridLayoutManager(this, pokemonSpanCount)
 
@@ -602,6 +601,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                             }
                         }
 
+                        // apply the layout manager to the Pokemon recycler view
                         pokemonListRecyclerView.layoutManager = layoutManager
 
                         // detach the dialog layout from any previous parent before reattaching
@@ -612,7 +612,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                             subMenuOpened = false   // on close, unset subMenuOpened
                         }
 
-                        // create the adapter for the selected pokemon recycler view
+                        // create the adapter for the selected Pokemon recycler view
                         selectedPokemonRecyclerView.adapter = SelectedPokemonAdapter(
                             selectedPokemon,
                             selectedPokemonForms,
@@ -629,7 +629,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                             }
                         )
 
-                        // create the adapter for the main pokemon selection list
+                        // create the adapter for the main Pokemon selection list
                         pokemonListRecyclerView.adapter = PokemonSelectionAdapter(
                             1,
                             groupedPokemonList,
@@ -650,8 +650,9 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
                         // access the search bar in the Pokemon selection dialog
                         val searchBar = selectPokemonDialogLayout.findViewById<EditText>(R.id.search_pokemon)
+                        searchBar.setText("")   // clear the search bar in case the user previously typed something
 
-                        // filter Pokémon as the user types
+                        // filter Pokemon as the user types
                         searchBar.addTextChangedListener(object : TextWatcher {
                             override fun afterTextChanged(s: Editable?) {}
 

@@ -11,6 +11,7 @@ import android.text.TextWatcher
 import android.util.Log
 import androidx.activity.ComponentActivity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
 import androidx.recyclerview.widget.GridLayoutManager
@@ -29,7 +30,7 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var selectPokemonBtn: Button           // pokemon selection button
     private lateinit var pokemonRecyclerView: RecyclerView  // pokemon recycler view
     private lateinit var selectedPokemonLabel: TextView     // selected pokemon label (will be hidden for the Individual Hunt page)
-    private lateinit var selectPokemonDialog: View          // pokemon selection dialog
+    private lateinit var selectPokemonDialogLayout: View    // pokemon selection dialog
     private lateinit var pickStartDateBtn: Button           // start date button
     private lateinit var selectedStartDate: TextView        // start date text
     private lateinit var selectOriginGameBtn: Button        // origin game button
@@ -242,8 +243,8 @@ class IndividualHunt : ComponentActivity() {
             if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) LinearLayout.HORIZONTAL else LinearLayout.VERTICAL
 
         // prepare the recycler views
-        selectPokemonDialog = layoutInflater.inflate(R.layout.pokemon_selection, null)
-        pokemonRecyclerView = selectPokemonDialog.findViewById(R.id.pokemon_recycler_view)
+        selectPokemonDialogLayout = layoutInflater.inflate(R.layout.pokemon_selection, null)
+        pokemonRecyclerView = selectPokemonDialogLayout.findViewById(R.id.pokemon_recycler_view)
         selectGameDialog = layoutInflater.inflate(R.layout.game_selection, null)
         gameRecyclerView = selectGameDialog.findViewById(R.id.game_recycler_view)
 
@@ -380,20 +381,13 @@ class IndividualHunt : ComponentActivity() {
             if (!subMenuOpened) {
                 subMenuOpened = true
 
-                val selectPokemonDialogLayout = layoutInflater.inflate(R.layout.pokemon_selection, null)
-                pokemonRecyclerView = selectPokemonDialogLayout.findViewById(R.id.pokemon_recycler_view)
-
                 // hide the "Selected Pokemon" label
-                selectedPokemonLabel = selectPokemonDialog.findViewById(R.id.selected_pokemon_label)
+                selectedPokemonLabel = selectPokemonDialogLayout.findViewById(R.id.selected_pokemon_label)
                 selectedPokemonLabel.visibility = View.GONE
 
-                val searchBar = selectPokemonDialog.findViewById<EditText>(R.id.search_pokemon)
+                val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
 
-                val spanCount =
-                    if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
-                pokemonRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
-
-                val layoutManager = GridLayoutManager(this, spanCount)
+                val layoutManager = GridLayoutManager(this, pokemonSpanCount)
 
                 // prepare dataset with headers
                 val groupedPokemonList = preparePokemonListWithHeaders(pokemonList)
@@ -402,15 +396,19 @@ class IndividualHunt : ComponentActivity() {
                 layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                     override fun getSpanSize(position: Int): Int {
                         return when (groupedPokemonList[position]) {
-                            is PokemonListItem.HeaderItem -> spanCount  // header takes full row
+                            is PokemonListItem.HeaderItem -> pokemonSpanCount  // header takes full row
                             is PokemonListItem.PokemonItem -> 1         // Pokemon takes 1 column
                         }
                     }
                 }
 
+                // apply the layout manager to the Pokemon recycler view
                 pokemonRecyclerView.layoutManager = layoutManager
 
-                // create the pokemon selection dialog
+                // detach the dialog layout from any previous parent before reattaching
+                (selectPokemonDialogLayout.parent as? ViewGroup)?.removeView(selectPokemonDialogLayout)
+
+                // create the Pokemon selection dialog
                 val selectPokemonDialog = dh.createLayoutDialog(this, "Select a Pokémon", selectPokemonDialogLayout) {
                     subMenuOpened = false   // on close, unset subMenuOpened
                 }
@@ -436,7 +434,11 @@ class IndividualHunt : ComponentActivity() {
                         subMenuOpened = false
                     }
 
-                // filter Pokémon as the user types
+                // access the search bar in the Pokemon selection dialog
+                val searchBar = selectPokemonDialogLayout.findViewById<EditText>(R.id.search_pokemon)
+                searchBar.setText("")   // clear the search bar in case the user previously typed something
+
+                // filter Pokemon as the user types
                 searchBar.addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {}
 
@@ -475,7 +477,7 @@ class IndividualHunt : ComponentActivity() {
                         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                             override fun getSpanSize(position: Int): Int {
                                 return when (updatedList[position]) {
-                                    is PokemonListItem.HeaderItem -> spanCount
+                                    is PokemonListItem.HeaderItem -> pokemonSpanCount
                                     is PokemonListItem.PokemonItem -> 1
                                 }
                             }
