@@ -1,7 +1,6 @@
 package com.example.pokemonshinytracker
 
 import android.app.AlertDialog
-import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -15,6 +14,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -33,9 +33,9 @@ import androidx.recyclerview.widget.RecyclerView
 class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
     // lateinit UI declarations: main UI
-    private lateinit var newHuntBtn: Button                     // new hunt button
-    private lateinit var sortBtn: Button                        // sort button
-    private lateinit var filterBtn: Button                      // filter button
+    private lateinit var newHuntBtn: ImageButton                     // new hunt button
+    private lateinit var sortBtn: ImageButton                        // sort button
+    private lateinit var filterBtn: ImageButton                      // filter button
     private lateinit var expandAllCheckbox: CheckBox            // expand all checkbox
     private lateinit var shinyHuntRecyclerView: RecyclerView    // shiny hunt recycler view
 

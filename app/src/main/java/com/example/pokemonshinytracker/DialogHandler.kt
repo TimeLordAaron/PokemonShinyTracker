@@ -15,7 +15,9 @@ class DialogHandler {
         return DatePickerDialog(
             context,
             { _, year, month, day ->
-                onDateSelected("$year-${month + 1}-$day")
+                // format the date by adding leading 0s for month and day if needed
+                val formattedDate = String.format("%d-%02d-%02d", year, month + 1, day)
+                onDateSelected(formattedDate)
                 onClose()
             },
             // pass the year, month, and day for the selected date

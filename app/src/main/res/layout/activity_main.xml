@@ -18,51 +18,71 @@
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:layout_gravity="center">
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center"
+            android:background="@drawable/ui_container_transparent">
 
-            <!--New Hunt Button-->
-            <Button
-                android:id="@+id/new_hunt_button"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:text="@string/increment_symbol"
-                android:textSize="15sp"
-                android:textColor="@color/black" />
-
-            <!--Sort Button-->
-            <Button
-                android:id="@+id/sort_button"
+            <!--Counter Multiplier Text Field (PLACEHOLDER)-->
+            <EditText
+                android:id="@+id/counter_multiplier"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sort_label"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="center"
                 android:textSize="15sp"
-                android:textColor="@color/black"
-                android:textAllCaps="false" />
+                android:hint="Multiplier" />
 
-            <!--Filter Button-->
-            <Button
-                android:id="@+id/filter_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/filter_label"
-                android:textSize="15sp"
-                android:textColor="@color/black"
-                android:textAllCaps="false" />
-
-            <!--Expand All Text-->
+            <!--Expand All Label-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="20dp"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="center"
                 android:text="@string/expand_all_label"
                 android:textSize="15sp"
                 android:textColor="@color/black" />
 
+            <!--Expand All Checkbox-->
             <CheckBox
                 android:id="@+id/expand_all_checkbox"
-                android:layout_width="50dp"
-                android:layout_height="50dp" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                android:layout_gravity="center" />
+
+            <!--New Hunt Button-->
+            <ImageButton
+                android:id="@+id/new_hunt_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_new"
+                android:contentDescription="@string/new_description" />
+
+            <!--Sort Button-->
+            <ImageButton
+                android:id="@+id/sort_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_sort"
+                android:contentDescription="@string/sort_description" />
+
+            <!--Filter Button-->
+            <ImageButton
+                android:id="@+id/filter_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_filter"
+                android:contentDescription="@string/filter_description" />
 
         </LinearLayout>
 
