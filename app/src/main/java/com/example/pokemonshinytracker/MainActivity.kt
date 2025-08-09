@@ -33,9 +33,10 @@ import androidx.recyclerview.widget.RecyclerView
 class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
     // lateinit UI declarations: main UI
-    private lateinit var newHuntBtn: ImageButton                     // new hunt button
-    private lateinit var sortBtn: ImageButton                        // sort button
-    private lateinit var filterBtn: ImageButton                      // filter button
+    private lateinit var newHuntBtn: ImageButton                // new hunt button
+    private lateinit var sortBtn: ImageButton                   // sort button
+    private lateinit var filterBtn: ImageButton                 // filter button
+    private lateinit var counterMultiplierBtn: Button        // counter multiplier button
     private lateinit var expandAllCheckbox: CheckBox            // expand all checkbox
     private lateinit var shinyHuntRecyclerView: RecyclerView    // shiny hunt recycler view
 
@@ -73,6 +74,11 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var phaseLo: EditText                      // phase (low bound) text field
     private lateinit var phaseHi: EditText                      // phase (high bound) text field
     private lateinit var confirmFiltersBtn: Button              // confirm filters button
+
+    // lateinit UI declarations: counter multiplier UI
+    private lateinit var counterMultiplierText: TextView        // counter multiplier text
+    private lateinit var counterMultiplierDecrementBtn: ImageButton // counter multiplier decrement button
+    private lateinit var counterMultiplierIncrementBtn: ImageButton // counter multiplier increment button
 
     // initialize variables for tracking the current sort method
     // 0: Default, 1: Start Date, 2: Finish Date, 3: Name, 4: Generation
@@ -154,8 +160,12 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         shinyHuntRecyclerView = findViewById(R.id.shiny_hunts_recycler_view)                    // recycler view that displays the user's saved hunts
         newHuntBtn = findViewById(R.id.new_hunt_button)                                         // new hunt button
         filterBtn = findViewById(R.id.filter_button)                                            // filter button
+        counterMultiplierBtn = findViewById(R.id.counter_multiplier_button)                     // counter multiplier button
         expandAllCheckbox = findViewById(R.id.expand_all_checkbox)                              // expand all checkbox
         sortBtn = findViewById(R.id.sort_button)                                                // floating sort button
+
+        // set the text of the counter multiplier button
+        counterMultiplierBtn.text = String.format("x%s", (application as MyApplication).counterMultiplier)
 
         // instantiate an adapter for the shiny hunt recycler view
         val shinyHuntListAdapter = ShinyHuntListAdapter(this, pokemonList, gameList).apply {
@@ -981,6 +991,49 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                             filterMenuOpened = false
                         }
                     }
+                }
+            }
+        }
+
+        // on click listener for the counter multiplier button
+        counterMultiplierBtn.setOnClickListener {
+            // check that a sub menu isn't currently open (to prevent the user from opening multiple dialogs at once)
+            if (!subMenuOpened && !sortMenuOpened && !filterMenuOpened && !individualHuntOpening) {
+                subMenuOpened = true
+
+                val counterMultiplierLayout = layoutInflater.inflate(R.layout.counter_multiplier_editor, null)
+
+                // access the UI elements
+                counterMultiplierText = counterMultiplierLayout.findViewById(R.id.counter_multiplier_text)
+                counterMultiplierDecrementBtn = counterMultiplierLayout.findViewById(R.id.counter_multiplier_decrement)
+                counterMultiplierIncrementBtn = counterMultiplierLayout.findViewById(R.id.counter_multiplier_increment)
+
+                // set the counter multiplier text
+                counterMultiplierText.text = String.format("x%s", (application as MyApplication).counterMultiplier)
+
+                // create a dialog for editing the counter multiplier
+                dh.createLayoutDialog(this, "Set the Counter Multiplier", counterMultiplierLayout) {
+                    subMenuOpened = false   // on close, unset subMenuOpened
+                }
+
+                // on click listener for the decrement button
+                counterMultiplierDecrementBtn.setOnClickListener {
+                    // decrement the value of the global counter multiplier, to a minimum of 1
+                    (application as MyApplication).counterMultiplier = ((application as MyApplication).counterMultiplier - 1).coerceAtLeast(1)
+
+                    // update the UI
+                    counterMultiplierText.text = String.format("x%s", (application as MyApplication).counterMultiplier)     // text in dialog
+                    counterMultiplierBtn.text = String.format("x%s", (application as MyApplication).counterMultiplier)      // button in main page
+                }
+
+                // on click listener for the increment button
+                counterMultiplierIncrementBtn.setOnClickListener {
+                    // increment the value of the global counter multiplier
+                    (application as MyApplication).counterMultiplier++
+
+                    // update the UI
+                    counterMultiplierText.text = String.format("x%s", (application as MyApplication).counterMultiplier)     // text in dialog
+                    counterMultiplierBtn.text = String.format("x%s", (application as MyApplication).counterMultiplier)      // button in main page
                 }
             }
         }

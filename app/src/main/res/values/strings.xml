@@ -73,5 +73,6 @@
     <string name="sort_description">Button to sort shiny hunts</string>
     <string name="new_description">Button to create a new shiny hunt</string>
     <string name="filter_description">Button to filter shiny hunts</string>
-    <string name="counter_multiplier_label">Counter Multiplier</string>
+    <string name="counter_multiplier_decrement_description">Button to decrement the counter multiplier</string>
+    <string name="counter_multiplier_increment_description">Button to increment the counter multiplier</string>
 </resources>

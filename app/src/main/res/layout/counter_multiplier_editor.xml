@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center">
+
+    <!--Counter Multiplier Value-->
+    <TextView
+        android:id="@+id/counter_multiplier_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:textSize="48sp"
+        android:textColor="@color/black" />
+
+    <!--Counter Multiplier Buttons-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <!--Counter Multiplier Decrement-->
+        <ImageButton
+            android:id="@+id/counter_multiplier_decrement"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="10dp"
+            android:background="@null"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_minus"
+            android:contentDescription="@string/counter_multiplier_decrement_description" />
+
+        <!--Counter Multiplier Increment-->
+        <ImageButton
+            android:id="@+id/counter_multiplier_increment"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="10dp"
+            android:background="@null"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_plus"
+            android:contentDescription="@string/counter_multiplier_increment_description" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

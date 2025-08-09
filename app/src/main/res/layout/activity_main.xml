@@ -22,16 +22,17 @@
             android:layout_gravity="center"
             android:background="@drawable/ui_container_transparent">
 
-            <!--Counter Multiplier Text Field (PLACEHOLDER)-->
-            <EditText
-                android:id="@+id/counter_multiplier"
+            <!--Counter Multiplier Label-->
+            <Button
+                android:id="@+id/counter_multiplier_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:layout_gravity="center"
-                android:textSize="15sp"
-                android:hint="Multiplier" />
+                android:background="@null"
+                android:text="1x"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textAllCaps="false" />
 
             <!--Expand All Label-->
             <TextView
@@ -46,28 +47,30 @@
             <!--Expand All Checkbox-->
             <CheckBox
                 android:id="@+id/expand_all_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="32dp"
                 android:layout_gravity="center" />
 
             <!--New Hunt Button-->
             <ImageButton
                 android:id="@+id/new_hunt_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center"
+                android:layout_marginEnd="5dp"
                 android:background="@null"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_new"
+                android:src="@drawable/ic_plus"
                 android:contentDescription="@string/new_description" />
 
             <!--Sort Button-->
             <ImageButton
                 android:id="@+id/sort_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center"
+                android:layout_marginEnd="5dp"
                 android:background="@null"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_sort"
@@ -76,9 +79,10 @@
             <!--Filter Button-->
             <ImageButton
                 android:id="@+id/filter_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center"
+                android:layout_marginEnd="5dp"
                 android:background="@null"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_filter"

@@ -1,9 +1,7 @@
 package com.example.pokemonshinytracker
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.os.Bundle
-import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.text.Editable
@@ -16,7 +14,6 @@ import android.widget.*
 import androidx.activity.addCallback
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.util.*
 
 class IndividualHunt : ComponentActivity() {
 

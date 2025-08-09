@@ -79,8 +79,8 @@ object ShinyHuntData {
         shinyHunts.add(listOf(938, 27, "Soft Resets", "", 563, 0, "", 1, "", 38))                       // Landorus (Ultra Sun)
         shinyHunts.add(listOf(737, 28, "Soft Resets", "", 835, 0, "", 1, "", 38))                       // Cresselia
         shinyHunts.add(listOf(937, 28, "Soft Resets", "", 1414, 0, "", 1, "", 28))                      // Zekrom
-        shinyHunts.add(listOf(1180, 28, "Soft Resets", "2025-05-12", 122, 0, "", 1, "2025-05-13", 28))    // Pheromosa (Ultra Moon)
-        shinyHunts.add(listOf(729, 27, "Soft Resets", "", 3026, 0, "", 1, "2025-05-15", 27))             // Dialga
+        shinyHunts.add(listOf(1180, 28, "Soft Resets", "2025-05-12", 122, 0, "", 1, "2025-05-13", 28))  // Pheromosa (Ultra Moon)
+        shinyHunts.add(listOf(729, 27, "Soft Resets", "", 3026, 0, "", 1, "2025-05-15", 27))            // Dialga
         shinyHunts.add(listOf(953, 22, "Soft Resets", "2025-05-14", 3600, 0,
             "Pokemon X Shiny-Only Run\n" +
             "\n" +
@@ -88,10 +88,10 @@ object ShinyHuntData {
             "- Alternated the starter every 10 encounters.\n" +
             "- Chespin; evolved into Quilladin.", 1, "2025-07-22", 21))                                  // Quilladin (Y -> traded to X)
         shinyHunts.add(listOf(936, 27, "Soft Resets", "2025-05-16", 200, 0, "", 0, "", null))            // Reshiram (ongoing)
-        shinyHunts.add(listOf(964, 21, "Encounters", "2025-07-25", 2700, 0,
+        shinyHunts.add(listOf(964, 21, "Encounters", "2025-07-25", 3200, 0,
             "Pokemon X Shiny-Only Run\n" +
             "\n" +
-            "- Random Encounters on Route 3", 0, "", null))                                             // Fletchling (X)
+            "- Random Encounters on Route 3", 0, "", null))                                              // Fletchling (X)
 
         // insert each shiny hunt into the database
         for (hunt in shinyHunts) {
