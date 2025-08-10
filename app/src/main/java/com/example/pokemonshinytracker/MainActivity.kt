@@ -1,6 +1,7 @@
 package com.example.pokemonshinytracker
 
 import android.app.AlertDialog
+import android.app.Application
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -133,9 +134,6 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     // dialog handler
     private val dh = DialogHandler()
 
-    // application instance
-    private val ma = (application as MyApplication)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("MainActivity", "onCreate() started")
         enableEdgeToEdge()
@@ -168,6 +166,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         sortBtn = findViewById(R.id.sort_button)                                                // floating sort button
 
         // set the text of the counter multiplier button
+        val ma = (application as MyApplication)
         counterMultiplierBtn.text = String.format("x%s", ma.counterMultiplier)
 
         // instantiate an adapter for the shiny hunt recycler view
@@ -255,11 +254,11 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
             shinyHuntRecyclerView.visibility = View.GONE
         } else {
             // determine the number of columns based on orientation
-            val spanCount =
-                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
+            val shinyHuntSpanCount =
+                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.SHINY_HUNT_SPAN_LANDSCAPE else MyApplication.SHINY_HUNT_SPAN_PORTRAIT
 
             // apply the layout and adapter to the shiny hunt recycler view
-            shinyHuntRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
+            shinyHuntRecyclerView.layoutManager = GridLayoutManager(this, shinyHuntSpanCount)
             shinyHuntRecyclerView.adapter = shinyHuntListAdapter
             shinyHuntListAdapter.submitList(hunts) {
                 shinyHuntRecyclerView.scrollToPosition(0)
@@ -1089,14 +1088,9 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
         // update layout of the shiny hunt recycler view
         val layoutManager = shinyHuntRecyclerView.layoutManager
+
         if (layoutManager is GridLayoutManager) {
-            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                layoutManager.spanCount = 2
-                Log.d("MainActivity", "Orientation is LANDSCAPE, spanCount set to 2")
-            } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                layoutManager.spanCount = 1
-                Log.d("MainActivity", "Orientation is PORTRAIT, spanCount set to 1")
-            }
+            layoutManager.spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.SHINY_HUNT_SPAN_LANDSCAPE else MyApplication.SHINY_HUNT_SPAN_PORTRAIT
         }
 
         /* Filter Menu: Selection Dialogs */
