@@ -133,6 +133,9 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     // dialog handler
     private val dh = DialogHandler()
 
+    // application instance
+    private val ma = (application as MyApplication)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("MainActivity", "onCreate() started")
         enableEdgeToEdge()
@@ -165,7 +168,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         sortBtn = findViewById(R.id.sort_button)                                                // floating sort button
 
         // set the text of the counter multiplier button
-        counterMultiplierBtn.text = String.format("x%s", (application as MyApplication).counterMultiplier)
+        counterMultiplierBtn.text = String.format("x%s", ma.counterMultiplier)
 
         // instantiate an adapter for the shiny hunt recycler view
         val shinyHuntListAdapter = ShinyHuntListAdapter(this, pokemonList, gameList).apply {
@@ -594,7 +597,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
                         // set the span counts based on device orientation
                         selectedPokemonRecyclerView.layoutManager = LinearLayoutManager(this)
-                        val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
+                        val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.POKEMON_SPAN_LANDSCAPE else MyApplication.POKEMON_SPAN_PORTRAIT
 
                         val layoutManager = GridLayoutManager(this, pokemonSpanCount)
 
@@ -721,7 +724,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // get and apply the span count based on orientation
-                        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
+                        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.GAME_SPAN_LANDSCAPE else MyApplication.GAME_SPAN_PORTRAIT
                         gamesRecyclerView.layoutManager = GridLayoutManager(this, gameSpanCount)
 
                         // prepare dataset with headers
@@ -795,7 +798,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // get and apply the span count based on orientation
-                        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
+                        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.GAME_SPAN_LANDSCAPE else MyApplication.GAME_SPAN_PORTRAIT
                         gamesRecyclerView.layoutManager = GridLayoutManager(this, gameSpanCount)
 
                         // prepare dataset with headers
@@ -1009,7 +1012,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 counterMultiplierIncrementBtn = counterMultiplierLayout.findViewById(R.id.counter_multiplier_increment)
 
                 // set the counter multiplier text
-                counterMultiplierText.text = String.format("x%s", (application as MyApplication).counterMultiplier)
+                counterMultiplierText.text = String.format("x%s", ma.counterMultiplier)
 
                 // create a dialog for editing the counter multiplier
                 dh.createLayoutDialog(this, "Set the Counter Multiplier", counterMultiplierLayout) {
@@ -1019,21 +1022,21 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 // on click listener for the decrement button
                 counterMultiplierDecrementBtn.setOnClickListener {
                     // decrement the value of the global counter multiplier, to a minimum of 1
-                    (application as MyApplication).counterMultiplier = ((application as MyApplication).counterMultiplier - 1).coerceAtLeast(1)
+                    ma.counterMultiplier = (ma.counterMultiplier - 1).coerceAtLeast(1)
 
                     // update the UI
-                    counterMultiplierText.text = String.format("x%s", (application as MyApplication).counterMultiplier)     // text in dialog
-                    counterMultiplierBtn.text = String.format("x%s", (application as MyApplication).counterMultiplier)      // button in main page
+                    counterMultiplierText.text = String.format("x%s", ma.counterMultiplier)     // text in dialog
+                    counterMultiplierBtn.text = String.format("x%s", ma.counterMultiplier)      // button in main page
                 }
 
                 // on click listener for the increment button
                 counterMultiplierIncrementBtn.setOnClickListener {
                     // increment the value of the global counter multiplier
-                    (application as MyApplication).counterMultiplier++
+                    ma.counterMultiplier++
 
                     // update the UI
-                    counterMultiplierText.text = String.format("x%s", (application as MyApplication).counterMultiplier)     // text in dialog
-                    counterMultiplierBtn.text = String.format("x%s", (application as MyApplication).counterMultiplier)      // button in main page
+                    counterMultiplierText.text = String.format("x%s", ma.counterMultiplier)     // text in dialog
+                    counterMultiplierBtn.text = String.format("x%s", ma.counterMultiplier)      // button in main page
                 }
             }
         }
@@ -1098,8 +1101,8 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
         /* Filter Menu: Selection Dialogs */
         // get span counts based on device orientation
-        val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
-        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
+        val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.POKEMON_SPAN_LANDSCAPE else MyApplication.POKEMON_SPAN_PORTRAIT
+        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.GAME_SPAN_LANDSCAPE else MyApplication.GAME_SPAN_PORTRAIT
 
         // reinitialize GridLayoutManagers with updated span counts
         val pokemonGridLayoutManager = GridLayoutManager(this, pokemonSpanCount)

@@ -382,7 +382,7 @@ class IndividualHunt : ComponentActivity() {
                 selectedPokemonLabel = selectPokemonDialogLayout.findViewById(R.id.selected_pokemon_label)
                 selectedPokemonLabel.visibility = View.GONE
 
-                val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
+                val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.POKEMON_SPAN_LANDSCAPE else MyApplication.POKEMON_SPAN_PORTRAIT
 
                 val layoutManager = GridLayoutManager(this, pokemonSpanCount)
 
@@ -525,7 +525,7 @@ class IndividualHunt : ComponentActivity() {
                 val selectGameDialogLayout = layoutInflater.inflate(R.layout.game_selection, null)
                 gameRecyclerView = selectGameDialogLayout.findViewById(R.id.game_recycler_view)
 
-                val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
+                val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.GAME_SPAN_LANDSCAPE else MyApplication.GAME_SPAN_PORTRAIT
                 gameRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
 
                 // prepare dataset with headers
@@ -658,7 +658,7 @@ class IndividualHunt : ComponentActivity() {
                 gameRecyclerView = selectGameDialogLayout.findViewById(R.id.game_recycler_view)
 
                 val spanCount =
-                    if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
+                    if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.GAME_SPAN_LANDSCAPE else MyApplication.GAME_SPAN_PORTRAIT
                 gameRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
 
                 // prepare dataset with headers
@@ -707,8 +707,8 @@ class IndividualHunt : ComponentActivity() {
                 LinearLayout.VERTICAL
 
         // determine the number of columns based on orientation
-        val pokemonSpanCount = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) 8 else 5
-        val gameSpanCount = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) 5 else 3
+        val pokemonSpanCount = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.POKEMON_SPAN_LANDSCAPE else MyApplication.POKEMON_SPAN_PORTRAIT
+        val gameSpanCount = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.GAME_SPAN_LANDSCAPE else MyApplication.GAME_SPAN_PORTRAIT
 
         // reinitialize GridLayoutManagers with updated span counts
         val pokemonGridLayoutManager = GridLayoutManager(this, pokemonSpanCount)
