@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 
 class PokemonSelectionAdapter(
-    private val mode: Int,
+    private val mode: PokemonSelectionMode,
     private var pokemonListItems: List<PokemonListItem>,
     private var preselectedPokemon: List<Pokemon>,
     private val onPokemonSelected: (Pokemon) -> Unit
@@ -36,7 +36,7 @@ class PokemonSelectionAdapter(
             pokemonImage.load(pokemon.forms.find { it.isDefaultForm }!!.formImage)
 
             // update background based on selection
-            if (mode == 1) {
+            if (mode == PokemonSelectionMode.MULTI_SELECT) {
                 pokemonImage.setBackgroundResource(
                     if (preselectedPokemon.any { it.pokemonID == pokemon.pokemonID }) {
                         selectedPokemonPositions.add(position)
@@ -48,8 +48,8 @@ class PokemonSelectionAdapter(
 
             // on click listener for the image
             pokemonImage.setOnClickListener {
-                // in filter mode (1), invert the background of the image
-                if (mode == 1) {
+                // in filter (multi-select) mode, invert the background of the image
+                if (mode == PokemonSelectionMode.MULTI_SELECT) {
                     if (selectedPokemonPositions.contains(position)) {
                         selectedPokemonPositions.remove(position)
                         pokemonImage.setBackgroundResource(R.drawable.ui_pokemon_unselected_item_border)
@@ -110,8 +110,8 @@ class PokemonSelectionAdapter(
             is PokemonListItem.HeaderItem -> (holder as HeaderViewHolder).bind(item.generation)
             is PokemonListItem.PokemonItem -> {
                 (holder as PokemonViewHolder).bind(item.pokemon, position)
-                // for filter mode (1), highlight the Pokemon if it was already selected
-                if (mode == 1) {
+                // for filter (multi-select) mode, highlight the Pokemon if it was already selected
+                if (mode == PokemonSelectionMode.MULTI_SELECT) {
                     holder.pokemonImage.setBackgroundResource(
                         if (selectedPokemonPositions.contains(position)) R.drawable.ui_pokemon_selected_item_border
                         else R.drawable.ui_pokemon_unselected_item_border)
@@ -156,4 +156,10 @@ class PokemonSelectionAdapter(
 
     }
 
+}
+
+// PokemonSelectionMode: specifies whether the Pokemon selector is in single-select or multi-select mode
+enum class PokemonSelectionMode {
+    SINGLE_SELECT,
+    MULTI_SELECT
 }

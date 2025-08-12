@@ -641,7 +641,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
                         // create the adapter for the main Pokemon selection list
                         pokemonListRecyclerView.adapter = PokemonSelectionAdapter(
-                            1,
+                            PokemonSelectionMode.MULTI_SELECT,
                             groupedPokemonList,
                             selectedPokemon
                         ) { returnedPokemon ->
@@ -748,7 +748,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
                         gamesRecyclerView.adapter =
                             GameSelectionAdapter(
-                                2,
+                                GameSelectionMode.ORIGIN_MULTI_SELECT,
                                 groupedGameList,
                                 selectedOriginGames
                             ) { selectedGame ->
@@ -822,7 +822,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
                         gamesRecyclerView.adapter =
                             GameSelectionAdapter(
-                                3,
+                                GameSelectionMode.CURRENT_MULTI_SELECT,
                                 groupedGameList,
                                 selectedCurrentGames
                             ) { selectedGame ->

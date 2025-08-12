@@ -17,13 +17,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class GameSelectionAdapter(
-    private val mode: Int,
+    private val mode: GameSelectionMode,
     private val gameListItems: List<GameListItem>,
     private var preselectedGames: List<Int?>,
     private val onGameSelected: (Game) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-
 
     private val selectedGamePositions = mutableSetOf<Int>()      // stores the positions of selected Games in the list
 
@@ -42,12 +40,12 @@ class GameSelectionAdapter(
 
         fun bind(game: Game) {
             // set the background and image of the game
-            // mode 0/2 = selecting origin game(s)
-            if (mode == 0 || mode == 2) {
+            // origin game(s)
+            if (mode == GameSelectionMode.ORIGIN_SINGLE_SELECT || mode == GameSelectionMode.ORIGIN_MULTI_SELECT) {
                 gameIconBorder.setBackgroundResource(R.drawable.ui_game_icon_border_origin)
                 gameImage.setBackgroundResource(R.drawable.ui_game_icon_border_origin)
             }
-            // mode 1/3 = selecting current game(s)
+            // current game(s)
             else {
                 gameIconBorder.setBackgroundResource(R.drawable.ui_game_icon_border_current)
                 gameImage.setBackgroundResource(R.drawable.ui_game_icon_border_current)
@@ -68,13 +66,13 @@ class GameSelectionAdapter(
                 onGameSelected(game)    // return the selected game
 
                 when (mode) {
-                    // Individual Hunt modes: clear the previous selection, and add the new selection
-                    0, 1 -> {
+                    // Individual Hunt modes (single-select): clear the previous selection, and add the new selection
+                    GameSelectionMode.ORIGIN_SINGLE_SELECT, GameSelectionMode.CURRENT_SINGLE_SELECT -> {
                         selectedGamePositions.clear()
                         selectedGamePositions.add(game.gameID)
                     }
-                    // Filter modes: flip the selection state
-                    2, 3 -> {
+                    // Filter modes (multi-select): flip the selection state
+                    GameSelectionMode.ORIGIN_MULTI_SELECT, GameSelectionMode.CURRENT_MULTI_SELECT -> {
                         if (selectedGamePositions.contains(game.gameID)) {
                             selectedGamePositions.remove(game.gameID)
                         } else {
@@ -135,4 +133,12 @@ class GameSelectionAdapter(
     }
 
     override fun getItemCount() = gameListItems.size
+}
+
+// GameSelectionMode: specifies whether the Game selector is in single-select or multi-select mode and selecting origin or current game(s)
+enum class GameSelectionMode {
+    ORIGIN_SINGLE_SELECT,
+    CURRENT_SINGLE_SELECT,
+    ORIGIN_MULTI_SELECT,
+    CURRENT_MULTI_SELECT
 }
