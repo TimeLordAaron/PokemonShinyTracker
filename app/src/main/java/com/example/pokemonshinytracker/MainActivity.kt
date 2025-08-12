@@ -81,10 +81,8 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var counterMultiplierDecrementBtn: ImageButton // counter multiplier decrement button
     private lateinit var counterMultiplierIncrementBtn: ImageButton // counter multiplier increment button
 
-    // initialize variables for tracking the current sort method
-    // 0: Default, 1: Start Date, 2: Finish Date, 3: Name, 4: Generation
+    // initialize variables for tracking the current sort method and order
     private var currentSortMethod = SortMethod.DEFAULT
-    private var currentSortMethodIndex = 0
     private var currentSortOrder = SortOrder.DESC
 
     // initialize variables for tracking the selected filters
@@ -356,7 +354,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 sortMethodSpinner.onItemSelectedListener = this
 
                 // set the current selection in the spinner with the current method
-                sortMethodSpinner.setSelection(currentSortMethodIndex)
+                sortMethodSpinner.setSelection(currentSortMethod.ordinal)
 
                 // set the current selection in the sort orders radio button group
                 sortOrdersRadioGrp.check(
@@ -959,7 +957,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                             confirmedPhaseLoFilter = enteredPhaseLo
                             confirmedPhaseHiFilter = enteredPhaseHi
 
-                            Log.d("MainActivity", "sortMethod: $currentSortMethodIndex")
+                            Log.d("MainActivity", "sortMethod: $currentSortMethod")
                             Log.d("MainActivity", "sortOrder: $currentSortOrder")
                             Log.d("MainActivity", "formIDs: $confirmedPokemonFormsFilter")
                             Log.d("MainActivity", "originGameIDs: $confirmedOriginGamesFilter")
@@ -1054,20 +1052,8 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
         Log.d("MainActivity", "Item $position selected in the sort method spinner")
 
-        // set the current sort method index to the currently selected index in the spinner
-        currentSortMethodIndex = position
-
-        // using the current sort method index, set the current sort method to the corresponding sort method
-        // 0: Default, 1: Start Date, 2: Finish Date, 3: Name, 4: Generation
-        currentSortMethod =
-            when (currentSortMethodIndex) {
-                0 -> SortMethod.DEFAULT
-                1 -> SortMethod.DATE_STARTED
-                2 -> SortMethod.DATE_FINISHED
-                3 -> SortMethod.NAME
-                4 -> SortMethod.GENERATION
-                else -> SortMethod.DEFAULT      // if the index is somehow out of range, default to the DEFAULT sort method
-            }
+        // use the selected position of the spinner to get the sort method
+        currentSortMethod = SortMethod.entries.getOrNull(position) ?: SortMethod.DEFAULT
     }
 
     // Function that handles when nothing is selected in the "Sort By" spinner
