@@ -12,6 +12,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -70,6 +73,15 @@ class IndividualHunt : ComponentActivity() {
         Log.d("IndividualHunt", "onCreate() started")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.individual_hunt)
+
+        // hide the system bars
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window,
+            window.decorView.findViewById(android.R.id.content)).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            // temporarily show the bars when swiping
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
 
         // set up detection for the user clicking the back button on their navigation bar
         onBackPressedDispatcher.addCallback(this) {
