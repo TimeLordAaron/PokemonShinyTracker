@@ -263,7 +263,11 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         } else {
             // determine the number of columns based on orientation
             val shinyHuntSpanCount =
-                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.SHINY_HUNT_SPAN_LANDSCAPE else MyApplication.SHINY_HUNT_SPAN_PORTRAIT
+                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    resources.getInteger(R.integer.shiny_hunt_span_landscape)
+                } else {
+                    resources.getInteger(R.integer.shiny_hunt_span_portrait)
+                }
 
             // apply the layout and adapter to the shiny hunt recycler view
             shinyHuntRecyclerView.layoutManager = GridLayoutManager(this, shinyHuntSpanCount)
@@ -604,7 +608,11 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
                         // set the span counts based on device orientation
                         selectedPokemonRecyclerView.layoutManager = LinearLayoutManager(this)
-                        val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.POKEMON_SPAN_LANDSCAPE else MyApplication.POKEMON_SPAN_PORTRAIT
+                        val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                            resources.getInteger(R.integer.pokemon_span_landscape)
+                        } else {
+                            resources.getInteger(R.integer.pokemon_span_portrait)
+                        }
 
                         val layoutManager = GridLayoutManager(this, pokemonSpanCount)
 
@@ -731,7 +739,11 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // get and apply the span count based on orientation
-                        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.GAME_SPAN_LANDSCAPE else MyApplication.GAME_SPAN_PORTRAIT
+                        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                            resources.getInteger(R.integer.game_span_landscape)
+                        } else {
+                            resources.getInteger(R.integer.game_span_portrait)
+                        }
                         gamesRecyclerView.layoutManager = GridLayoutManager(this, gameSpanCount)
 
                         // prepare dataset with headers
@@ -805,7 +817,11 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // get and apply the span count based on orientation
-                        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.GAME_SPAN_LANDSCAPE else MyApplication.GAME_SPAN_PORTRAIT
+                        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                            resources.getInteger(R.integer.game_span_landscape)
+                        } else {
+                            resources.getInteger(R.integer.game_span_portrait)
+                        }
                         gamesRecyclerView.layoutManager = GridLayoutManager(this, gameSpanCount)
 
                         // prepare dataset with headers
@@ -1086,13 +1102,25 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         val layoutManager = shinyHuntRecyclerView.layoutManager
 
         if (layoutManager is GridLayoutManager) {
-            layoutManager.spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.SHINY_HUNT_SPAN_LANDSCAPE else MyApplication.SHINY_HUNT_SPAN_PORTRAIT
+            layoutManager.spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                resources.getInteger(R.integer.shiny_hunt_span_landscape)
+            } else {
+                resources.getInteger(R.integer.shiny_hunt_span_portrait)
+            }
         }
 
         /* Filter Menu: Selection Dialogs */
         // get span counts based on device orientation
-        val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.POKEMON_SPAN_LANDSCAPE else MyApplication.POKEMON_SPAN_PORTRAIT
-        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MyApplication.GAME_SPAN_LANDSCAPE else MyApplication.GAME_SPAN_PORTRAIT
+        val pokemonSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            resources.getInteger(R.integer.pokemon_span_landscape)
+        } else {
+            resources.getInteger(R.integer.pokemon_span_portrait)
+        }
+        val gameSpanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            resources.getInteger(R.integer.game_span_landscape)
+        } else {
+            resources.getInteger(R.integer.game_span_portrait)
+        }
 
         // reinitialize GridLayoutManagers with updated span counts
         val pokemonGridLayoutManager = GridLayoutManager(this, pokemonSpanCount)

@@ -1,17 +1,16 @@
 package com.example.pokemonshinytracker
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -45,7 +44,7 @@ class ShinyHuntListAdapter(
 
     // View holder for shiny hunts
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val background: LinearLayout = view.findViewById(R.id.background)
+        val shinyHuntItemLayout: ConstraintLayout = view.findViewById(R.id.shiny_hunt_item)
         val pokemonName: TextView = view.findViewById(R.id.pokemon_name)
         val originGameIconBorder: FrameLayout = view.findViewById(R.id.origin_game_icon_border)
         val originGameIcon: ImageView = view.findViewById(R.id.origin_game_icon)
@@ -53,9 +52,9 @@ class ShinyHuntListAdapter(
         val currentGameIcon: ImageView = view.findViewById(R.id.current_game_icon)
         val pokemonImage: ImageView = view.findViewById(R.id.pokemon_image)
         val counterValue: TextView = view.findViewById(R.id.counter_value)
-        val counterIncrementBtn: Button = view.findViewById(R.id.increment_counter_button)
-        val counterDecrementBtn: Button = view.findViewById(R.id.decrement_counter_button)
-        val longClickMenu: LinearLayout = view.findViewById(R.id.long_click_menu)
+        val counterIncrementBtn: ImageButton = view.findViewById(R.id.increment_counter_button)
+        val counterDecrementBtn: ImageButton = view.findViewById(R.id.decrement_counter_button)
+        val longClickMenu: ConstraintLayout = view.findViewById(R.id.long_click_menu)
         val moveUpButton: ImageButton = view.findViewById(R.id.move_up_button)
         val moveDownButton: ImageButton = view.findViewById(R.id.move_down_button)
         val editButton: ImageButton = view.findViewById(R.id.edit_button)
@@ -82,7 +81,7 @@ class ShinyHuntListAdapter(
         val hunt = getItem(position)
 
         Log.d("ShinyHuntListAdapter", "Binding View Holder for shiny hunt: $hunt")
-        holder.background.setBackgroundResource(
+        holder.shinyHuntItemLayout.setBackgroundResource(
             if (hunt.isComplete) R.drawable.ui_container_complete_hunt
             else R.drawable.ui_container_incomplete_hunt
         )
@@ -157,7 +156,7 @@ class ShinyHuntListAdapter(
         }
 
         // on long click listener for the view
-        holder.background.setOnLongClickListener {
+        holder.shinyHuntItemLayout.setOnLongClickListener {
             Log.d("ShinyHuntListAdapter", "View long clicked for shiny hunt: $hunt")
 
             if (expandedItems.contains(hunt.huntID)) {

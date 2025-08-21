@@ -88,7 +88,7 @@ object ShinyHuntData {
             "- Alternated the starter every 10 encounters.\n" +
             "- Chespin; evolved into Quilladin.", 1, "2025-07-22", 21))                                  // Quilladin (Y -> traded to X)
         shinyHunts.add(listOf(936, 27, "Soft Resets", "2025-05-16", 200, 0, "", 0, "", null))            // Reshiram (ongoing)
-        shinyHunts.add(listOf(964, 21, "Encounters", "2025-07-25", 3200, 0,
+        shinyHunts.add(listOf(964, 21, "Encounters", "2025-07-25", 4100, 0,
             "Pokemon X Shiny-Only Run\n" +
             "\n" +
             "- Random Encounters on Route 3", 0, "", null))                                              // Fletchling (X)

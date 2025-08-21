@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="pokemon_span_landscape">8</integer>
+    <integer name="pokemon_span_portrait">5</integer>
+    <integer name="game_span_landscape">5</integer>
+    <integer name="game_span_portrait">3</integer>
+    <integer name="shiny_hunt_span_portrait">2</integer>
+    <integer name="shiny_hunt_span_landscape">4</integer>
+</resources>

@@ -75,4 +75,7 @@
     <string name="filter_description">Button to filter shiny hunts</string>
     <string name="counter_multiplier_decrement_description">Button to decrement the counter multiplier</string>
     <string name="counter_multiplier_increment_description">Button to increment the counter multiplier</string>
+    <string name="counter_multiplier_placeholder">1x</string>
+    <string name="counter_decrement_description">Button to decrement the shiny hunt\'s counter</string>
+    <string name="counter_increment_description">Button to increment a shiny hunt\'s counter</string>
 </resources>

@@ -1,115 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--Main Page Layout-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/ui_gradient_homepage">
 
-    <!--Main Page Layout-->
-    <LinearLayout
-        android:id="@+id/activity_main_view"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="60dp"
-        android:background="@drawable/ui_gradient_homepage">
+    <!--Top Bar Container-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/top_bar_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/ui_container_transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!--Top Bar-->
-        <LinearLayout
-            android:id="@+id/top_bar"
-            android:orientation="horizontal"
+        <!--Top Bar Flow-->
+        <androidx.constraintlayout.helper.widget.Flow
+            android:id="@+id/top_bar_flow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_gravity="center"
-            android:background="@drawable/ui_container_transparent">
+            app:flow_wrapMode="chain"
+            app:flow_horizontalGap="5dp"
+            app:constraint_referenced_ids="counter_multiplier_button,expand_all_text,expand_all_checkbox,new_hunt_button,sort_button,filter_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-            <!--Counter Multiplier Label-->
-            <Button
-                android:id="@+id/counter_multiplier_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@null"
-                android:text="1x"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textAllCaps="false" />
-
-            <!--Expand All Label-->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_gravity="center"
-                android:text="@string/expand_all_label"
-                android:textSize="15sp"
-                android:textColor="@color/black" />
-
-            <!--Expand All Checkbox-->
-            <CheckBox
-                android:id="@+id/expand_all_checkbox"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="32dp"
-                android:layout_gravity="center" />
-
-            <!--New Hunt Button-->
-            <ImageButton
-                android:id="@+id/new_hunt_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:layout_marginEnd="5dp"
-                android:background="@null"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_plus"
-                android:contentDescription="@string/new_description" />
-
-            <!--Sort Button-->
-            <ImageButton
-                android:id="@+id/sort_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:layout_marginEnd="5dp"
-                android:background="@null"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_sort"
-                android:contentDescription="@string/sort_description" />
-
-            <!--Filter Button-->
-            <ImageButton
-                android:id="@+id/filter_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:layout_marginEnd="5dp"
-                android:background="@null"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_filter"
-                android:contentDescription="@string/filter_description" />
-
-        </LinearLayout>
-
-        <!--No Hunts Message-->
-        <TextView
-            android:id="@+id/no_hunts_message"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp"
-            android:gravity="center"
-            android:visibility="gone"
-            android:text="@string/no_hunts_message"
-            android:textSize="24sp"
+        <!--Counter Multiplier-->
+        <Button
+            android:id="@+id/counter_multiplier_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:background="@null"
+            android:text="@string/counter_multiplier_placeholder"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
-        <!--Shiny Hunt Recycler View-->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/shiny_hunts_recycler_view"
-            android:clipToPadding="false"
-            android:fitsSystemWindows="true"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <!--Expand All Text-->
+        <TextView
+            android:id="@+id/expand_all_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/expand_all_label"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
-    </LinearLayout>
+        <!--Expand All Checkbox-->
+        <CheckBox
+            android:id="@+id/expand_all_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp" />
 
-</FrameLayout>
+        <!--New Hunt Button-->
+        <ImageButton
+            android:id="@+id/new_hunt_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:background="@null"
+            android:contentDescription="@string/new_description"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_new" />
+
+        <!--Sort Button-->
+        <ImageButton
+            android:id="@+id/sort_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:background="@null"
+            android:contentDescription="@string/sort_description"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_sort" />
+
+        <!--Filter Button-->
+        <ImageButton
+            android:id="@+id/filter_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:background="@null"
+            android:contentDescription="@string/filter_description"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_filter" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--No Hunts Message-->
+    <TextView
+        android:id="@+id/no_hunts_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_hunts_message"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!--Shiny Hunt Recycler View-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/shiny_hunts_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        android:clipToPadding="false"
+        android:fitsSystemWindows="true"
+        app:layout_constraintTop_toBottomOf="@+id/top_bar_container"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
