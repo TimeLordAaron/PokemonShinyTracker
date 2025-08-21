@@ -87,11 +87,17 @@ object ShinyHuntData {
             "- Hunted in both X and Y.\n" +
             "- Alternated the starter every 10 encounters.\n" +
             "- Chespin; evolved into Quilladin.", 1, "2025-07-22", 21))                                  // Quilladin (Y -> traded to X)
-        shinyHunts.add(listOf(936, 27, "Soft Resets", "2025-05-16", 200, 0, "", 0, "", null))            // Reshiram (ongoing)
-        shinyHunts.add(listOf(964, 21, "Encounters", "2025-07-25", 4100, 0,
+        shinyHunts.add(listOf(962, 21, "Encounters", "2025-07-25", 4548, 0,
             "Pokemon X Shiny-Only Run\n" +
             "\n" +
-            "- Random Encounters on Route 3", 0, "", null))                                              // Fletchling (X)
+            "- Dual hunting in X and Y\n" +
+            "- Random Encounters on Route 3", 1, "2025-08-16", 21))                                      // Bunnelby (X)
+        shinyHunts.add(listOf(936, 27, "Soft Resets", "2025-05-16", 200, 0, "", 0, "", null))            // Reshiram (ongoing)
+        shinyHunts.add(listOf(1024, 21, "Encounters", "2025-08-20", 66, 0,
+            "Pokemon X Shiny-Only Run\n" +
+            "\n" +
+            "- Dual hunting in X and Y\n" +
+            "- Random Encounters on Route 6", 0, "", null))             // Honedge (X, ongoing)
 
         // insert each shiny hunt into the database
         for (hunt in shinyHunts) {
