@@ -78,4 +78,8 @@
     <string name="counter_multiplier_placeholder">1x</string>
     <string name="counter_decrement_description">Button to decrement the shiny hunt\'s counter</string>
     <string name="counter_increment_description">Button to increment a shiny hunt\'s counter</string>
+    <string name="previous_form_description">Button to swap to the previous form</string>
+    <string name="next_form_description">Button to swap to the next form</string>
+    <string name="phase_decrement_description">Button to decrement the shiny hunt\'s phase</string>
+    <string name="phase_increment_description">Button to increment the shiny hunt\'s phase</string>
 </resources>

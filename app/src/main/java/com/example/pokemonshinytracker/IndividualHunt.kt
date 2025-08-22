@@ -12,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -24,9 +26,9 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var backBtn: Button                    // back button
     private lateinit var saveBtn: Button                    // save button
     private lateinit var deleteBtn: Button                  // delete button
-    private lateinit var detailLayout: LinearLayout         // detail layout
-    private lateinit var previousFormBtn: Button            // previous form button
-    private lateinit var nextFormBtn: Button                // next form button
+    private lateinit var detailLayout: ConstraintLayout     // detail layout
+    private lateinit var previousFormBtn: ImageButton       // previous form button
+    private lateinit var nextFormBtn: ImageButton           // next form button
     private lateinit var selectPokemonBtn: Button           // pokemon selection button
     private lateinit var pokemonRecyclerView: RecyclerView  // pokemon recycler view
     private lateinit var selectedPokemonLabel: TextView     // selected pokemon label (will be hidden for the Individual Hunt page)
@@ -38,15 +40,17 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var enteredCounter: EditText           // counter text field
     private lateinit var gameRecyclerView: RecyclerView     // game recycler view (used for origin game and current game)
     private lateinit var selectGameDialog: View             // game dialog (used for origin game and current game)
-    private lateinit var decrementCounterBtn: Button        // decrement counter button
-    private lateinit var incrementCounterBtn: Button        // increment counter button
+    private lateinit var decrementCounterBtn: ImageButton   // decrement counter button
+    private lateinit var incrementCounterBtn: ImageButton   // increment counter button
     private lateinit var enteredPhase: EditText             // phase text field
-    private lateinit var decrementPhaseBtn: Button          // decrement phase button
-    private lateinit var incrementPhaseBtn: Button          // increment phase button
+    private lateinit var decrementPhaseBtn: ImageButton     // decrement phase button
+    private lateinit var incrementPhaseBtn: ImageButton     // increment phase button
     private lateinit var enteredNotes: EditText             // notes text field
     private lateinit var completionCheckbox: CheckBox       // completion checkbox
+    private lateinit var finishDateLabel: TextView          // finish date label
     private lateinit var pickFinishDateBtn: Button          // finish date button
     private lateinit var selectedFinishDate: TextView       // finish date text
+    private lateinit var currentGameLabel: TextView         // current game label
     private lateinit var selectCurrentGameBtn: Button       // current game button
 
     // variable declarations for the selected hunt
@@ -83,6 +87,9 @@ class IndividualHunt : ComponentActivity() {
             controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
 
+        // prepare the layout based on device orientation
+        prepareLayout()
+
         // set up detection for the user clicking the back button on their navigation bar
         onBackPressedDispatcher.addCallback(this) {
             handleBackNavigation()  // display confirmation dialog if there are unsaved changes
@@ -99,7 +106,7 @@ class IndividualHunt : ComponentActivity() {
         }
 
         // find all the UI views
-        val mainLayout = findViewById<LinearLayout>(R.id.individual_hunt_background)        // background of the entire window
+        val mainLayout = findViewById<ConstraintLayout>(R.id.individual_hunt_background)        // background of the entire window
         backBtn = findViewById(R.id.back_button)                                            // back button
         saveBtn = findViewById(R.id.save_button)                                            // save button
         deleteBtn = findViewById(R.id.delete_button)                                        // delete button
@@ -116,19 +123,19 @@ class IndividualHunt : ComponentActivity() {
         val originGameIcon = findViewById<ImageView>(R.id.origin_game_icon)                 // origin game icon
         val originGameName = findViewById<TextView>(R.id.origin_game_name)                  // origin game name
         selectOriginGameBtn = findViewById(R.id.origin_game_button)                         // origin game select button
-        enteredMethod = findViewById(R.id.method)                                    // method edit text
-        enteredCounter = findViewById(R.id.counter)                                  // counter edit text
+        enteredMethod = findViewById(R.id.method)                                           // method edit text
+        enteredCounter = findViewById(R.id.counter)                                         // counter edit text
         decrementCounterBtn = findViewById(R.id.decrement_counter_button)                   // counter decrement button
         incrementCounterBtn = findViewById(R.id.increment_counter_button)                   // counter increment button
-        enteredPhase = findViewById(R.id.phase)                                      // phase edit text
+        enteredPhase = findViewById(R.id.phase)                                             // phase edit text
         decrementPhaseBtn = findViewById(R.id.decrement_phase_button)                       // phase decrement button
         incrementPhaseBtn = findViewById(R.id.increment_phase_button)                       // phase increment button
-        enteredNotes = findViewById(R.id.notes_text)                                 // notes edit text
+        enteredNotes = findViewById(R.id.notes_text)                                        // notes edit text
         completionCheckbox = findViewById(R.id.hunt_complete_checkbox)                      // hunt completion checkbox
-        val finishDateLayout = findViewById<LinearLayout>(R.id.finish_date_layout)          // finish date layout
+        finishDateLabel = findViewById(R.id.finish_date_label)                              // finish date label
         pickFinishDateBtn = findViewById(R.id.finish_date_button)                           // finish date button
         selectedFinishDate = findViewById(R.id.finish_date)                                 // finish date text view
-        val currentGameLayout = findViewById<LinearLayout>(R.id.current_game_layout)        // current game layout
+        currentGameLabel = findViewById(R.id.current_game_label)                            // current game label
         val currentGameIconBorder = findViewById<FrameLayout>(R.id.current_game_icon_border)// current game icon border
         val currentGameIcon = findViewById<ImageView>(R.id.current_game_icon)               // current game icon
         val currentGameName = findViewById<TextView>(R.id.current_game_name)                // current game name
@@ -232,13 +239,25 @@ class IndividualHunt : ComponentActivity() {
                 // update the background gradient
                 if (selectedHunt!!.isComplete) {
                     mainLayout.setBackgroundResource(R.drawable.ui_gradient_complete_hunt)
-                    finishDateLayout.visibility = View.VISIBLE
-                    currentGameLayout.visibility = View.VISIBLE
+                    finishDateLabel.visibility = View.VISIBLE
+                    selectedFinishDate.visibility = View.VISIBLE
+                    pickFinishDateBtn.visibility = View.VISIBLE
+                    currentGameLabel.visibility = View.VISIBLE
+                    if (selectedCurrentGameID != null) {
+                        currentGameName.visibility = View.VISIBLE
+                        currentGameIconBorder.visibility = View.VISIBLE
+                    }
+                    selectCurrentGameBtn.visibility = View.VISIBLE
                     Log.d("IndividualHunt", "Displaying complete hunt layout")
                 } else {
                     mainLayout.setBackgroundResource(R.drawable.ui_gradient_incomplete_hunt)
-                    finishDateLayout.visibility = View.GONE
-                    currentGameLayout.visibility = View.GONE
+                    finishDateLabel.visibility = View.GONE
+                    selectedFinishDate.visibility = View.GONE
+                    pickFinishDateBtn.visibility = View.GONE
+                    currentGameLabel.visibility = View.GONE
+                    currentGameName.visibility = View.GONE
+                    currentGameIconBorder.visibility = View.GONE
+                    selectCurrentGameBtn.visibility = View.GONE
                     Log.d("IndividualHunt", "Displaying incomplete hunt layout")
                 }
 
@@ -246,10 +265,6 @@ class IndividualHunt : ComponentActivity() {
                 Log.d("IndividualHunt", "No hunt found for ID: $selectedHuntID. This is a new hunt")
             }
         }
-
-        // handle the UI layout based on device orientation
-        detailLayout.orientation =
-            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) LinearLayout.HORIZONTAL else LinearLayout.VERTICAL
 
         // prepare the recycler views
         selectPokemonDialogLayout = layoutInflater.inflate(R.layout.pokemon_selection, null)
@@ -627,14 +642,26 @@ class IndividualHunt : ComponentActivity() {
             // if checkboxState is false, change background to gray gradient, and make layouts invisible
             if (!checkboxState) {
                 mainLayout.setBackgroundResource(R.drawable.ui_gradient_incomplete_hunt)
-                finishDateLayout.visibility = View.GONE
-                currentGameLayout.visibility = View.GONE
+                finishDateLabel.visibility = View.GONE
+                selectedFinishDate.visibility = View.GONE
+                pickFinishDateBtn.visibility = View.GONE
+                currentGameLabel.visibility = View.GONE
+                currentGameName.visibility = View.GONE
+                currentGameIconBorder.visibility = View.GONE
+                selectCurrentGameBtn.visibility = View.GONE
             }
             // if checkboxState is true, change background to green gradient, and make layouts visible
             else {
                 mainLayout.setBackgroundResource(R.drawable.ui_gradient_complete_hunt)
-                finishDateLayout.visibility = View.VISIBLE
-                currentGameLayout.visibility = View.VISIBLE
+                finishDateLabel.visibility = View.VISIBLE
+                selectedFinishDate.visibility = View.VISIBLE
+                pickFinishDateBtn.visibility = View.VISIBLE
+                currentGameLabel.visibility = View.VISIBLE
+                if (selectedCurrentGameID != null) {
+                    currentGameName.visibility = View.VISIBLE
+                    currentGameIconBorder.visibility = View.VISIBLE
+                }
+                selectCurrentGameBtn.visibility = View.VISIBLE
             }
         }
 
@@ -708,6 +735,7 @@ class IndividualHunt : ComponentActivity() {
                     GameSelectionAdapter(GameSelectionMode.CURRENT_SINGLE_SELECT, groupedGameList, listOf(selectedCurrentGameID)) { selectedGame ->
                         currentGameIcon.setImageResource(selectedGame.gameImage)
                         currentGameIconBorder.visibility = View.VISIBLE
+                        currentGameName.visibility = View.VISIBLE
                         currentGameName.text = selectedGame.gameName
                         selectedCurrentGameID = selectedGame.gameID - 1
                         selectCurrentGameDialog.dismiss()
@@ -723,12 +751,8 @@ class IndividualHunt : ComponentActivity() {
         Log.d("IndividualHunt", "onConfigurationChanged() started")
         super.onConfigurationChanged(newConfig)
 
-        // update layout orientation dynamically
-        detailLayout.orientation =
-            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
-                LinearLayout.HORIZONTAL
-            else
-                LinearLayout.VERTICAL
+        // update the layout
+        prepareLayout()
 
         // determine the number of columns based on orientation
         val pokemonSpanCount = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -772,6 +796,62 @@ class IndividualHunt : ComponentActivity() {
         gameRecyclerView.layoutManager = gameGridLayoutManager
 
         Log.d("IndividualHunt", "onConfigurationChanged() completed")
+    }
+
+    // Helper function to prepare the layout based on device orientation
+    private fun prepareLayout() {
+        val constraintLayout = findViewById<ConstraintLayout>(R.id.individual_hunt_details)
+        val set = ConstraintSet()
+
+        // layout for portrait orientation
+        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+            // constrain the pokemon section
+            set.connect(R.id.pokemon_section, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+            set.connect(R.id.pokemon_section, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+            set.connect(R.id.pokemon_section, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+            set.connect(R.id.pokemon_section, ConstraintSet.BOTTOM, R.id.additional_details_section, ConstraintSet.TOP)
+
+            // constrain the additional details section
+            set.connect(R.id.additional_details_section, ConstraintSet.TOP, R.id.pokemon_section, ConstraintSet.BOTTOM)
+            set.connect(R.id.additional_details_section, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+            set.connect(R.id.additional_details_section, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+            set.connect(R.id.additional_details_section, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+
+            // let both sections take up the maximum available width
+            set.constrainPercentWidth(R.id.pokemon_section, 1f)
+            set.constrainPercentWidth(R.id.additional_details_section, 1f)
+
+            // let both sections take up roughly half the maximum available height
+            set.constrainPercentHeight(R.id.pokemon_section, 0.48f)
+            set.constrainPercentHeight(R.id.additional_details_section, 0.48f)
+
+        // layout for landscape orientation
+        } else {
+
+            // constrain the pokemon section
+            set.connect(R.id.pokemon_section, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+            set.connect(R.id.pokemon_section, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            set.connect(R.id.pokemon_section, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+            set.connect(R.id.pokemon_section, ConstraintSet.END, R.id.additional_details_section, ConstraintSet.START)
+
+            // constrain the additional details section
+            set.connect(R.id.additional_details_section, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+            set.connect(R.id.additional_details_section, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            set.connect(R.id.additional_details_section, ConstraintSet.START, R.id.pokemon_section, ConstraintSet.END)
+            set.connect(R.id.additional_details_section, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+
+            // let both sections take up the maximum available height
+            set.constrainPercentHeight(R.id.pokemon_section, 1f)
+            set.constrainPercentHeight(R.id.additional_details_section, 1f)
+
+            // let both sections take up roughly half the maximum available width
+            set.constrainPercentWidth(R.id.pokemon_section, 0.38f)
+            set.constrainPercentWidth(R.id.additional_details_section, 0.58f)
+
+        }
+
+        set.applyTo(constraintLayout)
     }
 
     // Helper function for detecting unsaved changes
