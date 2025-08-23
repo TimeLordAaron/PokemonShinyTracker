@@ -12,7 +12,7 @@
         android:id="@+id/top_bar_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/ui_container_transparent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +42,7 @@
             android:text="@string/counter_multiplier_placeholder"
             android:textAllCaps="false"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="@dimen/text_size_small"
             android:textStyle="bold" />
 
         <!--Expand All Text-->
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:text="@string/expand_all_label"
             android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:textSize="@dimen/text_size_small" />
 
         <!--Expand All Checkbox-->
         <CheckBox
@@ -60,7 +60,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="@dimen/min_button_size"
-            android:minHeight="@dimen/min_button_size" />
+            android:minHeight="@dimen/min_button_size"
+            android:button="@null"
+            android:background="?android:attr/listChoiceIndicatorMultiple" />
 
         <!--New Hunt Button-->
         <ImageButton
@@ -71,7 +73,7 @@
             android:minHeight="@dimen/min_button_size"
             android:background="@null"
             android:contentDescription="@string/new_description"
-            android:scaleType="centerInside"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_new" />
 
         <!--Sort Button-->
@@ -83,7 +85,7 @@
             android:minHeight="@dimen/min_button_size"
             android:background="@null"
             android:contentDescription="@string/sort_description"
-            android:scaleType="centerInside"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_sort" />
 
         <!--Filter Button-->
@@ -95,7 +97,7 @@
             android:minHeight="@dimen/min_button_size"
             android:background="@null"
             android:contentDescription="@string/filter_description"
-            android:scaleType="centerInside"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_filter" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

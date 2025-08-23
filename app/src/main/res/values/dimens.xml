@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="text_size_small">16sp</dimen>
+    <dimen name="text_size_medium">20sp</dimen>
+    <dimen name="text_size_large">32sp</dimen>
+    <dimen name="button_margin">16dp</dimen>
     <dimen name="min_button_size">48dp</dimen>
+    <dimen name="min_game_icon_size">40dp</dimen>
+    <dimen name="notes_height">300dp</dimen>
 </resources>

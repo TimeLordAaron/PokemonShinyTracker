@@ -30,7 +30,7 @@
     <string name="generation_3_label">Generation 3</string>
     <string name="generation_4_label">Generation 4</string>
     <string name="generation_5_label">Generation 5</string>
-    <string name="select_a_game">Select a Game</string>
+    <string name="select_a_game">Select Game</string>
     <string name="game_item_image_description">Game Item Image Placeholder</string>
     <string name="back_button_text">Back</string>
     <string name="save_button_text">Save</string>
@@ -82,4 +82,6 @@
     <string name="next_form_description">Button to swap to the next form</string>
     <string name="phase_decrement_description">Button to decrement the shiny hunt\'s phase</string>
     <string name="phase_increment_description">Button to increment the shiny hunt\'s phase</string>
+    <string name="calendar_button_description">Button to open a calendar</string>
+    <string name="game_select_button_description">Button to select a game</string>
 </resources>

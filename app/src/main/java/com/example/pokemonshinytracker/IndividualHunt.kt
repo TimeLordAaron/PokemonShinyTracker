@@ -33,9 +33,9 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var pokemonRecyclerView: RecyclerView  // pokemon recycler view
     private lateinit var selectedPokemonLabel: TextView     // selected pokemon label (will be hidden for the Individual Hunt page)
     private lateinit var selectPokemonDialogLayout: View    // pokemon selection dialog
-    private lateinit var pickStartDateBtn: Button           // start date button
+    private lateinit var pickStartDateBtn: ImageButton      // start date button
     private lateinit var selectedStartDate: TextView        // start date text
-    private lateinit var selectOriginGameBtn: Button        // origin game button
+    private lateinit var selectOriginGameBtn: ImageButton   // origin game button
     private lateinit var enteredMethod: EditText            // method text field
     private lateinit var enteredCounter: EditText           // counter text field
     private lateinit var gameRecyclerView: RecyclerView     // game recycler view (used for origin game and current game)
@@ -48,10 +48,10 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var enteredNotes: EditText             // notes text field
     private lateinit var completionCheckbox: CheckBox       // completion checkbox
     private lateinit var finishDateLabel: TextView          // finish date label
-    private lateinit var pickFinishDateBtn: Button          // finish date button
+    private lateinit var pickFinishDateBtn: ImageButton     // finish date button
     private lateinit var selectedFinishDate: TextView       // finish date text
     private lateinit var currentGameLabel: TextView         // current game label
-    private lateinit var selectCurrentGameBtn: Button       // current game button
+    private lateinit var selectCurrentGameBtn: ImageButton  // current game button
 
     // variable declarations for the selected hunt
     private var selectedHuntID = 0
@@ -106,7 +106,7 @@ class IndividualHunt : ComponentActivity() {
         }
 
         // find all the UI views
-        val mainLayout = findViewById<ConstraintLayout>(R.id.individual_hunt_background)        // background of the entire window
+        val mainLayout = findViewById<ConstraintLayout>(R.id.individual_hunt_layout)        // layout of the entire window
         backBtn = findViewById(R.id.back_button)                                            // back button
         saveBtn = findViewById(R.id.save_button)                                            // save button
         deleteBtn = findViewById(R.id.delete_button)                                        // delete button
@@ -800,58 +800,58 @@ class IndividualHunt : ComponentActivity() {
 
     // Helper function to prepare the layout based on device orientation
     private fun prepareLayout() {
-        val constraintLayout = findViewById<ConstraintLayout>(R.id.individual_hunt_details)
-        val set = ConstraintSet()
+        // hunt details
+        val huntDetailsConstraintLayout = findViewById<ConstraintLayout>(R.id.individual_hunt_details)
+        val huntDetailsConstraintSet = ConstraintSet()
+        huntDetailsConstraintSet.clone(huntDetailsConstraintLayout)
 
-        // layout for portrait orientation
+        // handle portrait orientation
         if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-
             // constrain the pokemon section
-            set.connect(R.id.pokemon_section, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-            set.connect(R.id.pokemon_section, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-            set.connect(R.id.pokemon_section, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-            set.connect(R.id.pokemon_section, ConstraintSet.BOTTOM, R.id.additional_details_section, ConstraintSet.TOP)
+            huntDetailsConstraintSet.connect(R.id.pokemon_section, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+            huntDetailsConstraintSet.connect(R.id.pokemon_section, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+            huntDetailsConstraintSet.connect(R.id.pokemon_section, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+            huntDetailsConstraintSet.connect(R.id.pokemon_section, ConstraintSet.BOTTOM, R.id.additional_details_section, ConstraintSet.TOP)
 
             // constrain the additional details section
-            set.connect(R.id.additional_details_section, ConstraintSet.TOP, R.id.pokemon_section, ConstraintSet.BOTTOM)
-            set.connect(R.id.additional_details_section, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-            set.connect(R.id.additional_details_section, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-            set.connect(R.id.additional_details_section, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            huntDetailsConstraintSet.connect(R.id.additional_details_section, ConstraintSet.TOP, R.id.pokemon_section, ConstraintSet.BOTTOM)
+            huntDetailsConstraintSet.connect(R.id.additional_details_section, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+            huntDetailsConstraintSet.connect(R.id.additional_details_section, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+            huntDetailsConstraintSet.connect(R.id.additional_details_section, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
 
             // let both sections take up the maximum available width
-            set.constrainPercentWidth(R.id.pokemon_section, 1f)
-            set.constrainPercentWidth(R.id.additional_details_section, 1f)
+            huntDetailsConstraintSet.constrainPercentWidth(R.id.pokemon_section, 1f)
+            huntDetailsConstraintSet.constrainPercentWidth(R.id.additional_details_section, 1f)
 
             // let both sections take up roughly half the maximum available height
-            set.constrainPercentHeight(R.id.pokemon_section, 0.48f)
-            set.constrainPercentHeight(R.id.additional_details_section, 0.48f)
+            huntDetailsConstraintSet.constrainPercentHeight(R.id.pokemon_section, 0.48f)
+            huntDetailsConstraintSet.constrainPercentHeight(R.id.additional_details_section, 0.48f)
 
-        // layout for landscape orientation
+        // handle landscape orientation
         } else {
-
             // constrain the pokemon section
-            set.connect(R.id.pokemon_section, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-            set.connect(R.id.pokemon_section, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-            set.connect(R.id.pokemon_section, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-            set.connect(R.id.pokemon_section, ConstraintSet.END, R.id.additional_details_section, ConstraintSet.START)
+            huntDetailsConstraintSet.connect(R.id.pokemon_section, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+            huntDetailsConstraintSet.connect(R.id.pokemon_section, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            huntDetailsConstraintSet.connect(R.id.pokemon_section, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+            huntDetailsConstraintSet.connect(R.id.pokemon_section, ConstraintSet.END, R.id.additional_details_section, ConstraintSet.START)
 
             // constrain the additional details section
-            set.connect(R.id.additional_details_section, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-            set.connect(R.id.additional_details_section, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-            set.connect(R.id.additional_details_section, ConstraintSet.START, R.id.pokemon_section, ConstraintSet.END)
-            set.connect(R.id.additional_details_section, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+            huntDetailsConstraintSet.connect(R.id.additional_details_section, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+            huntDetailsConstraintSet.connect(R.id.additional_details_section, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            huntDetailsConstraintSet.connect(R.id.additional_details_section, ConstraintSet.START, R.id.pokemon_section, ConstraintSet.END)
+            huntDetailsConstraintSet.connect(R.id.additional_details_section, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
 
             // let both sections take up the maximum available height
-            set.constrainPercentHeight(R.id.pokemon_section, 1f)
-            set.constrainPercentHeight(R.id.additional_details_section, 1f)
+            huntDetailsConstraintSet.constrainPercentHeight(R.id.pokemon_section, 1f)
+            huntDetailsConstraintSet.constrainPercentHeight(R.id.additional_details_section, 1f)
 
-            // let both sections take up roughly half the maximum available width
-            set.constrainPercentWidth(R.id.pokemon_section, 0.38f)
-            set.constrainPercentWidth(R.id.additional_details_section, 0.58f)
+            // let the additional details section take a bit more width than the pokemon section
+            huntDetailsConstraintSet.constrainPercentWidth(R.id.pokemon_section, 0.38f)
+            huntDetailsConstraintSet.constrainPercentWidth(R.id.additional_details_section, 0.58f)
 
         }
 
-        set.applyTo(constraintLayout)
+        huntDetailsConstraintSet.applyTo(huntDetailsConstraintLayout)
     }
 
     // Helper function for detecting unsaved changes
