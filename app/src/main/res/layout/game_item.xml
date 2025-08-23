@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--Game Item (for displaying a game as a clickable icon w/ name)-->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/game_layout"
-    android:orientation="vertical"
-    android:layout_width="80dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp">
+    android:layout_margin="10dp">
 
     <!--Rounded Frame-->
     <FrameLayout
         android:id="@+id/game_icon_border"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_gravity="center"
-        android:background="@drawable/ui_game_icon_border_origin">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/ui_game_icon_border_origin"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="1:1">
 
         <!--Game Image (placed on top of the border)-->
         <ImageView
             android:id="@+id/game_image"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
             android:background="@drawable/ui_game_icon_border_origin"
             android:src="@drawable/etc_default"
             android:contentDescription="@string/game_item_image_description"
@@ -35,12 +36,15 @@
     <!--Game Name-->
     <TextView
         android:id="@+id/game_name"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:text="@string/game_item_name_placeholder"
-        android:textSize="15sp"
+        android:textSize="@dimen/text_size_small"
         android:textColor="@color/black"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/game_icon_border"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

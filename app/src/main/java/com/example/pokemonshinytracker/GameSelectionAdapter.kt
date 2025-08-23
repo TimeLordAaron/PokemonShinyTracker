@@ -12,8 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 
 class GameSelectionAdapter(
@@ -33,7 +33,7 @@ class GameSelectionAdapter(
 
     // class for game view holders
     inner class GameViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val gameLayout: LinearLayout = view.findViewById(R.id.game_layout)
+        private val gameLayout: ConstraintLayout = view.findViewById(R.id.game_layout)
         private val gameIconBorder: FrameLayout = view.findViewById(R.id.game_icon_border)
         private val gameImage: ImageView = view.findViewById(R.id.game_image)
         private val gameName: TextView = view.findViewById(R.id.game_name)

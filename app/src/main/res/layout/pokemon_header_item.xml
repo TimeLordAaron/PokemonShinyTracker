@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:padding="8dp"
     android:background="@drawable/ui_container_transparent"
-    android:textSize="18sp"
+    android:textSize="@dimen/text_size_medium"
     android:textStyle="bold"
     android:textColor="@android:color/black"
     android:textAlignment="center" />
