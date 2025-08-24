@@ -28,7 +28,8 @@
             android:textSize="@dimen/text_size_medium"
             android:textColor="@color/black"
             android:textAlignment="textEnd"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/sort_method_spinner"
+            app:layout_constraintBottom_toBottomOf="@id/sort_method_spinner"
             app:layout_constraintEnd_toStartOf="@id/guideline_label" />
 
         <!--Sort Method-->
@@ -37,8 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/min_button_size"
             android:layout_marginStart="10dp"
-            app:layout_constraintTop_toTopOf="@id/sort_method_label"
-            app:layout_constraintBottom_toBottomOf="@id/sort_method_label"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@id/sort_method_label" />
 
         <!--Sort Order Label-->

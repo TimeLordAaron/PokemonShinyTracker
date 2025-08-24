@@ -343,24 +343,24 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
                 // access all the UI elements
                 sortMethodSpinner =
-                    sortDialogLayout.findViewById(R.id.sort_method_spinner)                 // sort method spinner
+                    sortDialogLayout.findViewById(R.id.sort_method_spinner)         // sort method spinner
                 sortOrdersRadioGrp =
-                    sortDialogLayout.findViewById(R.id.sort_orders_radio_group)            // sort orders radio group
+                    sortDialogLayout.findViewById(R.id.sort_orders_radio_group)     // sort orders radio group
                 ascendingOrderRadioBtn =
-                    sortDialogLayout.findViewById(R.id.ascending_radio_button)         // ascending radio button (for sort order)
+                    sortDialogLayout.findViewById(R.id.ascending_radio_button)      // ascending radio button (for sort order)
                 descendingOrderRadioBtn =
-                    sortDialogLayout.findViewById(R.id.descending_radio_button)       // descending radio button (for sort order)
+                    sortDialogLayout.findViewById(R.id.descending_radio_button)     // descending radio button (for sort order)
                 confirmSortBtn =
-                    sortDialogLayout.findViewById(R.id.confirm_sort_button)                    // confirm sort button
+                    sortDialogLayout.findViewById(R.id.confirm_sort_button)         // confirm sort button
 
                 // create an adapter for the sort method spinner
                 ArrayAdapter.createFromResource(
                     this,
                     R.array.sort_methods_array,
-                    android.R.layout.simple_spinner_item
+                    R.layout.spinner_item
                 ).also { adapter ->
                     // set the layout to use when the list of choices appears
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
+                    adapter.setDropDownViewResource(R.layout.spinner_item)
                     // apply the adapter to the spinner
                     sortMethodSpinner.adapter = adapter
                 }
