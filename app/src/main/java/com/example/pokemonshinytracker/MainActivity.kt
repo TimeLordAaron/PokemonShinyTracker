@@ -124,6 +124,9 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     private var subMenuOpened = false
     private var individualHuntOpening = false
 
+    // variable for inflating the sort menu dialog
+    private lateinit var sortDialogLayout: View
+
     // variables for inflating the selection dialogs in the filter menu
     private lateinit var selectPokemonDialogLayout: View
     private lateinit var selectGamesDialogLayout: View
@@ -294,6 +297,15 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
             }
         }
 
+        /* Sort Menu Dialog*/
+        sortDialogLayout = layoutInflater.inflate(R.layout.sort_selection, null)
+
+        // access the spinner and radio group early (in case the user clears filters in the filter menu without having previously opened the sort menu
+        sortMethodSpinner =
+            sortDialogLayout.findViewById(R.id.sort_method_spinner)         // sort method spinner
+        sortOrdersRadioGrp =
+            sortDialogLayout.findViewById(R.id.sort_orders_radio_group)     // sort orders radio group
+
         /* Filter Menu: Selection Dialogs */
         // inflate layouts of the pokemon and game selection dialogs (for the filter menu)
         selectPokemonDialogLayout = layoutInflater.inflate(R.layout.pokemon_selection, null)
@@ -339,7 +351,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
             if (!subMenuOpened && !sortMenuOpened && !filterMenuOpened && !individualHuntOpening) {
                 sortMenuOpened = true
 
-                val sortDialogLayout = layoutInflater.inflate(R.layout.sort_selection, null)
+                sortDialogLayout = layoutInflater.inflate(R.layout.sort_selection, null)
 
                 // access all the UI elements
                 sortMethodSpinner =
@@ -553,7 +565,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // create a confirmation dialog
-                        dh.createConfirmationDialog(this, "Clear All Filters?", "Are you sure you want to clear all currently applied filters?", {
+                        dh.createConfirmationDialog(this, "Clear All Filters?", "Are you sure you want to clear all currently applied filters? This will also reset the current sorting method.", {
                             // logic for Yes button
                             // reset all the filters (selected and confirmed)
                             selectedPokemon.clear()
@@ -583,6 +595,13 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                             confirmedPhaseLoFilter = ""
                             enteredPhaseHi = ""
                             confirmedPhaseHiFilter = ""
+
+                            // reset the sort method and order
+                            currentSortMethod = SortMethod.DEFAULT
+                            sortMethodSpinner.setSelection(0)
+
+                            currentSortOrder = SortOrder.DESC
+                            sortOrdersRadioGrp.check(R.id.descending_radio_button)
 
                             // get the unfiltered hunts
                             val unfilteredHunts = getFilteredAndSortedHunts()
