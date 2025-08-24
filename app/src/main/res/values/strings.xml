@@ -59,7 +59,7 @@
     <string name="current_games_label">Current Games:</string>
     <string name="to">to</string>
     <string name="confirm_filters">Confirm Filters</string>
-    <string name="select_all_label">Select All</string>
+    <string name="select_all_label">Select All:</string>
     <string name="dropdown_button">Button to toggle visibility of Pokémon Forms</string>
     <string name="notes_label">Notes:</string>
     <string name="notes_hint">Add notes here.</string>

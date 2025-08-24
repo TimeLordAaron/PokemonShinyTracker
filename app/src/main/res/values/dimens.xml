@@ -9,4 +9,5 @@
     <dimen name="min_button_size">48dp</dimen>
     <dimen name="min_game_icon_size">40dp</dimen>
     <dimen name="notes_height">300dp</dimen>
+    <dimen name="pokemon_form_size">30dp</dimen>
 </resources>

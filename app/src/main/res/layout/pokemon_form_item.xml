@@ -11,8 +11,9 @@
     <!--Form Image-->
     <ImageView
         android:id="@+id/form_image"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/min_button_size"
+        android:layout_height="@dimen/min_button_size"
+        android:layout_margin="5dp"
         android:src="@drawable/etc_default" />
 
     <!--Form Name-->
@@ -22,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="(Mega)"
-        android:textSize="15sp"
-        android:textColor="@color/black"/>
+        android:textSize="@dimen/text_size_small"
+        android:textColor="@color/black" />
 
 </LinearLayout>
