@@ -526,7 +526,7 @@ class IndividualHunt : ComponentActivity() {
                 subMenuOpened = true
 
                 // display the date picker
-                dh.createDatePickerDialog(this, {
+                dh.createDatePickerDialog(this, selectedStartDate.text.toString(), {
                     // use the returned date string
                     selectedStartDate.text = it
                 }, {
@@ -674,7 +674,7 @@ class IndividualHunt : ComponentActivity() {
                 subMenuOpened = true
 
                 // display the date picker
-                dh.createDatePickerDialog(this, {
+                dh.createDatePickerDialog(this, selectedFinishDate.text.toString(), {
                     // use the returned date string
                     selectedFinishDate.text = it
                 }, {

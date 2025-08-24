@@ -9,8 +9,24 @@ import java.util.Calendar
 class DialogHandler {
 
     // Function to create a date picker dialog
-    fun createDatePickerDialog(context: Context, onDateSelected: (String) -> Unit = {}, onClose: () -> Unit = {}): DatePickerDialog {
+    fun createDatePickerDialog(context: Context, selectedDate: String? = null, onDateSelected: (String) -> Unit = {}, onClose: () -> Unit = {}): DatePickerDialog {
         val c = Calendar.getInstance()
+
+        // set the current selection (if a date was provided)
+        if (!selectedDate.isNullOrBlank()) {
+            try {
+                val parts = selectedDate.split("-")
+                if (parts.size == 3) {
+                    val year = parts[0].toInt()
+                    val month = parts[1].toInt() - 1    // calendar months are 0-based
+                    val day = parts[2].toInt()
+                    c.set(year, month, day)
+                }
+            } catch (e: Exception) {
+                // if parsing fails, just use today's date
+                e.printStackTrace()
+            }
+        }
 
         return DatePickerDialog(
             context,

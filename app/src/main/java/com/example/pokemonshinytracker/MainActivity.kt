@@ -905,7 +905,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // display the date picker
-                        dh.createDatePickerDialog(this, {
+                        dh.createDatePickerDialog(this, startDateFromBtn.text.toString(), {
                             // use the returned date string
                             selectedStartDateFrom = it
                             startDateFromBtn.text = it
@@ -925,7 +925,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // display the date picker
-                        dh.createDatePickerDialog(this, {
+                        dh.createDatePickerDialog(this, startDateToBtn.text.toString(), {
                             // use the returned date string
                             selectedStartDateTo = it
                             startDateToBtn.text = it
@@ -945,7 +945,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // display the date picker
-                        dh.createDatePickerDialog(this, {
+                        dh.createDatePickerDialog(this, finishDateFromBtn.text.toString(), {
                             // use the returned date string
                             selectedFinishDateFrom = it
                             finishDateFromBtn.text = it
@@ -965,7 +965,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         subMenuOpened = true
 
                         // display the date picker
-                        dh.createDatePickerDialog(this, {
+                        dh.createDatePickerDialog(this, finishDateToBtn.text.toString(), {
                             // use the returned date string
                             selectedFinishDateTo = it
                             finishDateToBtn.text = it
