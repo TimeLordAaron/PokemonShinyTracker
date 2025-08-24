@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="text_size_small">12sp</dimen>
-    <dimen name="text_size_medium">20sp</dimen>
-    <dimen name="text_size_large">48sp</dimen>
+    <dimen name="text_size_medium">16sp</dimen>
+    <dimen name="text_size_large">20sp</dimen>
+    <dimen name="text_size_x_large">48sp</dimen>
     <dimen name="button_margin">10dp</dimen>
     <dimen name="date_button_width">88dp</dimen>
     <dimen name="min_button_size">48dp</dimen>

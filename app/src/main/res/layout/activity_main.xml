@@ -42,7 +42,7 @@
             android:text="@string/counter_multiplier_placeholder"
             android:textAllCaps="false"
             android:textColor="@color/black"
-            android:textSize="@dimen/text_size_small"
+            android:textSize="@dimen/text_size_medium"
             android:textStyle="bold" />
 
         <!--Expand All Text-->
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:text="@string/expand_all_label"
             android:textColor="@color/black"
-            android:textSize="@dimen/text_size_small" />
+            android:textSize="@dimen/text_size_medium" />
 
         <!--Expand All Checkbox-->
         <CheckBox

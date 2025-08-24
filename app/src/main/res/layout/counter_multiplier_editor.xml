@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="20dp"
-        android:textSize="@dimen/text_size_large"
+        android:textSize="@dimen/text_size_x_large"
         android:textColor="@color/black" />
 
     <!--Counter Multiplier Buttons-->
