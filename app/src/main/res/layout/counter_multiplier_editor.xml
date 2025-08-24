@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="20dp"
-        android:textSize="48sp"
+        android:textSize="@dimen/text_size_large"
         android:textColor="@color/black" />
 
     <!--Counter Multiplier Buttons-->
@@ -25,8 +25,8 @@
         <!--Counter Multiplier Decrement-->
         <ImageButton
             android:id="@+id/counter_multiplier_decrement"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/min_button_size"
+            android:layout_height="@dimen/min_button_size"
             android:layout_margin="10dp"
             android:background="@null"
             android:scaleType="centerInside"
@@ -36,8 +36,8 @@
         <!--Counter Multiplier Increment-->
         <ImageButton
             android:id="@+id/counter_multiplier_increment"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/min_button_size"
+            android:layout_height="@dimen/min_button_size"
             android:layout_margin="10dp"
             android:background="@null"
             android:scaleType="centerInside"

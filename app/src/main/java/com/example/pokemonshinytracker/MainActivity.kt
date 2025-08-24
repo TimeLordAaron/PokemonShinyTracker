@@ -62,14 +62,15 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var inProgressRadioBtn: RadioButton        // in progress radio button (for completion status)
     private lateinit var completedRadioBtn: RadioButton         // completed radio button (for completion status)
     private lateinit var bothRadioBtn: RadioButton              // both radio button (for completion status)
-    private lateinit var currentGamesLayout: LinearLayout       // current games layout
+    private lateinit var currentGamesLabel: TextView            // current games label
     private lateinit var editCurrentGamesBtn: Button            // edit current games button
     private lateinit var currentGamesTxt: TextView              // selected current games text
     private lateinit var method: EditText                       // method text field
     private lateinit var startDateFromBtn: Button               // start date from button
     private lateinit var startDateToBtn: Button                 // start date to button
-    private lateinit var finishDateLayout: LinearLayout         // finish date range layout
+    private lateinit var finishDateLabel: TextView              // finish date label
     private lateinit var finishDateFromBtn: Button              // finish date from button
+    private lateinit var finishDateToText: TextView             // finish date "to" text
     private lateinit var finishDateToBtn: Button                // finish date to button
     private lateinit var counterLo: EditText                    // counter (low bound) text field
     private lateinit var counterHi: EditText                    // counter (high bound) text field
@@ -439,9 +440,13 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         // selected current games
         fun setCurrentGames() {
             if (selectedCompletionStatus == null || selectedCompletionStatus == CompletionStatus.IN_PROGRESS) {
-                currentGamesLayout.visibility = View.GONE
+                currentGamesLabel.visibility = View.GONE
+                editCurrentGamesBtn.visibility = View.GONE
+                currentGamesTxt.visibility = View.GONE
             } else {
-                currentGamesLayout.visibility = View.VISIBLE
+                currentGamesLabel.visibility = View.VISIBLE
+                editCurrentGamesBtn.visibility = View.VISIBLE
+                currentGamesTxt.visibility = View.VISIBLE
                 if (selectedCurrentGames.size == 1) {
                     currentGamesTxt.text = "1 game selected."
                 } else {
@@ -458,9 +463,15 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         // finish date layout
         fun setFinishDateLayout() {
             if (selectedCompletionStatus == null || selectedCompletionStatus == CompletionStatus.IN_PROGRESS) {
-                finishDateLayout.visibility = View.GONE
+                finishDateLabel.visibility = View.GONE
+                finishDateFromBtn.visibility = View.GONE
+                finishDateToText.visibility = View.GONE
+                finishDateToBtn.visibility = View.GONE
             } else {
-                finishDateLayout.visibility = View.VISIBLE
+                finishDateLabel.visibility = View.VISIBLE
+                finishDateFromBtn.visibility = View.VISIBLE
+                finishDateToText.visibility = View.VISIBLE
+                finishDateToBtn.visibility = View.VISIBLE
             }
         }
         // finish date from
@@ -496,14 +507,15 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 inProgressRadioBtn = filterDialogLayout.findViewById(R.id.in_progress_radio_button)     // in progress radio button (for completion status)
                 completedRadioBtn = filterDialogLayout.findViewById(R.id.completed_radio_button)        // completed radio button (for completion status)
                 bothRadioBtn = filterDialogLayout.findViewById(R.id.both_radio_button)                  // both radio button (for completion status)
-                currentGamesLayout = filterDialogLayout.findViewById(R.id.current_games_layout)         // current games layout
+                currentGamesLabel = filterDialogLayout.findViewById(R.id.current_games_label)           // current games label
                 editCurrentGamesBtn = filterDialogLayout.findViewById(R.id.edit_current_games_button)   // edit current games button
                 currentGamesTxt = filterDialogLayout.findViewById(R.id.current_games_text)              // selected current games text
                 method = filterDialogLayout.findViewById(R.id.method)                                   // method text field
                 startDateFromBtn = filterDialogLayout.findViewById(R.id.start_date_from_button)         // start date from button
                 startDateToBtn = filterDialogLayout.findViewById(R.id.start_date_to_button)             // start date to button
-                finishDateLayout = filterDialogLayout.findViewById(R.id.finish_date_layout)             // finish date range layout
+                finishDateLabel = filterDialogLayout.findViewById(R.id.finish_date_label)               // finish date label
                 finishDateFromBtn = filterDialogLayout.findViewById(R.id.finish_date_from_button)       // finish date from button
+                finishDateToText = filterDialogLayout.findViewById(R.id.finish_date_to_text)            // finish date "to" text
                 finishDateToBtn = filterDialogLayout.findViewById(R.id.finish_date_to_button)           // finish date to button
                 counterLo = filterDialogLayout.findViewById(R.id.counter_lo)                            // counter (low bound) text field
                 counterHi = filterDialogLayout.findViewById(R.id.counter_hi)                            // counter (high bound) text field
