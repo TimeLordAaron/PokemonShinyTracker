@@ -18,8 +18,12 @@ class SelectedPokemonAdapter(
     : RecyclerView.Adapter<SelectedPokemonAdapter.SelectedPokemonHolder>()
 {
 
+    // track the selected pokemon items that are currently expanded
+    private val expandedPokemon = mutableMapOf<Int, Boolean>()  // key = pokemonID
+
     class SelectedPokemonHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val pokemonName: TextView = itemView.findViewById(R.id.pokemon_name)
+        val selectedFormCount: TextView = itemView.findViewById(R.id.selected_form_count)
         val selectAll: CheckBox = itemView.findViewById(R.id.select_all_checkbox)
         val dropdown: ImageButton = itemView.findViewById(R.id.dropdown_button)
         val unselect: ImageButton = itemView.findViewById(R.id.unselect_pokemon_button)
@@ -39,36 +43,37 @@ class SelectedPokemonAdapter(
 
         val pokemon = selectedPokemon[position]
 
-        // set up the pokemon name
+        // set up pokemon name
         holder.pokemonName.text = pokemon.pokemonName
 
-        // get the pokemon's forms
-        val forms = pokemon.forms.sortedBy { it.formID }
+        // track expansion state
+        val isExpanded = expandedPokemon[pokemon.pokemonID] ?: false
+        holder.pokemonFormRecyclerView.visibility = if (isExpanded) View.VISIBLE else View.GONE
+        holder.dropdown.setImageResource(
+            if (isExpanded) R.drawable.ic_arrow_down else R.drawable.ic_arrow_up
+        )
 
-        // set up the pokemon forms recycler view
+        // initialize selected form count
+        val selectedFormsForThisPokemon = pokemon.forms.count { selectedPokemonForms.contains(it.formID) }
+        val totalPokemonFormsCount = pokemon.forms.count()
+        holder.selectedFormCount.text = "$selectedFormsForThisPokemon/$totalPokemonFormsCount forms selected."
+
+        // set up pokemon forms recycler view
+        val forms = pokemon.forms.sortedBy { it.formID }
         holder.pokemonFormRecyclerView.layoutManager = LinearLayoutManager(holder.itemView.context)
         holder.pokemonFormRecyclerView.adapter = PokemonFormAdapter(
-            pokemon.forms.sortedBy { it.formID },
+            forms,
             selectedPokemonForms,
             { selectedForm ->
                 Log.d("SelectedPokemonAdapter", "Clicked form: ${selectedForm.formName}")
             },
             onSelectedFormsChanged =  {
                 toggleSelectAll(holder, position)
+                updateSelectedFormCount(holder, pokemon)
             }
         )
 
-        // toggle visibility of the pokemon forms recycler view
-        var isExpanded = true
-        holder.dropdown.setOnClickListener {
-            isExpanded = !isExpanded
-            holder.pokemonFormRecyclerView.visibility = if (isExpanded) View.VISIBLE else View.GONE
-            holder.dropdown.setImageResource(
-                if (isExpanded) R.drawable.ic_arrow_down else R.drawable.ic_arrow_up
-            )
-        }
-
-        // select all forms
+        // on click listener for select all
         holder.selectAll.setOnCheckedChangeListener(null) // prevent recursion
         holder.selectAll.isChecked = forms.all { selectedPokemonForms.contains(it.formID) }
         holder.selectAll.setOnClickListener {
@@ -83,16 +88,24 @@ class SelectedPokemonAdapter(
             holder.pokemonFormRecyclerView.adapter?.notifyDataSetChanged()
 
             onSelectionChanged()
+
+            updateSelectedFormCount(holder, pokemon)
         }
 
+        // on click listener for dropdown
+        holder.dropdown.setOnClickListener {
+            val currentlyExpanded = expandedPokemon[pokemon.pokemonID] ?: false
+            val newExpanded = !currentlyExpanded
+            expandedPokemon[pokemon.pokemonID] = newExpanded
+            holder.pokemonFormRecyclerView.visibility = if (newExpanded) View.VISIBLE else View.GONE
+            holder.dropdown.setImageResource(
+                if (newExpanded) R.drawable.ic_arrow_down else R.drawable.ic_arrow_up
+            )
+        }
 
-        // on click listener for the unselect pokemon button
+        // on click listener for unselect
         holder.unselect.setOnClickListener {
-            val removed = selectedPokemon.removeAt(position)
-            removed.forms.forEach { selectedPokemonForms.remove(it.formID) }
-            notifyItemRemoved(position)
-            notifyItemRangeChanged(position, selectedPokemon.size)
-            onPokemonUnselected(removed) // notify the outer list
+            unselectPokemon(selectedPokemon[position])
         }
 
     }
@@ -102,6 +115,25 @@ class SelectedPokemonAdapter(
     fun updateList(newList: MutableList<Pokemon>) {
         selectedPokemon = newList
         notifyDataSetChanged()
+    }
+
+    // Helper function to update the selected form count text
+    private fun updateSelectedFormCount(holder: SelectedPokemonHolder, pokemon: Pokemon) {
+        val selectedFormsForThisPokemon = pokemon.forms.count { selectedPokemonForms.contains(it.formID) }
+        val totalForms = pokemon.forms.size
+        holder.selectedFormCount.text = "$selectedFormsForThisPokemon/$totalForms forms selected."
+    }
+
+    // Helper function to unselect a Pokemon
+    fun unselectPokemon(pokemon: Pokemon) {
+        val position = selectedPokemon.indexOfFirst { it.pokemonID == pokemon.pokemonID }
+        if (position != -1) {
+            selectedPokemon.removeAt(position)
+            expandedPokemon.remove(pokemon.pokemonID)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, selectedPokemon.size)
+            onPokemonUnselected(pokemon)
+        }
     }
 
     // Helper function to toggle the select all checkbox of a selected Pokemon

@@ -238,7 +238,7 @@ class IndividualHunt : ComponentActivity() {
 
                 // update the background gradient
                 if (selectedHunt!!.isComplete) {
-                    mainLayout.setBackgroundResource(R.drawable.ui_gradient_complete_hunt)
+                    mainLayout.setBackgroundResource(R.drawable.ui_background_individual_hunt_complete)
                     finishDateLabel.visibility = View.VISIBLE
                     selectedFinishDate.visibility = View.VISIBLE
                     pickFinishDateBtn.visibility = View.VISIBLE
@@ -250,7 +250,7 @@ class IndividualHunt : ComponentActivity() {
                     selectCurrentGameBtn.visibility = View.VISIBLE
                     Log.d("IndividualHunt", "Displaying complete hunt layout")
                 } else {
-                    mainLayout.setBackgroundResource(R.drawable.ui_gradient_incomplete_hunt)
+                    mainLayout.setBackgroundResource(R.drawable.ui_background_individual_hunt_incomplete)
                     finishDateLabel.visibility = View.GONE
                     selectedFinishDate.visibility = View.GONE
                     pickFinishDateBtn.visibility = View.GONE
@@ -641,7 +641,7 @@ class IndividualHunt : ComponentActivity() {
             val checkboxState = completionCheckbox.isChecked
             // if checkboxState is false, change background to gray gradient, and make layouts invisible
             if (!checkboxState) {
-                mainLayout.setBackgroundResource(R.drawable.ui_gradient_incomplete_hunt)
+                mainLayout.setBackgroundResource(R.drawable.ui_background_individual_hunt_incomplete)
                 finishDateLabel.visibility = View.GONE
                 selectedFinishDate.visibility = View.GONE
                 pickFinishDateBtn.visibility = View.GONE
@@ -652,7 +652,7 @@ class IndividualHunt : ComponentActivity() {
             }
             // if checkboxState is true, change background to green gradient, and make layouts visible
             else {
-                mainLayout.setBackgroundResource(R.drawable.ui_gradient_complete_hunt)
+                mainLayout.setBackgroundResource(R.drawable.ui_background_individual_hunt_complete)
                 finishDateLabel.visibility = View.VISIBLE
                 selectedFinishDate.visibility = View.VISIBLE
                 pickFinishDateBtn.visibility = View.VISIBLE

@@ -1,11 +1,14 @@
 package com.example.pokemonshinytracker
 
+import android.graphics.drawable.TransitionDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 
@@ -30,37 +33,50 @@ class PokemonSelectionAdapter(
 
     // class for Pokemon view holders
     inner class PokemonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val pokemonItemContainer: FrameLayout = view.findViewById(R.id.pokemon_item_container)
         val pokemonImage: ImageView = view.findViewById(R.id.pokemon_image)
+        val transitionDrawable = ContextCompat.getDrawable(
+            itemView.context,
+            R.drawable.ui_pokemon_item_border_transition
+        ) as TransitionDrawable
+
+        // apply transition drawable as foreground
+        init {
+            pokemonItemContainer.foreground = transitionDrawable
+        }
 
         fun bind(pokemon: Pokemon, position: Int) {
             pokemonImage.load(pokemon.forms.find { it.isDefaultForm }!!.formImage)
 
-            // update background based on selection
-            if (mode == PokemonSelectionMode.MULTI_SELECT) {
-                pokemonImage.setBackgroundResource(
-                    if (preselectedPokemon.any { it.pokemonID == pokemon.pokemonID }) {
-                        selectedPokemonPositions.add(position)
-                        R.drawable.ui_pokemon_selected_item_border
-                    }
-                    else R.drawable.ui_pokemon_unselected_item_border
-                )
+            // determine the initial selection state
+            val isSelected = selectedPokemonPositions.contains(position) ||
+                    preselectedPokemon.any { it.pokemonID == pokemon.pokemonID }
+
+            if (isSelected) selectedPokemonPositions.add(position)
+
+            // jump to the correct initial state
+            if (isSelected) {
+                transitionDrawable.startTransition(0)   // immediately show selected state
+            } else {
+                transitionDrawable.resetTransition()    // show unselected state
             }
 
             // on click listener for the image
             pokemonImage.setOnClickListener {
-                // in filter (multi-select) mode, invert the background of the image
+                // in filter (multi-select) mode, invert the foreground of the frame layout
                 if (mode == PokemonSelectionMode.MULTI_SELECT) {
                     if (selectedPokemonPositions.contains(position)) {
+                        // deselect the pokemon
                         selectedPokemonPositions.remove(position)
-                        pokemonImage.setBackgroundResource(R.drawable.ui_pokemon_unselected_item_border)
+                        transitionDrawable.reverseTransition(250)
                     } else {
+                        // select the pokemon
                         selectedPokemonPositions.add(position)
-                        pokemonImage.setBackgroundResource(R.drawable.ui_pokemon_selected_item_border)
+                        transitionDrawable.startTransition(250)
                     }
-                    notifyItemChanged(position) // refresh only the clicked item
                 }
 
-                // return the selected pokemon
+                // return the clicked pokemon
                 onPokemonSelected(pokemon)
             }
         }
@@ -110,12 +126,6 @@ class PokemonSelectionAdapter(
             is PokemonListItem.HeaderItem -> (holder as HeaderViewHolder).bind(item.generation)
             is PokemonListItem.PokemonItem -> {
                 (holder as PokemonViewHolder).bind(item.pokemon, position)
-                // for filter (multi-select) mode, highlight the Pokemon if it was already selected
-                if (mode == PokemonSelectionMode.MULTI_SELECT) {
-                    holder.pokemonImage.setBackgroundResource(
-                        if (selectedPokemonPositions.contains(position)) R.drawable.ui_pokemon_selected_item_border
-                        else R.drawable.ui_pokemon_unselected_item_border)
-                }
             }
         }
     }

@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
@@ -82,8 +81,8 @@ class ShinyHuntListAdapter(
 
         Log.d("ShinyHuntListAdapter", "Binding View Holder for shiny hunt: $hunt")
         holder.shinyHuntItemLayout.setBackgroundResource(
-            if (hunt.isComplete) R.drawable.ui_container_complete_hunt
-            else R.drawable.ui_container_incomplete_hunt
+            if (hunt.isComplete) R.drawable.ui_shiny_hunt_item_container_complete
+            else R.drawable.ui_shiny_hunt_item_container_incomplete
         )
 
         val pokemon = pokemonSet.find { p -> p.forms.any { it.formID == hunt.formID } }

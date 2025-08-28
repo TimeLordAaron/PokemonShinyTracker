@@ -5,14 +5,13 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="1dp"
-    android:background="@drawable/ui_container_transparent">
+    android:layout_margin="1dp">
 
     <!--Form Image-->
     <ImageView
         android:id="@+id/form_image"
-        android:layout_width="@dimen/min_button_size"
-        android:layout_height="@dimen/min_button_size"
+        android:layout_width="@dimen/pokemon_form_size"
+        android:layout_height="@dimen/pokemon_form_size"
         android:layout_margin="5dp"
         android:src="@drawable/etc_default" />
 

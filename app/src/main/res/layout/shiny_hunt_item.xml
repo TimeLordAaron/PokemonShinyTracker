@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="2dp"
-    android:background="@drawable/ui_container_incomplete_hunt"
+    android:background="@drawable/ui_shiny_hunt_item_container_incomplete"
     android:longClickable="true">
 
     <!--Main Layout-->
@@ -42,7 +42,7 @@
             android:layout_height="0dp"
             android:layout_margin="3dp"
             android:layout_gravity="center"
-            android:background="@drawable/ui_container_transparent"
+            android:background="@drawable/ui_transparent_container"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/pokemon_image"
@@ -54,7 +54,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_margin="5dp"
-                android:background="@drawable/ui_container_transparent"
+                android:background="@drawable/ui_transparent_container"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/counter_layout"
                 app:layout_constraintStart_toStartOf="parent"

@@ -5,7 +5,7 @@
     android:id="@+id/individual_hunt_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ui_gradient_incomplete_hunt">
+    android:background="@drawable/ui_background_individual_hunt_incomplete">
 
     <!--Top Bar Container-->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:background="@drawable/ui_container_transparent"
+        android:background="@drawable/ui_transparent_container"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -91,7 +91,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:padding="10dp"
-            android:background="@drawable/ui_container_transparent"
+            android:background="@drawable/ui_transparent_container"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/additional_details_section"
             app:layout_constraintStart_toStartOf="parent"
@@ -218,7 +218,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="visible"
-            android:background="@drawable/ui_container_transparent"
+            android:background="@drawable/ui_transparent_container"
             android:fillViewport="true"
             app:layout_constraintTop_toBottomOf="@id/pokemon_section"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -542,7 +542,7 @@
                     android:layout_marginTop="10dp"
                     android:gravity="top|start"
                     android:padding="8dp"
-                    android:background="@drawable/ui_container_transparent"
+                    android:background="@drawable/ui_transparent_container"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
                     android:hint="@string/notes_hint"

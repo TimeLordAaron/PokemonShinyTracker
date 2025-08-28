@@ -4,26 +4,39 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_margin="3dp"
     android:padding="5dp"
-    android:background="@drawable/ui_container_incomplete_hunt">
+    android:background="@drawable/ui_transparent_container">
 
     <!--Header-->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:gravity="center_vertical">
 
         <!--Pokemon Name-->
         <TextView
             android:id="@+id/pokemon_name"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text=""
+            android:text="Bulbasaur"
             android:textSize="@dimen/text_size_small"
-            android:textColor="@color/white" />
+            android:textAlignment="textStart"
+            android:textColor="@color/black" />
+
+        <!--Selected Form Count-->
+        <TextView
+            android:id="@+id/selected_form_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:textSize="@dimen/text_size_small"
+            android:textAlignment="textEnd"
+            android:textColor="@color/black" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -37,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/select_all_label"
                 android:textSize="@dimen/text_size_small"
-                android:textColor="@color/white" />
+                android:textColor="@color/black" />
 
             <!--Select All Checkbox-->
             <CheckBox

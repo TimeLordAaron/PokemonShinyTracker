@@ -57,7 +57,7 @@ class GameSelectionAdapter(
             // set background of the layout if the game is currently selected
             if (preselectedGames.contains(game.gameID - 1)) {
                 selectedGamePositions.add(game.gameID - 1)
-                gameLayout.setBackgroundResource(R.drawable.ui_container_complete_hunt)     // selected game
+                gameLayout.setBackgroundResource(R.drawable.ui_shiny_hunt_item_container_complete)     // selected game
             } else {
                 gameLayout.setBackgroundResource(0)     // unselected game (reset the background)
             }

@@ -1,5 +1,6 @@
 package com.example.pokemonshinytracker
 
+import android.graphics.drawable.TransitionDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 
 class PokemonFormAdapter(
@@ -16,6 +18,7 @@ class PokemonFormAdapter(
     private val onSelectedFormsChanged: () -> Unit)
     : RecyclerView.Adapter<PokemonFormAdapter.PokemonFormHolder>()
 {
+
     class PokemonFormHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val formLayout: LinearLayout = itemView.findViewById(R.id.form_layout)
         val formImage: ImageView = itemView.findViewById(R.id.form_image)
@@ -34,23 +37,36 @@ class PokemonFormAdapter(
         Log.d("PokemonFormAdapter", "onBindViewHolder() started")
 
         val form = forms[position]
-
         val isSelected = selectedFormIds.contains(form.formID)
 
         // set up the form image and name
-        holder.formLayout.setBackgroundResource(
-            if (isSelected) R.drawable.ui_container_complete_hunt
-            else R.drawable.ui_container_transparent
-        )
         holder.formImage.setImageResource(form.formImage)
         holder.formName.text = form.formName?.let { "($it)" } ?: ""
 
+        // apply transition drawable to the foreground
+        val transitionDrawable = ContextCompat.getDrawable(
+            holder.itemView.context,
+            R.drawable.ui_pokemon_item_border_transition
+        ) as TransitionDrawable
+        holder.formLayout.foreground = transitionDrawable
+
+        // jump to correct initial state
+        if (isSelected) {
+            transitionDrawable.startTransition(0)   // show selected state immediately
+        } else {
+            transitionDrawable.resetTransition()    // show unselected state
+        }
+
         // invert the background color and return the selected form
         holder.itemView.setOnClickListener {
-            if (isSelected) {
+            if (selectedFormIds.contains(form.formID)) {
+                // deselect the form
                 selectedFormIds.remove(form.formID)
+                transitionDrawable.reverseTransition(200)
             } else {
+                // select the form
                 selectedFormIds.add(form.formID)
+                transitionDrawable.startTransition(200)
             }
             notifyItemChanged(position) // refresh background
             onFormSelected(form)

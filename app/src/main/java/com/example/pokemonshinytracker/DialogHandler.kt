@@ -85,7 +85,7 @@ class DialogHandler {
             .create().apply {
                 setOnCancelListener { onClose() }
                 setOnDismissListener { onClose() }
-                window?.setBackgroundDrawableResource(R.drawable.ui_gradient_homepage)  // change the background of the dialog
+                window?.setBackgroundDrawableResource(R.drawable.ui_background_homepage)  // change the background of the dialog
                 show()
             }
     }

@@ -694,7 +694,12 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                             groupedPokemonList,
                             selectedPokemon
                         ) { returnedPokemon ->
+
+                            val selectedAdapter = selectedPokemonRecyclerView.adapter as SelectedPokemonAdapter
+
                             if (selectedPokemon.contains(returnedPokemon)) {
+                                // unselect the pokemon
+                                selectedAdapter.unselectPokemon(returnedPokemon)
                                 selectedPokemon.remove(returnedPokemon)
                                 for (form in returnedPokemon.forms) {
                                     selectedPokemonForms.remove(form.formID)
@@ -703,7 +708,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                                 selectedPokemon.add(returnedPokemon)
                                 selectedPokemonForms.add(returnedPokemon.forms.sortedBy { it.formID }[0].formID)
                             }
-                            (selectedPokemonRecyclerView.adapter as SelectedPokemonAdapter).updateList(selectedPokemon)
+                            selectedAdapter.updateList(selectedPokemon)
                             setPokemon()
                         }
 

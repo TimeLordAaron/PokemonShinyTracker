@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/ui_gradient_homepage">
+    android:background="@drawable/ui_background_homepage">
 
     <!--Game Recycler View-->
     <androidx.recyclerview.widget.RecyclerView
