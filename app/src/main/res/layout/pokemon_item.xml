@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--Pokemon Item (for displaying a Pokemon as a clickable icon-->
+<!--Pokemon Item Container-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pokemon_item_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="2dp">
 
+    <!--Pokemon Image-->
     <ImageView
         android:id="@+id/pokemon_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="3dp"
         android:src="@drawable/etc_default"
         android:contentDescription="@string/pokemon_item_image_description"
         android:adjustViewBounds="true"

@@ -33,9 +33,9 @@ class PokemonSelectionAdapter(
 
     // class for Pokemon view holders
     inner class PokemonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val pokemonItemContainer: FrameLayout = view.findViewById(R.id.pokemon_item_container)
-        val pokemonImage: ImageView = view.findViewById(R.id.pokemon_image)
-        val transitionDrawable = ContextCompat.getDrawable(
+        private val pokemonItemContainer: FrameLayout = view.findViewById(R.id.pokemon_item_container)
+        private val pokemonImage: ImageView = view.findViewById(R.id.pokemon_image)
+        private val transitionDrawable = ContextCompat.getDrawable(
             itemView.context,
             R.drawable.ui_pokemon_item_border_transition
         ) as TransitionDrawable

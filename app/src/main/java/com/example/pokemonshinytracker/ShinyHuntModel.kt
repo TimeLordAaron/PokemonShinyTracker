@@ -67,37 +67,36 @@ object ShinyHuntData {
         // Mock Data Set #2: Some of my personal shiny hunts
         shinyHunts.add(listOf(740, 33, "Soft Resets", "2024-09-20", 3111, 0, "", 1, "2025-01-06", 37))  // Darkrai
         shinyHunts.add(listOf(341, 37, "Masuda Method", "", 319, 0, "", 1, "2025-01-17", 37))           // Gligar
-        shinyHunts.add(listOf(734, 28, "Soft Resets", "", 1768, 0, "", 1, "", 38))                      // Regigigas
-        shinyHunts.add(listOf(733, 27, "Soft Resets", "", 1381, 0, "", 1, "", 38))                      // Heatran
-        shinyHunts.add(listOf(233, 28, "Soft Resets", "", 559, 0, "", 1, "", 38))                       // Zapdos
+        shinyHunts.add(listOf(734, 28, "Soft Resets", "", 1768, 0, "", 1, "", 39))                      // Regigigas
+        shinyHunts.add(listOf(733, 27, "Soft Resets", "", 1381, 0, "", 1, "", 39))                      // Heatran
+        shinyHunts.add(listOf(233, 28, "Soft Resets", "", 559, 0, "", 1, "", 39))                       // Zapdos
         shinyHunts.add(listOf(738, 37, "Masuda Method", "", 296, 0, "", 1, "", 37))                     // Phione
-        shinyHunts.add(listOf(932, 27, "Soft Resets", "", 952, 0, "", 1, "", 38))                       // Tornadus
-        shinyHunts.add(listOf(235, 28, "Soft Resets", "", 493, 0, "", 1, "", 38))                       // Moltres
-        shinyHunts.add(listOf(934, 28, "Soft Resets", "", 4, 0, "", 1, "", 38))                         // Thundurus
-        shinyHunts.add(listOf(231, 27, "Soft Resets", "", 1704, 0, "", 1, "", 38))                      // Articuno
-        shinyHunts.add(listOf(938, 28, "Soft Resets", "", 2058, 0, "", 1, "", 38))                      // Landorus (Ultra Moon)
-        shinyHunts.add(listOf(938, 27, "Soft Resets", "", 563, 0, "", 1, "", 38))                       // Landorus (Ultra Sun)
-        shinyHunts.add(listOf(737, 28, "Soft Resets", "", 835, 0, "", 1, "", 38))                       // Cresselia
+        shinyHunts.add(listOf(932, 27, "Soft Resets", "", 952, 0, "", 1, "", 39))                       // Tornadus
+        shinyHunts.add(listOf(235, 28, "Soft Resets", "", 493, 0, "", 1, "", 39))                       // Moltres
+        shinyHunts.add(listOf(934, 28, "Soft Resets", "", 4, 0, "", 1, "", 39))                         // Thundurus
+        shinyHunts.add(listOf(231, 27, "Soft Resets", "", 1704, 0, "", 1, "", 39))                      // Articuno
+        shinyHunts.add(listOf(938, 28, "Soft Resets", "", 2058, 0, "", 1, "", 39))                      // Landorus (Ultra Moon)
+        shinyHunts.add(listOf(938, 27, "Soft Resets", "", 563, 0, "", 1, "", 39))                       // Landorus (Ultra Sun)
+        shinyHunts.add(listOf(737, 28, "Soft Resets", "", 835, 0, "", 1, "", 28))                       // Cresselia
         shinyHunts.add(listOf(937, 28, "Soft Resets", "", 1414, 0, "", 1, "", 28))                      // Zekrom
         shinyHunts.add(listOf(1180, 28, "Soft Resets", "2025-05-12", 122, 0, "", 1, "2025-05-13", 28))  // Pheromosa (Ultra Moon)
         shinyHunts.add(listOf(729, 27, "Soft Resets", "", 3026, 0, "", 1, "2025-05-15", 27))            // Dialga
         shinyHunts.add(listOf(953, 22, "Soft Resets", "2025-05-14", 3600, 0,
             "Pokemon X Shiny-Only Run\n" +
             "\n" +
-            "- Hunted in both X and Y.\n" +
-            "- Alternated the starter every 10 encounters.\n" +
-            "- Chespin; evolved into Quilladin.", 1, "2025-07-22", 21))                                  // Quilladin (Y -> traded to X)
+            "- Dual hunted in X and Y.\n" +
+            "- Alternated the starter every 10 encounters.", 1, "2025-07-22", 21))                      // Quilladin (Y -> traded to X)
         shinyHunts.add(listOf(962, 21, "Encounters", "2025-07-25", 4548, 0,
             "Pokemon X Shiny-Only Run\n" +
             "\n" +
-            "- Dual hunting in X and Y\n" +
-            "- Random Encounters on Route 3", 1, "2025-08-16", 21))                                      // Bunnelby (X)
-        shinyHunts.add(listOf(936, 27, "Soft Resets", "2025-05-16", 200, 0, "", 0, "", null))            // Reshiram (ongoing)
-        shinyHunts.add(listOf(1024, 21, "Encounters", "2025-08-20", 66, 0,
+            "- Dual hunted in X and Y.\n" +
+            "- Random Encounters on Route 3.", 1, "2025-08-16", 21))                                    // Bunnelby (X)
+        shinyHunts.add(listOf(256, 21, "Encounters", "2025-08-20", 1054, 0,
             "Pokemon X Shiny-Only Run\n" +
             "\n" +
-            "- Dual hunting in X and Y\n" +
-            "- Random Encounters on Route 6", 0, "", null))             // Honedge (X, ongoing)
+            "- Dual hunted in X and Y.\n" +
+            "- Random Encounters on Route 6.", 1, "2025-08-26", 21))                                    // Furret (X)
+        shinyHunts.add(listOf(936, 27, "Soft Resets", "2025-05-16", 200, 0, "", 0, "", null))           // Reshiram (ongoing)
 
         // insert each shiny hunt into the database
         for (hunt in shinyHunts) {

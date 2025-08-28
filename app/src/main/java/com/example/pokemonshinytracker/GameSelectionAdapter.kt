@@ -1,11 +1,6 @@
 package com.example.pokemonshinytracker
 
-/* 4 MODES */
-// 0 = Individual Hunt (selecting origin game)
-// 1 = Individual Hunt (selecting current game)
-// 2 = Filter Menu (selecting origin games)
-// 3 = Filter Menu (selecting current games)
-
+import android.graphics.drawable.TransitionDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -29,39 +24,61 @@ class GameSelectionAdapter(
     companion object {
         const val VIEW_TYPE_HEADER = 0
         const val VIEW_TYPE_GAME = 1
+        private const val ANIMATION_DURATION = 200
     }
 
     // class for game view holders
     inner class GameViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val gameLayout: ConstraintLayout = view.findViewById(R.id.game_layout)
-        private val gameIconBorder: FrameLayout = view.findViewById(R.id.game_icon_border)
+        private val gameItemContainer: FrameLayout = view.findViewById(R.id.game_item_container)
         private val gameImage: ImageView = view.findViewById(R.id.game_image)
         private val gameName: TextView = view.findViewById(R.id.game_name)
 
         fun bind(game: Game) {
-            // set the background and image of the game
-            // origin game(s)
-            if (mode == GameSelectionMode.ORIGIN_SINGLE_SELECT || mode == GameSelectionMode.ORIGIN_MULTI_SELECT) {
-                gameIconBorder.setBackgroundResource(R.drawable.ui_game_icon_border_origin)
-                gameImage.setBackgroundResource(R.drawable.ui_game_icon_border_origin)
-            }
-            // current game(s)
-            else {
-                gameIconBorder.setBackgroundResource(R.drawable.ui_game_icon_border_current)
-                gameImage.setBackgroundResource(R.drawable.ui_game_icon_border_current)
-            }
             // set game image and name
             gameImage.setImageResource(game.gameImage)
             gameName.text = game.gameName
 
-            // set background of the layout if the game is currently selected
-            if (preselectedGames.contains(game.gameID - 1)) {
-                selectedGamePositions.add(game.gameID - 1)
-                gameLayout.setBackgroundResource(R.drawable.ui_shiny_hunt_item_container_complete)     // selected game
+            val gamePosition = game.gameID
+            var isSelected = selectedGamePositions.contains(gamePosition)
+
+            // determine the correct resources to use for unselected/selected
+            val unselectedRes: Int
+            val selectedRes: Int
+
+            if (mode == GameSelectionMode.ORIGIN_SINGLE_SELECT ||
+                mode == GameSelectionMode.ORIGIN_MULTI_SELECT
+            ) {
+                unselectedRes = R.drawable.ui_origin_game_unselected_item_border
+                selectedRes = R.drawable.ui_origin_game_selected_item_border
+                gameImage.setBackgroundResource(R.drawable.ui_game_icon_border_origin)  // set background of the image
             } else {
-                gameLayout.setBackgroundResource(0)     // unselected game (reset the background)
+                unselectedRes = R.drawable.ui_current_game_unselected_item_border
+                selectedRes = R.drawable.ui_current_game_selected_item_border
+                gameImage.setBackgroundResource(R.drawable.ui_game_icon_border_current) // set background of the image
             }
 
+            // if game is preselected and not already marked, initialize as selected
+            if (preselectedGames.contains(gamePosition - 1) && !selectedGamePositions.contains(gamePosition)) {
+                selectedGamePositions.add(gamePosition)
+                isSelected = true
+            }
+
+            val transitionDrawable = TransitionDrawable(
+                arrayOf(
+                    gameItemContainer.context.getDrawable(unselectedRes),
+                    gameItemContainer.context.getDrawable(selectedRes)
+                )
+            )
+            gameItemContainer.foreground = transitionDrawable
+
+            // jump to the correct initial state
+            if (isSelected) {
+                transitionDrawable.startTransition(0)   // immediately show selected state
+            } else {
+                transitionDrawable.resetTransition()    // show unselected state
+            }
+
+            // on click listener for the image
             gameImage.setOnClickListener {
                 onGameSelected(game)    // return the selected game
 
@@ -70,18 +87,21 @@ class GameSelectionAdapter(
                     GameSelectionMode.ORIGIN_SINGLE_SELECT, GameSelectionMode.CURRENT_SINGLE_SELECT -> {
                         selectedGamePositions.clear()
                         selectedGamePositions.add(game.gameID)
+                        notifyDataSetChanged()
                     }
                     // Filter modes (multi-select): flip the selection state
                     GameSelectionMode.ORIGIN_MULTI_SELECT, GameSelectionMode.CURRENT_MULTI_SELECT -> {
-                        if (selectedGamePositions.contains(game.gameID)) {
-                            selectedGamePositions.remove(game.gameID)
+                        if (selectedGamePositions.contains(gamePosition)) {
+                            // deselect the game
+                            selectedGamePositions.remove(gamePosition)
+                            transitionDrawable.reverseTransition(ANIMATION_DURATION)
                         } else {
-                            selectedGamePositions.add(game.gameID)
+                            // select the game
+                            selectedGamePositions.add(gamePosition)
+                            transitionDrawable.startTransition(ANIMATION_DURATION)
                         }
                     }
                 }
-
-                notifyDataSetChanged()
             }
         }
     }
