@@ -84,4 +84,5 @@
     <string name="phase_increment_description">Button to increment the shiny hunt\'s phase</string>
     <string name="calendar_button_description">Button to open a calendar</string>
     <string name="game_select_button_description">Button to select a game</string>
+    <string name="pokemon_select_button_description">Button to select a Pokemon</string>
 </resources>

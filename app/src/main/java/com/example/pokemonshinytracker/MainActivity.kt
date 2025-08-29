@@ -51,11 +51,11 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
     // lateinit UI declarations: filter selection UI
     private lateinit var filterClearFiltersBtn: Button          // clear filters button (filter selection dialog)
-    private lateinit var editPokemonBtn: Button                 // edit pokemon button
+    private lateinit var editPokemonBtn: ImageButton            // edit pokemon button
     private lateinit var pokemonTxt: TextView                   // selected pokemon text
     private lateinit var selectedPokemonRecyclerView: RecyclerView  // selected pokemon recycler view
     private lateinit var pokemonListRecyclerView: RecyclerView  // pokemon list recycler view
-    private lateinit var editOriginGamesBtn: Button             // edit origin games button
+    private lateinit var editOriginGamesBtn: ImageButton        // edit origin games button
     private lateinit var originGamesTxt: TextView               // selected origin games text
     private lateinit var gamesRecyclerView: RecyclerView        // game recycler view (used for origin and current game)
     private lateinit var completionStatusRadioGrp: RadioGroup   // completion status radio group
@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var completedRadioBtn: RadioButton         // completed radio button (for completion status)
     private lateinit var bothRadioBtn: RadioButton              // both radio button (for completion status)
     private lateinit var currentGamesLabel: TextView            // current games label
-    private lateinit var editCurrentGamesBtn: Button            // edit current games button
+    private lateinit var editCurrentGamesBtn: ImageButton       // edit current games button
     private lateinit var currentGamesTxt: TextView              // selected current games text
     private lateinit var method: EditText                       // method text field
     private lateinit var startDateFromBtn: Button               // start date from button

@@ -29,7 +29,7 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var detailLayout: ConstraintLayout     // detail layout
     private lateinit var previousFormBtn: ImageButton       // previous form button
     private lateinit var nextFormBtn: ImageButton           // next form button
-    private lateinit var selectPokemonBtn: Button           // pokemon selection button
+    private lateinit var selectPokemonBtn: ImageButton      // pokemon selection button
     private lateinit var pokemonRecyclerView: RecyclerView  // pokemon recycler view
     private lateinit var selectedPokemonLabel: TextView     // selected pokemon label (will be hidden for the Individual Hunt page)
     private lateinit var selectPokemonDialogLayout: View    // pokemon selection dialog

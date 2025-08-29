@@ -99,6 +99,7 @@
             android:contentDescription="@string/filter_description"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_filter" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--No Hunts Message-->
