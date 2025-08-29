@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 
@@ -46,7 +47,13 @@ class PokemonSelectionAdapter(
         }
 
         fun bind(pokemon: Pokemon, position: Int) {
-            pokemonImage.load(pokemon.forms.find { it.isDefaultForm }!!.formImage)
+            // load image with coil
+            val defaultForm = pokemon.forms.find { it.isDefaultForm }!!
+            pokemonImage.load(defaultForm.formImage) {
+                placeholder(R.drawable.etc_default)
+                crossfade(true)
+                size(pokemonImage.width.takeIf { it > 0 } ?: 128)   // approximate size if not measured yet
+            }
 
             // determine the initial selection state
             val isSelected = selectedPokemonPositions.contains(position) ||
@@ -93,8 +100,6 @@ class PokemonSelectionAdapter(
 
     // Get the type of the view (invoked by the layout manager)
     override fun getItemViewType(position: Int): Int {
-        //Log.d("PokemonSelectionAdapter", "getItemViewType() started")
-
         return when (pokemonListItems[position]) {
             is PokemonListItem.HeaderItem -> VIEW_TYPE_HEADER
             is PokemonListItem.PokemonItem -> VIEW_TYPE_POKEMON
@@ -124,9 +129,7 @@ class PokemonSelectionAdapter(
 
         when (val item = pokemonListItems[position]) {
             is PokemonListItem.HeaderItem -> (holder as HeaderViewHolder).bind(item.generation)
-            is PokemonListItem.PokemonItem -> {
-                (holder as PokemonViewHolder).bind(item.pokemon, position)
-            }
+            is PokemonListItem.PokemonItem -> (holder as PokemonViewHolder).bind(item.pokemon, position)
         }
     }
 
@@ -135,12 +138,37 @@ class PokemonSelectionAdapter(
     override fun getItemId(position: Int): Long {
         return when (val item = pokemonListItems[position]) {
             is PokemonListItem.PokemonItem -> item.pokemon.pokemonID.toLong()
-            is PokemonListItem.HeaderItem -> -position.toLong() // headers can use negative unique values
+            is PokemonListItem.HeaderItem -> item.generation.hashCode().toLong()
         }
     }
 
     // Function to update the Pokemon list
     fun updateList(newList: List<PokemonListItem>) {
+        val oldList = pokemonListItems
+        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize() = oldList.size
+            override fun getNewListSize() = newList.size
+
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                val oldItem = oldList[oldItemPosition]
+                val newItem = newList[newItemPosition]
+
+                return when {
+                    oldItem is PokemonListItem.PokemonItem && newItem is PokemonListItem.PokemonItem ->
+                        oldItem.pokemon.pokemonID == newItem.pokemon.pokemonID
+                    oldItem is PokemonListItem.HeaderItem && newItem is PokemonListItem.HeaderItem ->
+                        oldItem.generation == newItem.generation
+                    else -> false
+                }
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                val oldItem = oldList[oldItemPosition]
+                val newItem = newList[newItemPosition]
+                return oldItem == newItem
+            }
+        })
+
         pokemonListItems = newList
         selectedPokemonPositions.clear()
 
@@ -150,7 +178,7 @@ class PokemonSelectionAdapter(
             }
         }
 
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
     }
 
     fun updateSelectedPokemon(selected: List<Pokemon>) {
