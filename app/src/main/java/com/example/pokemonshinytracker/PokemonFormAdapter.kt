@@ -62,11 +62,11 @@ class PokemonFormAdapter(
             if (selectedFormIds.contains(form.formID)) {
                 // deselect the form
                 selectedFormIds.remove(form.formID)
-                transitionDrawable.reverseTransition(200)
+                transitionDrawable.reverseTransition(MyApplication.TRANSITION_DURATION)
             } else {
                 // select the form
                 selectedFormIds.add(form.formID)
-                transitionDrawable.startTransition(200)
+                transitionDrawable.startTransition(MyApplication.TRANSITION_DURATION)
             }
             notifyItemChanged(position) // refresh background
             onFormSelected(form)

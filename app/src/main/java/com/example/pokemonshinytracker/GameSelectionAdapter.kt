@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 
 class GameSelectionAdapter(
@@ -24,7 +23,6 @@ class GameSelectionAdapter(
     companion object {
         const val VIEW_TYPE_HEADER = 0
         const val VIEW_TYPE_GAME = 1
-        private const val ANIMATION_DURATION = 200
     }
 
     // class for game view holders
@@ -94,11 +92,11 @@ class GameSelectionAdapter(
                         if (selectedGamePositions.contains(gamePosition)) {
                             // deselect the game
                             selectedGamePositions.remove(gamePosition)
-                            transitionDrawable.reverseTransition(ANIMATION_DURATION)
+                            transitionDrawable.reverseTransition(MyApplication.TRANSITION_DURATION)
                         } else {
                             // select the game
                             selectedGamePositions.add(gamePosition)
-                            transitionDrawable.startTransition(ANIMATION_DURATION)
+                            transitionDrawable.startTransition(MyApplication.TRANSITION_DURATION)
                         }
                     }
                 }

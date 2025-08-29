@@ -68,11 +68,11 @@ class PokemonSelectionAdapter(
                     if (selectedPokemonPositions.contains(position)) {
                         // deselect the pokemon
                         selectedPokemonPositions.remove(position)
-                        transitionDrawable.reverseTransition(250)
+                        transitionDrawable.reverseTransition(MyApplication.TRANSITION_DURATION)
                     } else {
                         // select the pokemon
                         selectedPokemonPositions.add(position)
-                        transitionDrawable.startTransition(250)
+                        transitionDrawable.startTransition(MyApplication.TRANSITION_DURATION)
                     }
                 }
 
@@ -155,15 +155,20 @@ class PokemonSelectionAdapter(
 
     fun updateSelectedPokemon(selected: List<Pokemon>) {
         preselectedPokemon = selected
+        val oldSelected = selectedPokemonPositions.toSet()
         selectedPokemonPositions.clear()
+
         pokemonListItems.forEachIndexed { index, item ->
             if (item is PokemonListItem.PokemonItem && preselectedPokemon.any { it.pokemonID == item.pokemon.pokemonID }) {
                 selectedPokemonPositions.add(index)
             }
         }
 
-        notifyDataSetChanged()
+        // determine the positions that have changed
+        val changed = (oldSelected union selectedPokemonPositions) subtract (oldSelected intersect selectedPokemonPositions)
 
+        // only update those positions
+        changed.forEach { pos -> notifyItemChanged(pos) }
     }
 
 }

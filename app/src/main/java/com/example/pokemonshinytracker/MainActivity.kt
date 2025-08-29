@@ -680,7 +680,6 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                                 removedPokemon.forms.forEach { selectedPokemonForms.remove(it.formID) }
                                 (selectedPokemonRecyclerView.adapter as SelectedPokemonAdapter).updateList(selectedPokemon)
                                 (pokemonListRecyclerView.adapter as PokemonSelectionAdapter).updateSelectedPokemon(selectedPokemon)
-                                (pokemonListRecyclerView.adapter as PokemonSelectionAdapter).notifyDataSetChanged()
                                 setPokemon()
                             },
                             onSelectionChanged = {
