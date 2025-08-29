@@ -5,9 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -33,7 +33,7 @@ class PokemonSelectionAdapter(
 
     // class for Pokemon view holders
     inner class PokemonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val pokemonItemContainer: FrameLayout = view.findViewById(R.id.pokemon_item_container)
+        private val pokemonItemContainer: ConstraintLayout = view.findViewById(R.id.pokemon_item_container)
         private val pokemonImage: ImageView = view.findViewById(R.id.pokemon_image)
         private val transitionDrawable = ContextCompat.getDrawable(
             itemView.context,
@@ -169,6 +169,13 @@ class PokemonSelectionAdapter(
 
         // only update those positions
         changed.forEach { pos -> notifyItemChanged(pos) }
+    }
+
+    fun getPositionOfPokemon(pokemonID: Int?): Int? {
+        if (pokemonID == null) return null
+        return pokemonListItems.indexOfFirst { item ->
+            item is PokemonListItem.PokemonItem && item.pokemon.pokemonID == pokemonID
+        }.takeIf { it != -1 }
     }
 
 }

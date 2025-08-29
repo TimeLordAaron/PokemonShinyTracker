@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--Pokemon Item Container-->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/pokemon_item_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="2dp">
 
-    <!--Pokemon Image-->
+    <!-- Pokemon Image -->
     <ImageView
         android:id="@+id/pokemon_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_margin="3dp"
         android:src="@drawable/etc_default"
         android:contentDescription="@string/pokemon_item_image_description"
-        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         android:clickable="true"
-        android:focusable="true" />
+        android:focusable="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="1:1" />
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

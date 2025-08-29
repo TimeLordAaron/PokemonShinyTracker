@@ -441,8 +441,13 @@ class IndividualHunt : ComponentActivity() {
                     subMenuOpened = false   // on close, unset subMenuOpened
                 }
 
-                pokemonRecyclerView.adapter =
-                    PokemonSelectionAdapter(PokemonSelectionMode.SINGLE_SELECT, groupedPokemonList, emptyList()) { selectedPokemon ->
+                // filter for the selected pokemon from pokemonList
+                val selectedList = selectedPokemonID?.let { id ->
+                    pokemonList.find { it.pokemonID == id }?.let { listOf(it) }
+                } ?: emptyList()
+
+                val adapter =
+                    PokemonSelectionAdapter(PokemonSelectionMode.SINGLE_SELECT, groupedPokemonList, selectedList) { selectedPokemon ->
                         val formName = selectedPokemon.forms.find { it.isDefaultForm }?.formName
                         val formImage = selectedPokemon.forms.find { it.isDefaultForm }!!.formImage
                         selectedPokemonName.text = selectedPokemon.pokemonName
@@ -461,6 +466,17 @@ class IndividualHunt : ComponentActivity() {
                         selectPokemonDialog.dismiss()
                         subMenuOpened = false
                     }
+
+                pokemonRecyclerView.adapter = adapter
+
+                // calculate the position of the selected pokemon
+                val pos = adapter.getPositionOfPokemon(selectedPokemonID)
+                if (pos != null) {
+                    // if a pokemon is currently selected, scroll to its position in the pokemon list
+                    pokemonRecyclerView.post {
+                        pokemonRecyclerView.smoothScrollToPosition(pos)
+                    }
+                }
 
                 // access the search bar in the Pokemon selection dialog
                 val searchBar = selectPokemonDialogLayout.findViewById<EditText>(R.id.search_pokemon)
@@ -591,6 +607,18 @@ class IndividualHunt : ComponentActivity() {
                         selectOriginGameDialog.dismiss()
                         subMenuOpened = false
                     }
+
+                selectedOriginGameID?.let { preselectedId ->
+                    val targetIndex = groupedGameList.indexOfFirst { item ->
+                        item is GameListItem.GameItem && item.game.gameID - 1 == preselectedId
+                    }
+                    if (targetIndex != -1) {
+                        gameRecyclerView.post {
+                            // smooth scroll looks nicer
+                            gameRecyclerView.smoothScrollToPosition(targetIndex)
+                        }
+                    }
+                }
             }
         }
 
@@ -741,6 +769,18 @@ class IndividualHunt : ComponentActivity() {
                         selectCurrentGameDialog.dismiss()
                         subMenuOpened = false
                     }
+
+                selectedCurrentGameID?.let { preselectedId ->
+                    val targetIndex = groupedGameList.indexOfFirst { item ->
+                        item is GameListItem.GameItem && item.game.gameID - 1 == preselectedId
+                    }
+                    if (targetIndex != -1) {
+                        gameRecyclerView.post {
+                            // smooth scroll looks nicer
+                            gameRecyclerView.smoothScrollToPosition(targetIndex)
+                        }
+                    }
+                }
             }
         }
 
