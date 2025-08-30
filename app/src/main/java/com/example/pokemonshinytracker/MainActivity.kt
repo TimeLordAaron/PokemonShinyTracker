@@ -1125,6 +1125,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     override fun onResume() {
         super.onResume()
         individualHuntOpening = false   // the IndividualHunt activity is now closed
+        counterMultiplierBtn.text = String.format("x%s", MyApplication.counterMultiplier)   // update the text in the counter multiplier button
     }
 
     // Function for adjusting the UI layout when the screen is rotated
