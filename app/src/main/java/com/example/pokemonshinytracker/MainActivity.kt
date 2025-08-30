@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var newHuntBtn: ImageButton                // new hunt button
     private lateinit var sortBtn: ImageButton                   // sort button
     private lateinit var filterBtn: ImageButton                 // filter button
-    private lateinit var counterMultiplierBtn: Button        // counter multiplier button
+    private lateinit var counterMultiplierBtn: Button           // counter multiplier button
     private lateinit var expandAllCheckbox: CheckBox            // expand all checkbox
     private lateinit var shinyHuntRecyclerView: RecyclerView    // shiny hunt recycler view
 
@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var confirmFiltersBtn: Button              // confirm filters button
 
     // lateinit UI declarations: counter multiplier UI
-    private lateinit var counterMultiplierText: TextView        // counter multiplier text
+    private lateinit var counterMultiplierText: TextView            // counter multiplier text
     private lateinit var counterMultiplierDecrementBtn: ImageButton // counter multiplier decrement button
     private lateinit var counterMultiplierIncrementBtn: ImageButton // counter multiplier increment button
 
@@ -178,8 +178,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         sortBtn = findViewById(R.id.sort_button)                                                // floating sort button
 
         // set the text of the counter multiplier button
-        val ma = (application as MyApplication)
-        counterMultiplierBtn.text = String.format("x%s", ma.counterMultiplier)
+        counterMultiplierBtn.text = String.format("x%s", MyApplication.counterMultiplier)
 
         // instantiate an adapter for the shiny hunt recycler view
         val shinyHuntListAdapter = ShinyHuntListAdapter(this, pokemonList, gameList).apply {
@@ -1070,7 +1069,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 counterMultiplierIncrementBtn = counterMultiplierLayout.findViewById(R.id.counter_multiplier_increment)
 
                 // set the counter multiplier text
-                counterMultiplierText.text = String.format("x%s", ma.counterMultiplier)
+                counterMultiplierText.text = String.format("x%s", MyApplication.counterMultiplier)
 
                 // create a dialog for editing the counter multiplier
                 dh.createLayoutDialog(this, "Set the Counter Multiplier", counterMultiplierLayout) {
@@ -1080,21 +1079,21 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 // on click listener for the decrement button
                 counterMultiplierDecrementBtn.setOnClickListener {
                     // decrement the value of the global counter multiplier, to a minimum of 1
-                    ma.counterMultiplier = (ma.counterMultiplier - 1).coerceAtLeast(1)
+                    MyApplication.counterMultiplier = (MyApplication.counterMultiplier - 1).coerceAtLeast(1)
 
                     // update the UI
-                    counterMultiplierText.text = String.format("x%s", ma.counterMultiplier)     // text in dialog
-                    counterMultiplierBtn.text = String.format("x%s", ma.counterMultiplier)      // button in main page
+                    counterMultiplierText.text = String.format("x%s", MyApplication.counterMultiplier)     // text in dialog
+                    counterMultiplierBtn.text = String.format("x%s", MyApplication.counterMultiplier)      // button in main page
                 }
 
                 // on click listener for the increment button
                 counterMultiplierIncrementBtn.setOnClickListener {
                     // increment the value of the global counter multiplier
-                    ma.counterMultiplier++
+                    MyApplication.counterMultiplier = (MyApplication.counterMultiplier + 1).coerceAtMost(MyApplication.COUNTER_MULTIPLIER_MAX)
 
                     // update the UI
-                    counterMultiplierText.text = String.format("x%s", ma.counterMultiplier)     // text in dialog
-                    counterMultiplierBtn.text = String.format("x%s", ma.counterMultiplier)      // button in main page
+                    counterMultiplierText.text = String.format("x%s", MyApplication.counterMultiplier)     // text in dialog
+                    counterMultiplierBtn.text = String.format("x%s", MyApplication.counterMultiplier)      // button in main page
                 }
             }
         }

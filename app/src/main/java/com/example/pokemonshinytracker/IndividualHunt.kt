@@ -37,11 +37,12 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var selectedStartDate: TextView        // start date text
     private lateinit var selectOriginGameBtn: ImageButton   // origin game button
     private lateinit var enteredMethod: EditText            // method text field
-    private lateinit var enteredCounter: EditText           // counter text field
     private lateinit var gameRecyclerView: RecyclerView     // game recycler view (used for origin game and current game)
     private lateinit var selectGameDialog: View             // game dialog (used for origin game and current game)
+    private lateinit var enteredCounter: EditText           // counter text field
     private lateinit var decrementCounterBtn: ImageButton   // decrement counter button
     private lateinit var incrementCounterBtn: ImageButton   // increment counter button
+    private lateinit var counterMultiplierBtn: Button       // counter multiplier button
     private lateinit var enteredPhase: EditText             // phase text field
     private lateinit var decrementPhaseBtn: ImageButton     // decrement phase button
     private lateinit var incrementPhaseBtn: ImageButton     // increment phase button
@@ -52,6 +53,11 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var selectedFinishDate: TextView       // finish date text
     private lateinit var currentGameLabel: TextView         // current game label
     private lateinit var selectCurrentGameBtn: ImageButton  // current game button
+
+    // lateinit UI declarations: counter multiplier UI
+    private lateinit var counterMultiplierText: TextView            // counter multiplier text
+    private lateinit var counterMultiplierDecrementBtn: ImageButton // counter multiplier decrement button
+    private lateinit var counterMultiplierIncrementBtn: ImageButton // counter multiplier increment button
 
     // variable declarations for the selected hunt
     private var selectedHuntID = 0
@@ -127,6 +133,7 @@ class IndividualHunt : ComponentActivity() {
         enteredCounter = findViewById(R.id.counter)                                         // counter edit text
         decrementCounterBtn = findViewById(R.id.decrement_counter_button)                   // counter decrement button
         incrementCounterBtn = findViewById(R.id.increment_counter_button)                   // counter increment button
+        counterMultiplierBtn = findViewById(R.id.counter_multiplier_button)                 // counter multiplier button
         enteredPhase = findViewById(R.id.phase)                                             // phase edit text
         decrementPhaseBtn = findViewById(R.id.decrement_phase_button)                       // phase decrement button
         incrementPhaseBtn = findViewById(R.id.increment_phase_button)                       // phase increment button
@@ -141,6 +148,13 @@ class IndividualHunt : ComponentActivity() {
         val currentGameName = findViewById<TextView>(R.id.current_game_name)                // current game name
         selectCurrentGameBtn = findViewById(R.id.current_game_button)                       // current game select button
         Log.d("IndividualHunt", "Accessed all UI elements")
+
+        // set the text of the counter multiplier button
+        counterMultiplierBtn.text = String.format("x%s", MyApplication.counterMultiplier)
+
+        // apply filters to the entered counter and phase
+        enteredCounter.filters = arrayOf(InputFilterMax(MyApplication.COUNTER_MAX))
+        enteredPhase.filters = arrayOf(InputFilterMax(MyApplication.PHASE_MAX))
 
         // retrieve data from the main window
         intent?.let { it ->
@@ -626,9 +640,9 @@ class IndividualHunt : ComponentActivity() {
         decrementCounterBtn.setOnClickListener {
             Log.d("IndividualHunt", "Decrement counter button clicked. Decrementing the counter")
             val counterValue = enteredCounter.text.toString().toIntOrNull()
-            // decrement if value is greater than 0 and not null
-            if (counterValue != null && counterValue > 0) {
-                enteredCounter.setText(String.format((counterValue - 1).toString()))
+            // decrement if value is not null
+            if (counterValue != null) {
+                enteredCounter.setText(String.format((counterValue - MyApplication.counterMultiplier).coerceAtLeast(0).toString()))
             }
         }
 
@@ -638,7 +652,50 @@ class IndividualHunt : ComponentActivity() {
             val counterValue = enteredCounter.text.toString().toIntOrNull()
             // increment if value is not null
             if (counterValue != null) {
-                enteredCounter.setText(String.format((counterValue + 1).toString()))
+                enteredCounter.setText(String.format((counterValue + MyApplication.counterMultiplier).coerceAtMost(MyApplication.COUNTER_MAX).toString()))
+            }
+        }
+
+        // on click listener for the counter multiplier button
+        counterMultiplierBtn.setOnClickListener {
+            // check that a sub menu isn't currently open (to prevent the user from opening multiple dialogs at once)
+            if (!subMenuOpened) {
+                subMenuOpened = true
+
+                val counterMultiplierLayout = layoutInflater.inflate(R.layout.counter_multiplier_editor, null)
+
+                // access the UI elements
+                counterMultiplierText = counterMultiplierLayout.findViewById(R.id.counter_multiplier_text)
+                counterMultiplierDecrementBtn = counterMultiplierLayout.findViewById(R.id.counter_multiplier_decrement)
+                counterMultiplierIncrementBtn = counterMultiplierLayout.findViewById(R.id.counter_multiplier_increment)
+
+                // set the counter multiplier text
+                counterMultiplierText.text = String.format("x%s", MyApplication.counterMultiplier)
+
+                // create a dialog for editing the counter multiplier
+                dh.createLayoutDialog(this, "Set the Counter Multiplier", counterMultiplierLayout) {
+                    subMenuOpened = false   // on close, unset subMenuOpened
+                }
+
+                // on click listener for the decrement button
+                counterMultiplierDecrementBtn.setOnClickListener {
+                    // decrement the value of the global counter multiplier, to a minimum of 1
+                    MyApplication.counterMultiplier = (MyApplication.counterMultiplier - 1).coerceAtLeast(1)
+
+                    // update the UI
+                    counterMultiplierText.text = String.format("x%s", MyApplication.counterMultiplier)     // text in dialog
+                    counterMultiplierBtn.text = String.format("x%s", MyApplication.counterMultiplier)      // button in main page
+                }
+
+                // on click listener for the increment button
+                counterMultiplierIncrementBtn.setOnClickListener {
+                    // increment the value of the global counter multiplier
+                    MyApplication.counterMultiplier = (MyApplication.counterMultiplier + 1).coerceAtMost(MyApplication.COUNTER_MULTIPLIER_MAX)
+
+                    // update the UI
+                    counterMultiplierText.text = String.format("x%s", MyApplication.counterMultiplier)     // text in dialog
+                    counterMultiplierBtn.text = String.format("x%s", MyApplication.counterMultiplier)      // button in main page
+                }
             }
         }
 
@@ -646,9 +703,9 @@ class IndividualHunt : ComponentActivity() {
         decrementPhaseBtn.setOnClickListener {
             Log.d("IndividualHunt", "Decrement phase button clicked. Decrementing the phase")
             val phaseValue = enteredPhase.text.toString().toIntOrNull()
-            // decrement if value is greater than 0 and not null
+            // decrement if value is not null
             if (phaseValue != null && phaseValue > 0) {
-                enteredPhase.setText(String.format((phaseValue - 1).toString()))
+                enteredPhase.setText(String.format((phaseValue - 1).coerceAtLeast(0).toString()))
             }
         }
 
@@ -658,7 +715,7 @@ class IndividualHunt : ComponentActivity() {
             val phaseValue = enteredPhase.text.toString().toIntOrNull()
             // increment if value is not null
             if (phaseValue != null) {
-                enteredPhase.setText(String.format((phaseValue + 1).toString()))
+                enteredPhase.setText(String.format((phaseValue + 1).coerceAtMost(MyApplication.PHASE_MAX).toString()))
             }
         }
 

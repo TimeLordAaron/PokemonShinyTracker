@@ -130,7 +130,7 @@ class ShinyHuntListAdapter(
             Log.d("ShinyHuntListAdapter", "Increment counter button clicked for shiny hunt: $hunt")
 
             // increment the counter using the global counter multiplier
-            hunt.counter += (context.applicationContext as MyApplication).counterMultiplier
+            hunt.counter = (hunt.counter + MyApplication.counterMultiplier).coerceAtMost(MyApplication.COUNTER_MAX)
             holder.counterValue.text = hunt.counter.toString()
 
             // update the database
@@ -144,7 +144,7 @@ class ShinyHuntListAdapter(
         holder.counterDecrementBtn.setOnClickListener {
             Log.d("ShinyHuntListAdapter", "Decrement counter button clicked for shiny hunt: $hunt")
 
-            hunt.counter = (hunt.counter - (context.applicationContext as MyApplication).counterMultiplier).coerceAtLeast(0)
+            hunt.counter = (hunt.counter - MyApplication.counterMultiplier).coerceAtLeast(0)
             holder.counterValue.text = hunt.counter.toString()
 
             // update the database

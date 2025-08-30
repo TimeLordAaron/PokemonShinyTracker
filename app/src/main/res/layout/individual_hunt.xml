@@ -396,7 +396,7 @@
                     app:layout_constraintTop_toTopOf="@id/method_label"
                     app:layout_constraintBottom_toBottomOf="@id/method_label"
                     app:layout_constraintStart_toStartOf="@id/guideline_label"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintEnd_toEndOf="parent" />
 
                 <!--Counter Label-->
                 <TextView
@@ -424,7 +424,7 @@
                     app:layout_constraintTop_toTopOf="@id/counter_label"
                     app:layout_constraintBottom_toBottomOf="@id/counter_label"
                     app:layout_constraintStart_toStartOf="@id/guideline_label"
-                    app:layout_constraintEnd_toStartOf="@id/guideline_middle"/>
+                    app:layout_constraintEnd_toStartOf="@id/guideline_middle" />
 
                 <!--Decrement Counter Button-->
                 <ImageButton
@@ -458,16 +458,30 @@
                     app:layout_constraintBottom_toBottomOf="@id/counter_label"
                     app:layout_constraintStart_toEndOf="@id/decrement_counter_button" />
 
+                <!--Counter Multiplier Button-->
+                <Button
+                    android:id="@+id/counter_multiplier_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/min_button_size"
+                    android:minWidth="@dimen/min_button_size"
+                    android:text="@string/counter_multiplier_placeholder"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_medium"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@id/counter_label"
+                    app:layout_constraintStart_toStartOf="@id/counter_label" />
+
                 <!--Phase Label-->
                 <TextView
                     android:id="@+id/phase_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/phase_label"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
-                    app:layout_constraintTop_toBottomOf="@id/counter_label"
+                    app:layout_constraintTop_toBottomOf="@id/counter_multiplier_button"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
 
@@ -484,7 +498,7 @@
                     app:layout_constraintTop_toTopOf="@id/phase_label"
                     app:layout_constraintBottom_toBottomOf="@id/phase_label"
                     app:layout_constraintStart_toStartOf="@id/guideline_label"
-                    app:layout_constraintEnd_toStartOf="@id/guideline_middle"/>
+                    app:layout_constraintEnd_toStartOf="@id/guideline_middle" />
 
                 <!--Decrement Phase Button-->
                 <ImageButton
