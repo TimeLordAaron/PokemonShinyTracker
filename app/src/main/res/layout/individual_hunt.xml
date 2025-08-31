@@ -286,17 +286,35 @@
                 <!--Start Date-->
                 <TextView
                     android:id="@+id/start_date"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/button_margin"
+                    android:padding="10dp"
+                    android:background="@drawable/ui_transparent_container"
+                    android:visibility="gone"
                     android:text=""
                     android:textSize="@dimen/text_size_medium"
                     android:textColor="@color/black"
                     android:textAlignment="textStart"
                     app:layout_constraintTop_toTopOf="@id/start_date_label"
                     app:layout_constraintBottom_toBottomOf="@id/start_date_label"
-                    app:layout_constraintStart_toEndOf="@id/start_date_button"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintStart_toEndOf="@id/start_date_button" />
+
+                <!--Unselect Start Date Button-->
+                <ImageButton
+                    android:id="@+id/unselect_start_date_button"
+                    android:layout_width="@dimen/min_button_size"
+                    android:layout_height="@dimen/min_button_size"
+                    android:padding="10dp"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/ic_x"
+                    android:contentDescription="@string/date_unselect_description"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toTopOf="@id/start_date_label"
+                    app:layout_constraintBottom_toBottomOf="@id/start_date_label"
+                    app:layout_constraintStart_toEndOf="@id/start_date" />
 
                 <!--Origin Game Label-->
                 <TextView
@@ -349,27 +367,25 @@
                         android:background="@drawable/ui_game_icon_border_origin"
                         android:src="@drawable/etc_default"
                         android:contentDescription="@string/origin_game_icon_desc"
-                        android:clickable="true"
-                        android:focusable="true"
                         android:clipToOutline="true" />
 
                 </FrameLayout>
 
-                <!--Origin Game Name-->
-                <TextView
-                    android:id="@+id/origin_game_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/button_margin"
-                    android:textSize="@dimen/text_size_medium"
-                    android:textColor="@color/black"
-                    android:textAlignment="textStart"
-                    android:singleLine="true"
-                    android:ellipsize="end"
+                <!--Unselect Origin Game Button-->
+                <ImageButton
+                    android:id="@+id/unselect_origin_game_button"
+                    android:layout_width="@dimen/min_button_size"
+                    android:layout_height="@dimen/min_button_size"
+                    android:padding="10dp"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/ic_x"
+                    android:contentDescription="@string/date_unselect_description"
+                    android:visibility="gone"
                     app:layout_constraintTop_toTopOf="@id/origin_game_label"
                     app:layout_constraintBottom_toBottomOf="@id/origin_game_label"
-                    app:layout_constraintStart_toEndOf="@id/origin_game_icon_border"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintStart_toEndOf="@id/origin_game_icon_border" />
 
                 <!--Method Label-->
                 <TextView
@@ -624,6 +640,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/button_margin"
+                    android:padding="10dp"
+                    android:background="@drawable/ui_transparent_container"
                     android:visibility="gone"
                     android:text=""
                     android:textSize="@dimen/text_size_medium"
@@ -631,8 +649,23 @@
                     android:textAlignment="textStart"
                     app:layout_constraintTop_toTopOf="@id/finish_date_label"
                     app:layout_constraintBottom_toBottomOf="@id/finish_date_label"
-                    app:layout_constraintStart_toEndOf="@id/finish_date_button"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintStart_toEndOf="@id/finish_date_button" />
+
+                <!--Unselect Finish Date Button-->
+                <ImageButton
+                    android:id="@+id/unselect_finish_date_button"
+                    android:layout_width="@dimen/min_button_size"
+                    android:layout_height="@dimen/min_button_size"
+                    android:padding="10dp"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/ic_x"
+                    android:contentDescription="@string/date_unselect_description"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toTopOf="@id/finish_date_label"
+                    app:layout_constraintBottom_toBottomOf="@id/finish_date_label"
+                    app:layout_constraintStart_toEndOf="@id/finish_date" />
 
                 <!--Current Game Label-->
                 <TextView
@@ -688,28 +721,25 @@
                         android:background="@drawable/ui_game_icon_border_current"
                         android:src="@drawable/etc_default"
                         android:contentDescription="@string/current_game_icon_desc"
-                        android:clickable="true"
-                        android:focusable="true"
                         android:clipToOutline="true" />
 
                 </FrameLayout>
 
-                <!--Current Game Name-->
-                <TextView
-                    android:id="@+id/current_game_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/button_margin"
+                <!--Unselect Current Game Button-->
+                <ImageButton
+                    android:id="@+id/unselect_current_game_button"
+                    android:layout_width="@dimen/min_button_size"
+                    android:layout_height="@dimen/min_button_size"
+                    android:padding="10dp"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/ic_x"
+                    android:contentDescription="@string/date_unselect_description"
                     android:visibility="gone"
-                    android:textSize="@dimen/text_size_medium"
-                    android:textColor="@color/black"
-                    android:textAlignment="textStart"
-                    android:singleLine="true"
-                    android:ellipsize="end"
                     app:layout_constraintTop_toTopOf="@id/current_game_label"
                     app:layout_constraintBottom_toBottomOf="@id/current_game_label"
-                    app:layout_constraintStart_toEndOf="@id/current_game_icon_border"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintStart_toEndOf="@id/current_game_icon_border" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

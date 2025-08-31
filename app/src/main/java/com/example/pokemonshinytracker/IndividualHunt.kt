@@ -35,7 +35,9 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var selectPokemonDialogLayout: View    // pokemon selection dialog
     private lateinit var pickStartDateBtn: ImageButton      // start date button
     private lateinit var selectedStartDate: TextView        // start date text
+    private lateinit var unselectStartDateBtn: ImageButton  // unselect start date button
     private lateinit var selectOriginGameBtn: ImageButton   // origin game button
+    private lateinit var unselectOriginGameBtn: ImageButton // unselect origin game button
     private lateinit var enteredMethod: EditText            // method text field
     private lateinit var gameRecyclerView: RecyclerView     // game recycler view (used for origin game and current game)
     private lateinit var selectGameDialog: View             // game dialog (used for origin game and current game)
@@ -51,8 +53,10 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var finishDateLabel: TextView          // finish date label
     private lateinit var pickFinishDateBtn: ImageButton     // finish date button
     private lateinit var selectedFinishDate: TextView       // finish date text
+    private lateinit var unselectFinishDateBtn: ImageButton // unselect finish date button
     private lateinit var currentGameLabel: TextView         // current game label
     private lateinit var selectCurrentGameBtn: ImageButton  // current game button
+    private lateinit var unselectCurrentGameBtn: ImageButton    // unselect current game button
 
     // lateinit UI declarations: counter multiplier UI
     private lateinit var counterMultiplierText: TextView            // counter multiplier text
@@ -125,10 +129,11 @@ class IndividualHunt : ComponentActivity() {
         selectPokemonBtn = findViewById(R.id.pokemon_selection_button)                      // pokemon select button
         selectedStartDate = findViewById(R.id.start_date)                                   // start date text view
         pickStartDateBtn = findViewById(R.id.start_date_button)                             // start date button
+        unselectStartDateBtn = findViewById(R.id.unselect_start_date_button)                // unselect start date button
+        selectOriginGameBtn = findViewById(R.id.origin_game_button)                         // origin game select button
         val originGameIconBorder = findViewById<FrameLayout>(R.id.origin_game_icon_border)  // origin game icon border
         val originGameIcon = findViewById<ImageView>(R.id.origin_game_icon)                 // origin game icon
-        val originGameName = findViewById<TextView>(R.id.origin_game_name)                  // origin game name
-        selectOriginGameBtn = findViewById(R.id.origin_game_button)                         // origin game select button
+        unselectOriginGameBtn = findViewById(R.id.unselect_origin_game_button)              // unselect origin game button
         enteredMethod = findViewById(R.id.method)                                           // method edit text
         enteredCounter = findViewById(R.id.counter)                                         // counter edit text
         decrementCounterBtn = findViewById(R.id.decrement_counter_button)                   // counter decrement button
@@ -142,11 +147,12 @@ class IndividualHunt : ComponentActivity() {
         finishDateLabel = findViewById(R.id.finish_date_label)                              // finish date label
         pickFinishDateBtn = findViewById(R.id.finish_date_button)                           // finish date button
         selectedFinishDate = findViewById(R.id.finish_date)                                 // finish date text view
+        unselectFinishDateBtn = findViewById(R.id.unselect_finish_date_button)              // unselect finish date button
         currentGameLabel = findViewById(R.id.current_game_label)                            // current game label
+        selectCurrentGameBtn = findViewById(R.id.current_game_button)                       // current game select button
         val currentGameIconBorder = findViewById<FrameLayout>(R.id.current_game_icon_border)// current game icon border
         val currentGameIcon = findViewById<ImageView>(R.id.current_game_icon)               // current game icon
-        val currentGameName = findViewById<TextView>(R.id.current_game_name)                // current game name
-        selectCurrentGameBtn = findViewById(R.id.current_game_button)                       // current game select button
+        unselectCurrentGameBtn = findViewById(R.id.unselect_current_game_button)            // unselect current game button
         Log.d("IndividualHunt", "Accessed all UI elements")
 
         // set the text of the counter multiplier button
@@ -204,17 +210,19 @@ class IndividualHunt : ComponentActivity() {
                     pokemonImage.setImageResource(formImage)
                 }
 
-                // update the start date text (if not null)
-                if (selectedHunt!!.startDate != null) {
+                // set the start date text and unselect button (if not empty)
+                if (selectedHunt!!.startDate!!.isNotEmpty()) {
                     selectedStartDate.text = selectedHunt!!.startDate
+                    selectedStartDate.visibility = View.VISIBLE
+                    unselectStartDateBtn.visibility = View.VISIBLE
                 }
                 Log.d("IndividualHunt", "Start Date: ${selectedStartDate.text}")
 
-                // update the origin game icon and name
+                // set the origin game icon and unselect button (if not null)
                 if (selectedHunt!!.originGameID != null) {
                     originGameIcon.setImageResource(gameList[selectedHunt!!.originGameID!!].gameImage)
                     originGameIconBorder.visibility = View.VISIBLE
-                    originGameName.text = gameList[selectedHunt!!.originGameID!!].gameName
+                    unselectOriginGameBtn.visibility = View.VISIBLE
                 }
 
                 // update the method text
@@ -233,19 +241,6 @@ class IndividualHunt : ComponentActivity() {
                 enteredNotes.setText(selectedHunt!!.notes)
                 Log.d("IndividualHunt", "Notes: ${enteredNotes.text}")
 
-                // update the finish date text (if not null)
-                if (selectedHunt!!.finishDate != null) {
-                    selectedFinishDate.text = selectedHunt!!.finishDate
-                }
-                Log.d("IndividualHunt", "Finish Date: ${selectedFinishDate.text}")
-
-                // update the current game icon and name
-                if (selectedHunt!!.currentGameID != null) {
-                    currentGameIcon.setImageResource(gameList[selectedHunt!!.currentGameID!!].gameImage)
-                    currentGameIconBorder.visibility = View.VISIBLE
-                    currentGameName.text = gameList[selectedHunt!!.currentGameID!!].gameName
-                }
-
                 // update completion checkbox state
                 completionCheckbox.isChecked = selectedHunt!!.isComplete
                 Log.d("IndividualHunt", "Completion Status: ${completionCheckbox.isChecked}")
@@ -254,24 +249,30 @@ class IndividualHunt : ComponentActivity() {
                 if (selectedHunt!!.isComplete) {
                     mainLayout.setBackgroundResource(R.drawable.ui_background_individual_hunt_complete)
                     finishDateLabel.visibility = View.VISIBLE
-                    selectedFinishDate.visibility = View.VISIBLE
                     pickFinishDateBtn.visibility = View.VISIBLE
-                    currentGameLabel.visibility = View.VISIBLE
-                    if (selectedCurrentGameID != null) {
-                        currentGameName.visibility = View.VISIBLE
-                        currentGameIconBorder.visibility = View.VISIBLE
+                    if (selectedHunt!!.finishDate!!.isNotEmpty()) {
+                        selectedFinishDate.text = selectedHunt!!.finishDate
+                        selectedFinishDate.visibility = View.VISIBLE
+                        unselectFinishDateBtn.visibility = View.VISIBLE
                     }
+                    currentGameLabel.visibility = View.VISIBLE
                     selectCurrentGameBtn.visibility = View.VISIBLE
+                    if (selectedCurrentGameID != null) {
+                        currentGameIcon.setImageResource(gameList[selectedHunt!!.currentGameID!!].gameImage)
+                        currentGameIconBorder.visibility = View.VISIBLE
+                        unselectCurrentGameBtn.visibility = View.VISIBLE
+                    }
                     Log.d("IndividualHunt", "Displaying complete hunt layout")
                 } else {
                     mainLayout.setBackgroundResource(R.drawable.ui_background_individual_hunt_incomplete)
                     finishDateLabel.visibility = View.GONE
-                    selectedFinishDate.visibility = View.GONE
                     pickFinishDateBtn.visibility = View.GONE
+                    selectedFinishDate.visibility = View.GONE
+                    unselectFinishDateBtn.visibility = View.GONE
                     currentGameLabel.visibility = View.GONE
-                    currentGameName.visibility = View.GONE
-                    currentGameIconBorder.visibility = View.GONE
                     selectCurrentGameBtn.visibility = View.GONE
+                    currentGameIconBorder.visibility = View.GONE
+                    unselectCurrentGameBtn.visibility = View.GONE
                     Log.d("IndividualHunt", "Displaying incomplete hunt layout")
                 }
 
@@ -559,6 +560,8 @@ class IndividualHunt : ComponentActivity() {
                 dh.createDatePickerDialog(this, selectedStartDate.text.toString(), {
                     // use the returned date string
                     selectedStartDate.text = it
+                    selectedStartDate.visibility = View.VISIBLE
+                    unselectStartDateBtn.visibility = View.VISIBLE  // show the unselect button
                 }, {
                     // on close, unset subMenuOpened
                     subMenuOpened = false
@@ -567,12 +570,11 @@ class IndividualHunt : ComponentActivity() {
             }
         }
 
-        // on click listener for the origin game icon (i.e. unselecting the game)
-        originGameIcon.setOnClickListener {
-            Log.d("IndividualHunt", "Origin game icon clicked. Unselecting the origin game")
-            originGameIconBorder.visibility = View.INVISIBLE
-            originGameName.text = ""
-            selectedOriginGameID = null
+        // on click listener for the unselect start date button
+        unselectStartDateBtn.setOnClickListener {
+            unselectStartDateBtn.visibility = View.GONE
+            selectedStartDate.text = ""
+            selectedStartDate.visibility = View.GONE
         }
 
         // on click listener for the origin game selection button
@@ -616,8 +618,8 @@ class IndividualHunt : ComponentActivity() {
                     GameSelectionAdapter(GameSelectionMode.ORIGIN_SINGLE_SELECT, groupedGameList, listOf(selectedOriginGameID)) { selectedGame ->
                         originGameIcon.setImageResource(selectedGame.gameImage)
                         originGameIconBorder.visibility = View.VISIBLE
-                        originGameName.text = selectedGame.gameName
                         selectedOriginGameID = selectedGame.gameID - 1
+                        unselectOriginGameBtn.visibility = View.VISIBLE
                         selectOriginGameDialog.dismiss()
                         subMenuOpened = false
                     }
@@ -634,6 +636,13 @@ class IndividualHunt : ComponentActivity() {
                     }
                 }
             }
+        }
+
+        // on click listener for the unselect origin game button
+        unselectOriginGameBtn.setOnClickListener {
+            unselectOriginGameBtn.visibility = View.GONE
+            originGameIconBorder.visibility = View.GONE
+            selectedOriginGameID = null
         }
 
         // on click listener for the decrement counter button
@@ -730,23 +739,27 @@ class IndividualHunt : ComponentActivity() {
                 finishDateLabel.visibility = View.GONE
                 selectedFinishDate.visibility = View.GONE
                 pickFinishDateBtn.visibility = View.GONE
+                unselectFinishDateBtn.visibility = View.GONE
                 currentGameLabel.visibility = View.GONE
-                currentGameName.visibility = View.GONE
-                currentGameIconBorder.visibility = View.GONE
                 selectCurrentGameBtn.visibility = View.GONE
+                currentGameIconBorder.visibility = View.GONE
+                unselectCurrentGameBtn.visibility = View.GONE
             }
             // if checkboxState is true, change background to green gradient, and make layouts visible
             else {
                 mainLayout.setBackgroundResource(R.drawable.ui_background_individual_hunt_complete)
                 finishDateLabel.visibility = View.VISIBLE
-                selectedFinishDate.visibility = View.VISIBLE
                 pickFinishDateBtn.visibility = View.VISIBLE
-                currentGameLabel.visibility = View.VISIBLE
-                if (selectedCurrentGameID != null) {
-                    currentGameName.visibility = View.VISIBLE
-                    currentGameIconBorder.visibility = View.VISIBLE
+                if (selectedFinishDate.text.isNotBlank()) {
+                    selectedFinishDate.visibility = View.VISIBLE
+                    unselectFinishDateBtn.visibility = View.VISIBLE
                 }
+                currentGameLabel.visibility = View.VISIBLE
                 selectCurrentGameBtn.visibility = View.VISIBLE
+                if (selectedCurrentGameID != null) {
+                    currentGameIconBorder.visibility = View.VISIBLE
+                    unselectCurrentGameBtn.visibility = View.VISIBLE
+                }
             }
         }
 
@@ -762,6 +775,8 @@ class IndividualHunt : ComponentActivity() {
                 dh.createDatePickerDialog(this, selectedFinishDate.text.toString(), {
                     // use the returned date string
                     selectedFinishDate.text = it
+                    selectedFinishDate.visibility = View.VISIBLE
+                    unselectFinishDateBtn.visibility = View.VISIBLE // show the unselect button
                 }, {
                     // on close, unset subMenuOpened
                     subMenuOpened = false
@@ -770,12 +785,11 @@ class IndividualHunt : ComponentActivity() {
             }
         }
 
-        // on click listener for the current game icon (i.e. unselecting the current game)
-        currentGameIcon.setOnClickListener {
-            Log.d("IndividualHunt", "Current game icon clicked. Unselecting the current game")
-            currentGameIconBorder.visibility = View.INVISIBLE
-            currentGameName.text = ""
-            selectedCurrentGameID = null
+        // on click listener for the unselect finish date button
+        unselectFinishDateBtn.setOnClickListener {
+            unselectFinishDateBtn.visibility = View.GONE
+            selectedFinishDate.text = ""
+            selectedFinishDate.visibility = View.GONE
         }
 
         // on click listener for the current game selection button
@@ -820,9 +834,8 @@ class IndividualHunt : ComponentActivity() {
                     GameSelectionAdapter(GameSelectionMode.CURRENT_SINGLE_SELECT, groupedGameList, listOf(selectedCurrentGameID)) { selectedGame ->
                         currentGameIcon.setImageResource(selectedGame.gameImage)
                         currentGameIconBorder.visibility = View.VISIBLE
-                        currentGameName.visibility = View.VISIBLE
-                        currentGameName.text = selectedGame.gameName
                         selectedCurrentGameID = selectedGame.gameID - 1
+                        unselectCurrentGameBtn.visibility = View.VISIBLE
                         selectCurrentGameDialog.dismiss()
                         subMenuOpened = false
                     }
@@ -839,6 +852,13 @@ class IndividualHunt : ComponentActivity() {
                     }
                 }
             }
+        }
+
+        // on click listener for the unselect current game button
+        unselectCurrentGameBtn.setOnClickListener {
+            unselectCurrentGameBtn.visibility = View.GONE
+            currentGameIconBorder.visibility = View.GONE
+            selectedCurrentGameID = null
         }
 
         Log.d("IndividualHunt", "onCreate() completed")
