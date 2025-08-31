@@ -919,6 +919,13 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                     }
                 }
 
+                // on long click listener for start date from button
+                startDateFromBtn.setOnLongClickListener {
+                    selectedStartDateFrom = ""
+                    startDateFromBtn.text = ""
+                    true
+                }
+
                 // on click listener for the start date to button
                 startDateToBtn.setOnClickListener {
                     Log.d("MainActivity", "Start Date To button clicked in the filter selection dialog")
@@ -937,6 +944,13 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                             subMenuOpened = false
                         })
                     }
+                }
+
+                // on long click listener for start date to button
+                startDateToBtn.setOnLongClickListener {
+                    selectedStartDateTo = ""
+                    startDateToBtn.text = ""
+                    true
                 }
 
                 // on click listener for the finish date from button
@@ -959,6 +973,13 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                     }
                 }
 
+                // on long click listener for finish date from button
+                finishDateFromBtn.setOnLongClickListener {
+                    selectedFinishDateFrom = ""
+                    finishDateFromBtn.text = ""
+                    true
+                }
+
                 // on click listener for the finish date to button
                 finishDateToBtn.setOnClickListener {
                     Log.d("MainActivity", "Finish Date To button clicked in the filter selection dialog")
@@ -977,6 +998,13 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                             subMenuOpened = false
                         })
                     }
+                }
+
+                // on long click listener for finish date to button
+                finishDateToBtn.setOnLongClickListener {
+                    selectedFinishDateTo = ""
+                    finishDateToBtn.text = ""
+                    true
                 }
 
                 // text change listeners for the counter and phase ranges
