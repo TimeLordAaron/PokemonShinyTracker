@@ -1,7 +1,6 @@
 package com.example.pokemonshinytracker
 
 import android.graphics.drawable.TransitionDrawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 class PokemonFormAdapter(
     private val forms: List<PokemonForm>,
     private val selectedFormIds: MutableSet<Int>,
-    private val onFormSelected: (PokemonForm) -> Unit,
     private val onSelectedFormsChanged: () -> Unit)
     : RecyclerView.Adapter<PokemonFormAdapter.PokemonFormHolder>()
 {
@@ -26,16 +24,12 @@ class PokemonFormAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PokemonFormHolder {
-        Log.d("PokemonFormAdapter", "onCreateViewHolder() started")
-
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.pokemon_form_item, parent, false)
         return PokemonFormHolder(view)
     }
 
     override fun onBindViewHolder(holder: PokemonFormHolder, position: Int) {
-        Log.d("PokemonFormAdapter", "onBindViewHolder() started")
-
         val form = forms[position]
         val isSelected = selectedFormIds.contains(form.formID)
 
@@ -69,7 +63,6 @@ class PokemonFormAdapter(
                 transitionDrawable.startTransition(MyApplication.TRANSITION_DURATION)
             }
             notifyItemChanged(position) // refresh background
-            onFormSelected(form)
             onSelectedFormsChanged()
         }
     }

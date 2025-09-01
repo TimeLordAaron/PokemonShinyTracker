@@ -12,8 +12,6 @@ object ShinyHuntData {
 
     // Function to insert mock shiny hunts into the database
     fun insertShinyHuntData(db: SQLiteDatabase) {
-        Log.d("ShinyHuntModel", "insertShinyHuntData() started")
-
         val shinyHunts = mutableListOf<List<Any?>>()
 
         /*
@@ -116,7 +114,6 @@ object ShinyHuntData {
             if (newHuntID == -1L) {
                 Log.e("ShinyHuntModel", "Error inserting shiny hunt into the database: $hunt")
             } else {
-                Log.d("ShinyHuntModel", "Shiny hunt inserted into the database: $hunt")
                 // use the returned huntID to set the shiny hunt's defaultPosition
                 val updateValues = ContentValues().apply {
                     put(DBHelper.DEFAULT_POSITION_COL, newHuntID)
@@ -124,13 +121,9 @@ object ShinyHuntData {
                 val result = db.update(DBHelper.SHINY_HUNT_TABLE, updateValues, "${DBHelper.HUNT_ID_COL} = ?", arrayOf(newHuntID.toString()))
                 if (result == 0) {
                     Log.e("ShinyHuntModel", "Error setting $DBHelper.DEFAULT_POSITION_COL of shiny hunt: $hunt")
-                } else {
-                    Log.d("ShinyHuntModel", "Set defaultPosition '$newHuntID' of shiny hunt: $hunt")
                 }
             }
         }
-
-        Log.d("ShinyHuntData", "insertShinyHuntData() completed")
     }
 }
 

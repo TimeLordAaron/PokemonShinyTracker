@@ -16,8 +16,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     // Function to create the database
     override fun onCreate(db: SQLiteDatabase) {
-        Log.d("DBHelper", "onCreate() started")
-
         try {
             db.beginTransaction()   // start the database transaction
 
@@ -30,7 +28,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 )
                 """).trimIndent()
                 db.execSQL(query1)
-                Log.d("DBHelper", "$POKEMON_TABLE table created")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error creating $POKEMON_TABLE table: ${e.message}")
             }
@@ -48,7 +45,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 )
                 """).trimIndent()
                 db.execSQL(query2)
-                Log.d("DBHelper", "$POKEMON_FORM_TABLE table created")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error creating $POKEMON_FORM_TABLE table: ${e.message}")
             }
@@ -64,7 +60,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 )
                 """).trimIndent()
                 db.execSQL(query3)
-                Log.d("DBHelper", "$GAME_TABLE table created")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error creating $GAME_TABLE table: ${e.message}")
             }
@@ -91,7 +86,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 )
                 """).trimIndent()
                 db.execSQL(query4)
-                Log.d("DBHelper", "$SHINY_HUNT_TABLE table created")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error creating $SHINY_HUNT_TABLE table: ${e.message}")
             }
@@ -111,21 +105,16 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         } finally {
             db.endTransaction()     // end the database transaction; rollback if not set as successful
         }
-
-        Log.d("DBHelper", "onCreate() completed")
     }
 
     // Function to upgrade the database when the version changes
     override fun onUpgrade(db: SQLiteDatabase, p1: Int, p2: Int) {
-        Log.d("DBHelper", "onUpgrade() started")
-
         try {
             db.beginTransaction()   // start the database transaction
 
             // STEP 1: Drop the ShinyHunt Table (to remove foreign keys to the other tables)
             try {
                 db.execSQL("DROP TABLE IF EXISTS $SHINY_HUNT_TABLE")
-                Log.d("DBHelper", "$SHINY_HUNT_TABLE table dropped")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error dropping $SHINY_HUNT_TABLE table: ${e.message}")
             }
@@ -133,7 +122,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             // STEP 2: Drop the PokemonForm Table (to remove foreign keys to the Pokemon table)
             try {
                 db.execSQL("DROP TABLE IF EXISTS $POKEMON_FORM_TABLE")
-                Log.d("DBHelper", "$POKEMON_FORM_TABLE table dropped")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error dropping $POKEMON_FORM_TABLE table: ${e.message}")
             }
@@ -141,7 +129,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             // STEP 3: Drop the Pokemon Table
             try {
                 db.execSQL("DROP TABLE IF EXISTS $POKEMON_TABLE")
-                Log.d("DBHelper", "$POKEMON_TABLE table dropped")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error dropping $POKEMON_TABLE table: ${e.message}")
             }
@@ -149,7 +136,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             // STEP 4: Drop the Game Table
             try {
                 db.execSQL("DROP TABLE IF EXISTS $GAME_TABLE")
-                Log.d("DBHelper", "$GAME_TABLE table dropped")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error dropping $GAME_TABLE table: ${e.message}")
             }
@@ -157,7 +143,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             // STEP 5: Recreate the database
             try {
                 onCreate(db)
-                Log.d("DBHelper", "Database recreated successfully")
                 db.setTransactionSuccessful()   // mark the database transaction as successful
             } catch (e: Exception) {
                 Log.e("DBHelper", "Error recreating database: ${e.message}")
@@ -167,21 +152,16 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         } finally {
             db.endTransaction()     // end the database transaction; rollback if not set as successful
         }
-
-        Log.d("DBHelper", "onUpgrade() completed")
     }
 
     // Function to force an upgrade on the database (for debug purposes)
     fun forceUpgrade() {
-        Log.d("DBHelper", "forceUpgrade() started")
-
         var db: SQLiteDatabase? = null
 
         try {
             // attempt to get a writable instance of the database
             try {
                 db = writableDatabase
-                Log.d("DBHelper", "Writable instance of the database created")
             } catch (e: SQLiteException) {
                 Log.e("DBHelper", "Error creating a writable instance of the database: ${e.message}")
                 return  // exit early if the database instance can't be created
@@ -192,7 +172,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             // STEP 1: Drop the ShinyHunt Table (to remove foreign keys to the other tables)
             try {
                 db.execSQL("DROP TABLE IF EXISTS $SHINY_HUNT_TABLE")
-                Log.d("DBHelper", "$SHINY_HUNT_TABLE table dropped")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error dropping $SHINY_HUNT_TABLE table: ${e.message}")
             }
@@ -200,7 +179,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             // STEP 2: Drop the PokemonForm Table (to remove foreign keys to the Pokemon table)
             try {
                 db.execSQL("DROP TABLE IF EXISTS $POKEMON_FORM_TABLE")
-                Log.d("DBHelper", "$POKEMON_FORM_TABLE table dropped")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error dropping $POKEMON_FORM_TABLE table: ${e.message}")
             }
@@ -208,7 +186,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             // STEP 3: Drop the Pokemon Table
             try {
                 db.execSQL("DROP TABLE IF EXISTS $POKEMON_TABLE")
-                Log.d("DBHelper", "$POKEMON_TABLE table dropped")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error dropping $POKEMON_TABLE table: ${e.message}")
             }
@@ -216,7 +193,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             // STEP 4: Drop the Game Table
             try {
                 db.execSQL("DROP TABLE IF EXISTS $GAME_TABLE")
-                Log.d("DBHelper", "$GAME_TABLE table dropped")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error dropping $GAME_TABLE table: ${e.message}")
             }
@@ -224,7 +200,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             // STEP 5: Recreate the database
             try {
                 onCreate(db)
-                Log.d("DBHelper", "Database recreated successfully")
                 db.setTransactionSuccessful()   // mark the database transaction as successful
             } catch (e: Exception) {
                 Log.e("DBHelper", "Error recreating database: ${e.message}")
@@ -235,16 +210,12 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             db?.endTransaction()    // end the database transaction; rollback if not set as successful
             db?.close()     // close the database
         }
-
-        Log.d("DBHelper", "forceUpgrade() completed")
     }
 
 
     // Function to add new shiny hunts to the database
     private fun addHunt(db: SQLiteDatabase, formID: Int?, originGameID: Int?, method: String, startDate: String?,
                 counter: Int, phase: Int, notes: String, isComplete: Boolean, finishDate: String?, currentGameID: Int?, defaultPosition: Int?) {
-        Log.d("DBHelper", "addHunt() started")
-
         val values = ContentValues().apply {
             put(FORM_ID_COL, formID)
             put(ORIGIN_GAME_ID_COL, originGameID)
@@ -266,7 +237,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             if (newHuntID == -1L) {
                 Log.e("DBHelper", "Failed to insert shiny hunt with formID: $formID")
             } else {
-                Log.d("DBHelper", "Inserted shiny hunt with formID: $formID, ID: $newHuntID")
                 // use the returned huntID to set the shiny hunt's defaultPosition
                 val updateValues = ContentValues().apply {
                     put(DEFAULT_POSITION_COL, newHuntID)
@@ -275,13 +245,11 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 // specify the row to update (via the huntID)
                 val selection = "$HUNT_ID_COL = ?"
                 val selectionArgs = arrayOf(newHuntID.toInt().toString())
-                Log.d("DBHelper", "selectionArgs: ${selectionArgs[0]}")
 
                 val result = db.update(SHINY_HUNT_TABLE, updateValues, selection, selectionArgs)
                 if (result == 0) {
                     Log.e("DBHelper", "Error setting $DEFAULT_POSITION_COL of the new shiny hunt")
                 } else {
-                    Log.d("DBHelper", "Set defaultPosition '$newHuntID' of the new shiny hunt")
                     db.setTransactionSuccessful()   // set the database transaction as successful
                 }
             }
@@ -290,21 +258,16 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         } finally {
             // db.endTransaction()     // end the database transaction; rollback if not successful
         }
-
-        Log.d("DBHelper", "addHunt() completed")
     }
 
     // Function to delete a shiny hunt from the database
     fun deleteHunt(huntID : Int) {
-        Log.d("DBHelper", "deleteHunt() started")
-
         var db: SQLiteDatabase? = null
 
         try {
             // attempt to get a writable instance of the database
             try {
                 db = writableDatabase
-                Log.d("DBHelper", "Writable instance of the database created")
             } catch (e: SQLiteException) {
                 Log.e("DBHelper", "Error creating a writable instance of the database: ${e.message}")
                 return  // exit early if the database instance can't be created
@@ -313,8 +276,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             db.beginTransaction()   // start the database transaction
 
             // delete the hunt from the database
-            val result = db.delete(SHINY_HUNT_TABLE, "huntID = ?", arrayOf(huntID.toString()))
-            Log.d("DBHelper", "$result row(s) deleted from the $SHINY_HUNT_TABLE table")
+            db.delete(SHINY_HUNT_TABLE, "huntID = ?", arrayOf(huntID.toString()))
 
             // set the database transaction as successful
             db.setTransactionSuccessful()
@@ -325,22 +287,17 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             db?.endTransaction()     // end the database transaction; rollback if not successful
             db?.close()     // close the database
         }
-
-        Log.d("DBHelper", "deleteHunt() completed")
     }
 
     // Function to update a hunt in the database
     fun updateHunt(huntID: Int, formID: Int?, originGameID: Int?, method: String, startDate: String?,
                    counter: Int, phase: Int, notes: String, isComplete: Boolean, finishDate: String?, currentGameID: Int?, defaultPosition: Int?) {
-        Log.d("DBHelper", "updateHunt() started")
-
         var db: SQLiteDatabase? = null
 
         try {
             // attempt to get a writable instance of the database
             try {
                 db = writableDatabase
-                Log.d("DBHelper", "Writable instance of the database created")
             } catch (e: SQLiteException) {
                 Log.e("DBHelper", "Error creating a writable instance of the database: ${e.message}")
                 return  // exit early if the database instance can't be created
@@ -350,7 +307,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
             // huntID == 0 => creating a new shiny hunt; call addHunt()
             if (huntID == 0) {
-                Log.d("DBHelper", "huntID is 0. Calling addHunt() to create a new hunt")
                 addHunt(
                     db,
                     formID,
@@ -369,8 +325,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
             // huntID >= 0 => updating an existing shiny hunt
             else {
-                Log.d("DBHelper", "huntID is $huntID. Creating ContentValues for the updated row")
-
                 val values = ContentValues().apply {
                     put(HUNT_ID_COL, huntID)
                     put(FORM_ID_COL, formID)
@@ -389,11 +343,9 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 // specify the row to update (via the huntID)
                 val selection = "$HUNT_ID_COL = ?"
                 val selectionArgs = arrayOf(huntID.toString())
-                Log.d("DBHelper", "selectionArgs: ${selectionArgs[0]}")
 
                 // update the table
-                val result = db.update(SHINY_HUNT_TABLE, values, selection, selectionArgs)
-                Log.d("DBHelper", "$result row(s) updated in the $SHINY_HUNT_TABLE table")
+                db.update(SHINY_HUNT_TABLE, values, selection, selectionArgs)
 
                 // set the database transaction as successful
                 db.setTransactionSuccessful()
@@ -404,8 +356,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             db?.endTransaction()    // end the database transaction; rollback if not successful
             db?.close()     // close the database
         }
-
-        Log.d("DBHelper", "updateHunt() completed")
     }
 
     // Function to retrieve all shiny hunts from the database (supports various filters and sorting methods)
@@ -414,22 +364,18 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                  method: String? = null, startedFrom: String? = null, startedTo: String? = null, finishedFrom: String? = null,
                  finishedTo: String? = null, counterLo: Int? = null, counterHi: Int? = null, phaseLo: Int? = null, phaseHi: Int? = null,
                  completionStatus: CompletionStatus = CompletionStatus.BOTH): List<ShinyHunt> {
-        Log.d("DBHelper", "getHunts() started")
-
         val huntList = mutableListOf<ShinyHunt>()
         var db: SQLiteDatabase? = null
 
         try {
             // attempt to get a readable instance of the database
             db = this.readableDatabase
-            Log.d("DBHelper", "Readable instance of the database created")
 
             var query: String
             var argsList = mutableListOf<String>()  // a mutable list of strings to organize the args for the query
             val args: Array<String>?                // the actual args array used in the raw query
             whereClauseAdded = false                // boolean to track when a WHERE clause has been added to the query
 
-            Log.d("DBHelper", "Creating static part of the getHunts SQL query")
             query = ("""
             SELECT s.*, p.$POKEMON_NAME_COL
             FROM $SHINY_HUNT_TABLE AS s
@@ -439,18 +385,13 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
             if (huntID != null) {
                 // a huntID was provided. filter for that specific hunt
-                Log.d("DBHelper", "huntID is $huntID. Applying WHERE clause for huntID")
                 query += "\n"
                 query += "WHERE $HUNT_ID_COL = ?"
                 args = arrayOf(huntID.toString())
             } else {
                 // a huntID was not provided. apply the appropriate filters to the SQL query
-                Log.d("DBHelper", "huntID is null. Applying filters to the SQL query")
-
                 // formIDs: include if not empty
-                Log.d("DBHelper", "Checking formIDs")
                 if (formIDs.isNotEmpty()) {
-                    Log.d("DBHelper", "Applying formID filter: $formIDs")
                     // create a placeholder for each formID
                     val placeholders = formIDs.joinToString(",") { "?" }
                     query += "\n" + addWhereOrAndClause() + "s.$FORM_ID_COL IN ($placeholders)"
@@ -459,9 +400,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 }
 
                 // originGameIDs: include if not empty
-                Log.d("DBHelper", "Checking originGameIDs")
                 if (originGameIDs.isNotEmpty()) {
-                    Log.d("DBHelper", "Applying originGameID filter: $originGameIDs")
                     // create a placeholder for each originGameID
                     val placeholders = originGameIDs.joinToString(",") { "?" }
                     query += "\n" + addWhereOrAndClause() + "s.$ORIGIN_GAME_ID_COL IN ($placeholders)"
@@ -470,9 +409,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 }
 
                 // currentGameIDs: include if not empty
-                Log.d("DBHelper", "Checking currentGameIDs")
                 if (currentGameIDs.isNotEmpty()) {
-                    Log.d("DBHelper", "Applying currentGameID filter: $currentGameIDs")
                     // create a placeholder for each currentGameID
                     val placeholders = currentGameIDs.joinToString(",") { "?" }
                     query += "\n" + addWhereOrAndClause() + "s.$CURRENT_GAME_ID_COL IN ($placeholders)"
@@ -481,100 +418,76 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 }
 
                 // method: include if not null or blank
-                Log.d("DBHelper", "Checking method")
                 if (!method.isNullOrBlank()) {
-                    Log.d("DBHelper", "Applying method filter: $method")
                     // add the method string directly to the query
                     query += "\n" + addWhereOrAndClause() + "s.$METHOD_COL = \"$method\""
                 }
 
                 // startedFrom: include if in the correct date format (YYYY-MM-DD)
-                Log.d("DBHelper", "Checking startedFrom")
                 if (isValidDateFormat(startedFrom)) {
-                    Log.d("DBHelper", "Applying startedFrom filter: $startedFrom")
                     // add the startedFrom string directly to the query
                     query += "\n" + addWhereOrAndClause() + "s.$START_DATE_COL >= \"$startedFrom\""
                 }
 
                 // startedTo: include if in the correct date format (YYYY-MM-DD)
-                Log.d("DBHelper", "Checking startedTo")
                 if (isValidDateFormat(startedTo)) {
-                    Log.d("DBHelper", "Applying startedTo filter: $startedTo")
                     // add the startedTo string directly to the query
                     query += "\n" + addWhereOrAndClause() + "s.$START_DATE_COL <= \"$startedTo\""
                 }
 
                 // finishedFrom: include if in the correct date format (YYYY-MM-DD)
-                Log.d("DBHelper", "Checking finishedFrom")
                 if (isValidDateFormat(finishedFrom)) {
-                    Log.d("DBHelper", "Applying finishedFrom filter: $finishedFrom")
                     // add the finishedFrom string directly to the query
                     query += "\n" + addWhereOrAndClause() + "s.$FINISH_DATE_COL >= \"$finishedFrom\""
                 }
 
                 // finishedTo: include if in the correct date format (YYYY-MM-DD)
-                Log.d("DBHelper", "Checking finishedTo")
                 if (isValidDateFormat(finishedTo)) {
-                    Log.d("DBHelper", "Applying finishedTo filter: $finishedTo")
                     // add the finishedTo string directly to the query
                     query += "\n" + addWhereOrAndClause() + "s.$FINISH_DATE_COL <= \"$finishedTo\""
                 }
 
                 // counterLo: include if non-negative integer
-                Log.d("DBHelper", "Checking counterLo")
                 if (counterLo != null && counterLo >= 0) {
-                    Log.d("DBHelper", "Applying counterLo filter: $counterLo")
                     query += "\n" + addWhereOrAndClause() + "s.$COUNTER_COL >= ?"
                     // add the counter low bound to the args list
                     argsList.add(counterLo.toString())
                 }
 
                 // counterHi: include if non-negative integer
-                Log.d("DBHelper", "Checking counterHi")
                 if (counterHi != null && counterHi >= 0) {
-                    Log.d("DBHelper", "Applying counterHi filter: $counterHi")
                     query += "\n" + addWhereOrAndClause() + "s.$COUNTER_COL <= ?"
                     // add the counter high bound to the args list
                     argsList.add(counterHi.toString())
                 }
 
                 // phaseLo: include if non-negative integer
-                Log.d("DBHelper", "Checking phaseLo")
                 if (phaseLo != null && phaseLo >= 0) {
-                    Log.d("DBHelper", "Applying phaseLo filter: $phaseLo")
                     query += "\n" + addWhereOrAndClause() + "s.$PHASE_COL >= ?"
                     // add the phase low bound to the args list
                     argsList.add(phaseLo.toString())
                 }
 
                 // phaseHi: include if non-negative integer
-                Log.d("DBHelper", "Checking phaseHi")
                 if (phaseHi != null && phaseHi >= 0) {
-                    Log.d("DBHelper", "Applying phaseHi filter: $phaseHi")
                     query += "\n" + addWhereOrAndClause() + "s.$PHASE_COL <= ?"
                     // add the phase high bound to the args list
                     argsList.add(phaseHi.toString())
                 }
 
                 // completionStatus: include if not BOTH
-                Log.d("DBHelper", "Checking completionStatus")
                 if (completionStatus != CompletionStatus.BOTH) {
-                    Log.d("DBHelper", "Applying completionStatus filter: $completionStatus => ${completionStatus.isComplete}")
                     query += "\n" + addWhereOrAndClause() + "s.$IS_COMPLETE_COL = ?"
                     // add the completion status to the args list
                     argsList.add(completionStatus.isComplete.toString())
                 }
 
                 // add the ORDER BY clause with the sort method and sort order applied
-                Log.d("DBHelper", "Applying sortMethod: $sortMethod")
-                Log.d("DBHelper", "Applying sortOrder: $sortOrder")
                 query += "\n" + "ORDER BY ${sortMethod.sortMethod} ${sortOrder.order}"
 
                 // convert the mutable args list into a string array
                 args = argsList.toTypedArray()
             }
-
-            Log.d("DBHelper", "Full SQL Query (with placeholders):\n" + query)
 
             db.rawQuery(query, args).use { cursor ->
                 if (cursor.moveToFirst()) {
@@ -598,8 +511,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     } while (cursor.moveToNext())
                 }
             }
-
-            Log.d("DBHelper", "getHunts() completed. Retrieved ${huntList.size} shiny hunts")
 
         } catch (e: SQLiteException) {
             Log.e("DBHelper", "Error opening readable database: ${e.message}")
@@ -636,15 +547,12 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     // Function to swap the default position of shiny hunts
     fun swapHunts(firstHunt: ShinyHunt, secondHunt: ShinyHunt) {
-        Log.d("DBHelper", "swapHunts() started")
-
         var db: SQLiteDatabase? = null
 
         try {
             // attempt to get a writable instance of the database
             try {
                 db = writableDatabase
-                Log.d("DBHelper", "Writable instance of the database created")
             } catch (e: SQLiteException) {
                 Log.e("DBHelper", "Error creating a writable instance of the database: ${e.message}")
                 return  // exit early if the database instance can't be created
@@ -675,27 +583,22 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             )
 
             db.setTransactionSuccessful()
-            Log.d("DBHelper", "Swapped defaultPosition of hunt ${firstHunt.huntID} and ${secondHunt.huntID}")
         } catch (e: SQLException) {
             Log.e("DBHelper", "Error swapping shiny hunts: ${e.message}")
         } finally {
             db?.endTransaction()
             db?.close()
-            Log.d("DBHelper", "swapHunts() completed")
         }
     }
 
     // Function to retrieve pokemon from the database (by pokemonID or all pokemon if no ID is provided)
     fun getPokemon(pokemonID: Int? = null, formID: Int? = null): List<Pokemon> {
-        Log.d("DBHelper", "getPokemon() started")
-
         val pokemonMap = mutableMapOf<Int, Pokemon>()
         var db: SQLiteDatabase? = null
 
         try {
             // attempt to get a readable instance of the database
             db = this.readableDatabase
-            Log.d("DBHelper", "Readable instance of the database created")
 
             // construct query dynamically based on the parameters
             val query = StringBuilder(
@@ -741,8 +644,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 }
             }
 
-            Log.d("DBHelper", "getPokemon() completed. Retrieved ${pokemonMap.size} Pokemon")
-
         } catch (e: SQLiteException) {
             Log.e("DBHelper", "Error opening readable database: ${e.message}")
         } catch (e: Exception) {
@@ -756,26 +657,21 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     // Function to retrieve games from the database (by ID or all games if no ID is provided
     fun getGames(gameID: Int? = null): List<Game> {
-        Log.d("DBHelper", "getGames() started")
-
         val gameList = mutableListOf<Game>()
         var db: SQLiteDatabase? = null
 
         try {
             // attempt to get a readable instance of the database
             db = this.readableDatabase
-            Log.d("DBHelper", "Readable instance of the database created")
 
             val query: String
             val args: Array<String>?
 
             // check if a gameID was provided
             if (gameID != null) {
-                Log.d("DBHelper", "Game ID: $gameID")
                 query = "SELECT * FROM $GAME_TABLE WHERE gameID = ?"
                 args = arrayOf(gameID.toString())
             } else {
-                Log.d("DBHelper", "No Game ID. Selecting all games")
                 query = "SELECT * FROM $GAME_TABLE"
                 args = null
             }
@@ -793,8 +689,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     } while (cursor.moveToNext())
                 }
             }
-
-            Log.d("DBHelper", "getGames() completed. Retrieved ${gameList.size} games")
 
         } catch (e: SQLiteException) {
             Log.e("DBHelper", "Error opening readable database: ${e.message}")

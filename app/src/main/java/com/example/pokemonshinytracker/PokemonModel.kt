@@ -10,8 +10,6 @@ object PokemonData {
 
     // Function to insert the Pokemon into the database
     fun insertPokemonData(db: SQLiteDatabase) {
-        Log.d("PokemonModel", "insertPokemonData() started")
-
         val pokemonList = listOf(
             "Bulbasaur",
             "Ivysaur",
@@ -1047,12 +1045,8 @@ object PokemonData {
             val result = db.insert(DBHelper.POKEMON_TABLE, null, values)
             if (result == -1L) {
                 Log.e("PokemonModel", "Error inserting Pokemon into the database: \"$name\"")
-            } else {
-                Log.d("PokemonModel", "Pokemon inserted into the database: \"$name\"")
             }
         }
-
-        Log.d("PokemonModel", "insertPokemonData() completed")
     }
 }
 
@@ -1064,8 +1058,6 @@ sealed class PokemonListItem {
 
 // Function to prepare the data set for the Pokemon recycler view (including headers)
 fun preparePokemonListWithHeaders(pokemonList: List<Pokemon>): List<PokemonListItem> {
-    Log.d("PokemonModel", "preparePokemonListWithHeaders() started")
-
     val groupedList = mutableListOf<PokemonListItem>()
 
     val generations = listOf(
@@ -1092,6 +1084,5 @@ fun preparePokemonListWithHeaders(pokemonList: List<Pokemon>): List<PokemonListI
         groupedList.add(PokemonListItem.PokemonItem(pokemon))
     }
 
-    Log.d("PokemonModel", "preparePokemonListWithHeaders() completed")
     return groupedList
 }

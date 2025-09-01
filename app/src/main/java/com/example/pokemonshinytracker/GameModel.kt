@@ -10,8 +10,6 @@ object GameData {
 
     // Function to insert the games into the database
     fun insertGameData(db: SQLiteDatabase) {
-        Log.d("GameModel", "insertGameData() started")
-
         // format: game name, game image, generation
         val gameList = listOf(
             Triple("Red", R.drawable.game_1_red, 1),
@@ -67,11 +65,8 @@ object GameData {
             val result = db.insert(DBHelper.GAME_TABLE, null, values)
             if (result == -1L) {
                 Log.e("GameModel", "Error inserting game into the database: \"$name\"")
-            } else {
-                Log.d("GameModel", "Game inserted into the database: \"$name\"")
             }
         }
-        Log.d("GameModel", "insertGameData() completed")
     }
 }
 
@@ -83,8 +78,6 @@ sealed class GameListItem {
 
 // Function to prepare the data set for the game recycler view (including headers)
 fun prepareGameListWithHeaders(gameList: List<Game>): List<GameListItem> {
-    Log.d("GameModel", "prepareGameListWithHeaders() started")
-
     val groupedList = mutableListOf<GameListItem>()
 
     val generations = listOf(
@@ -112,6 +105,5 @@ fun prepareGameListWithHeaders(gameList: List<Game>): List<GameListItem> {
         groupedList.add(GameListItem.GameItem(game))
     }
 
-    Log.d("GameModel", "prepareGameListWithHeaders() completed")
     return groupedList
 }

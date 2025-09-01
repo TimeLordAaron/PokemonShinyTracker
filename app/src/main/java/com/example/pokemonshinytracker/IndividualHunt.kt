@@ -87,7 +87,6 @@ class IndividualHunt : ComponentActivity() {
 
     @SuppressLint("SetTextI18n", "InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d("IndividualHunt", "onCreate() started")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.individual_hunt)
 
@@ -111,11 +110,11 @@ class IndividualHunt : ComponentActivity() {
         // retrieve relevant data from database
         val pokemonList = db.getPokemon()   // list of all pokemon
         if (pokemonList.isEmpty()) {
-            Log.d("IndividualHunt", "Failed to retrieve Pokemon from the database")
+            Log.e("IndividualHunt", "Failed to retrieve Pokemon from the database")
         }
         val gameList = db.getGames()        // list of all games
         if (gameList.isEmpty()) {
-            Log.d("IndividualHunt", "Failed to retrieve games from database")
+            Log.e("IndividualHunt", "Failed to retrieve games from database")
         }
 
         // find all the UI views
@@ -156,7 +155,6 @@ class IndividualHunt : ComponentActivity() {
         val currentGameIconBorder = findViewById<FrameLayout>(R.id.current_game_icon_border)// current game icon border
         val currentGameIcon = findViewById<ImageView>(R.id.current_game_icon)               // current game icon
         unselectCurrentGameBtn = findViewById(R.id.unselect_current_game_button)            // unselect current game button
-        Log.d("IndividualHunt", "Accessed all UI elements")
 
         // set the text of the counter multiplier button
         counterMultiplierBtn.text = String.format("x%s", MyApplication.counterMultiplier)
@@ -168,22 +166,17 @@ class IndividualHunt : ComponentActivity() {
         // retrieve data from the main window
         intent?.let { it ->
             selectedHuntID = it.getIntExtra("hunt_id", 0)           // hunt ID of the retrieved hunt (or 0 if new hunt)
-            Log.d("IndividualHunt", "Received Hunt ID: $selectedHuntID")
 
             // retrieve the hunt from the database using the hunt ID
             selectedHuntList = db.getHunts(selectedHuntID)
-            Log.d("IndividualHunt", "Hunt for ID $selectedHuntID: $selectedHuntList")
 
             // check if a hunt was received from the database (should be empty if huntID was 0)
             if (selectedHuntList.isNotEmpty()) {
                 selectedHunt = selectedHuntList[0]  // extracting the hunt from the returned list
-                Log.d("IndividualHunt", "Received Hunt: $selectedHunt")
                 selectedFormID = selectedHunt!!.formID
-                Log.d("IndividualHunt", "Form ID: $selectedFormID")
                 val pokemon = pokemonList.find { p -> p.forms.any { it.formID == selectedFormID } }!!
                 val formName = pokemon.forms.find { it.formID == selectedHunt!!.formID }!!.formName
                 formImage = pokemon.forms.find { it.formID == selectedHunt!!.formID }!!.formImage
-                Log.d("IndividualHunt", "Received Pokemon: $pokemon")
                 if (selectedFormID != null) {
                     selectedPokemonID = pokemon.pokemonID
                     if (pokemon.forms.size > 1) {
@@ -191,13 +184,9 @@ class IndividualHunt : ComponentActivity() {
                         nextFormBtn.visibility = View.VISIBLE
                     }
                 }
-                Log.d("IndividualHunt", "Pokemon ID: $selectedPokemonID")
                 selectedOriginGameID = selectedHunt!!.originGameID
-                Log.d("IndividualHunt", "Origin Game ID: $selectedOriginGameID")
                 selectedCurrentGameID = selectedHunt!!.currentGameID
-                Log.d("IndividualHunt", "Current Game ID: $selectedCurrentGameID")
                 selectedDefaultPosition = selectedHunt!!.defaultPosition
-                Log.d("IndividualHunt", "Default Position: $selectedDefaultPosition")
 
                 // enable the delete button
                 deleteBtn.visibility = View.VISIBLE
@@ -228,7 +217,6 @@ class IndividualHunt : ComponentActivity() {
                     selectedStartDate.visibility = View.VISIBLE
                     unselectStartDateBtn.visibility = View.VISIBLE
                 }
-                Log.d("IndividualHunt", "Start Date: ${selectedStartDate.text}")
 
                 // set the origin game icon and unselect button (if not null)
                 if (selectedHunt!!.originGameID != null) {
@@ -239,23 +227,18 @@ class IndividualHunt : ComponentActivity() {
 
                 // update the method text
                 enteredMethod.setText(selectedHunt!!.method)
-                Log.d("IndividualHunt", "Method: ${enteredMethod.text}")
 
                 // update counter
                 enteredCounter.setText(selectedHunt!!.counter.toString())
-                Log.d("IndividualHunt", "Counter: ${enteredCounter.text}")
 
                 // update phase
                 enteredPhase.setText(selectedHunt!!.phase.toString())
-                Log.d("IndividualHunt", "Phase: ${enteredPhase.text}")
 
                 // update notes
                 enteredNotes.setText(selectedHunt!!.notes)
-                Log.d("IndividualHunt", "Notes: ${enteredNotes.text}")
 
                 // update completion checkbox state
                 completionCheckbox.isChecked = selectedHunt!!.isComplete
-                Log.d("IndividualHunt", "Completion Status: ${completionCheckbox.isChecked}")
 
                 // update the background gradient
                 if (selectedHunt!!.isComplete) {
@@ -273,8 +256,9 @@ class IndividualHunt : ComponentActivity() {
                         currentGameIcon.setImageResource(gameList[selectedHunt!!.currentGameID!!].gameImage)
                         currentGameIconBorder.visibility = View.VISIBLE
                         unselectCurrentGameBtn.visibility = View.VISIBLE
+                    } else {
+                        // do nothing; current game section is GONE by default
                     }
-                    Log.d("IndividualHunt", "Displaying complete hunt layout")
                 } else {
                     mainLayout.setBackgroundResource(R.drawable.ui_background_individual_hunt_incomplete)
                     finishDateLabel.visibility = View.GONE
@@ -285,11 +269,7 @@ class IndividualHunt : ComponentActivity() {
                     selectCurrentGameBtn.visibility = View.GONE
                     currentGameIconBorder.visibility = View.GONE
                     unselectCurrentGameBtn.visibility = View.GONE
-                    Log.d("IndividualHunt", "Displaying incomplete hunt layout")
                 }
-
-            } else {
-                Log.d("IndividualHunt", "No hunt found for ID: $selectedHuntID. This is a new hunt")
             }
         }
 
@@ -305,14 +285,11 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the back button
         backBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Back button clicked")
             handleBackNavigation()  // display confirmation dialog if there are unsaved changes
         }
 
         // on click listener for the save button
         saveBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Save button clicked. Saving hunt to the database")
-
             // check that a pokemon is selected
             if (selectedPokemonID == null || selectedFormID == null) {
                 // check if a sub menu is already open (to prevent the user from spamming open multiple copies of it)
@@ -344,7 +321,6 @@ class IndividualHunt : ComponentActivity() {
                 )
 
                 // return to MainActivity
-                Log.d("IndividualActivity", "Returning to Main window")
                 val intent = Intent(this, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
@@ -354,8 +330,6 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the delete button
         deleteBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Delete button clicked. Showing confirmation dialog")
-
             // check that a sub menu isn't open yet (to prevent user from spamming buttons to open multiple menus at once)
             if (!subMenuOpened) {
                 subMenuOpened = true
@@ -384,7 +358,6 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the previous form button '◀'
         previousFormBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Previous form button clicked. Retrieving the previous form of the Pokemon")
             val pokemon = pokemonList.find { it.pokemonID == selectedPokemonID }!!
             val sortedForms = pokemon.forms.sortedBy { it.formID }
             selectedFormID = if (selectedFormID!! != sortedForms.first().formID) {
@@ -414,7 +387,6 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the next form button '▶'
         nextFormBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Next form button clicked. Retrieving the next form of the Pokemon")
             val pokemon = pokemonList.find { it.pokemonID == selectedPokemonID }!!
             val sortedForms = pokemon.forms.sortedBy { it.formID }
             if (selectedFormID!! != sortedForms.last().formID) {
@@ -444,8 +416,6 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the pokemon selection button
         selectPokemonBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Pokemon selection button clicked. Preparing the Pokemon recycler view")
-
             // check that a sub menu isn't open yet (to prevent user from spamming buttons to open multiple menus at once)
             if (!subMenuOpened) {
                 subMenuOpened = true
@@ -589,8 +559,6 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the start date selection button
         pickStartDateBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Start date selection button clicked. Preparing the calendar")
-
             // check that a sub menu isn't open yet (to prevent user from spamming buttons to open multiple menus at once)
             if (!subMenuOpened) {
                 subMenuOpened = true
@@ -618,8 +586,6 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the origin game selection button
         selectOriginGameBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Origin game selection button clicked. Preparing the game recycler view")
-
             // check that a sub menu isn't open yet (to prevent user from spamming buttons to open multiple menus at once)
             if (!subMenuOpened) {
                 subMenuOpened = true
@@ -686,7 +652,6 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the decrement counter button
         decrementCounterBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Decrement counter button clicked. Decrementing the counter")
             val counterValue = enteredCounter.text.toString().toIntOrNull()
             // decrement if value is not null
             if (counterValue != null) {
@@ -696,7 +661,6 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the increment counter button
         incrementCounterBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Increment counter button clicked. Incrementing the counter")
             val counterValue = enteredCounter.text.toString().toIntOrNull()
             // increment if value is not null
             if (counterValue != null) {
@@ -749,7 +713,6 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the decrement phase button
         decrementPhaseBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Decrement phase button clicked. Decrementing the phase")
             val phaseValue = enteredPhase.text.toString().toIntOrNull()
             // decrement if value is not null
             if (phaseValue != null && phaseValue > 0) {
@@ -759,7 +722,6 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the increment phase button
         incrementPhaseBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Increment phase button clicked. Incrementing the phase")
             val phaseValue = enteredPhase.text.toString().toIntOrNull()
             // increment if value is not null
             if (phaseValue != null) {
@@ -769,7 +731,6 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the hunt completed checkbox
         completionCheckbox.setOnClickListener {
-            Log.d("IndividualHunt", "Hunt completed checkbox clicked. Updating the layout")
             // get the state of the checkbox
             val checkboxState = completionCheckbox.isChecked
             // if checkboxState is false, change background to gray gradient, and make layouts invisible
@@ -804,8 +765,6 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the finish date selection button
         pickFinishDateBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Finish date selection button clicked. Preparing the calendar")
-
             // check that a sub menu isn't open yet (to prevent user from spamming buttons to open multiple menus at once)
             if (!subMenuOpened) {
                 subMenuOpened = true
@@ -833,8 +792,6 @@ class IndividualHunt : ComponentActivity() {
 
         // on click listener for the current game selection button
         selectCurrentGameBtn.setOnClickListener {
-            Log.d("IndividualHunt", "Current game selection button clicked. Preparing the game recycler view")
-
             // check that a sub menu isn't open yet (to prevent user from spamming buttons to open multiple menus at once)
             if (!subMenuOpened) {
                 subMenuOpened = true
@@ -899,12 +856,9 @@ class IndividualHunt : ComponentActivity() {
             currentGameIconBorder.visibility = View.GONE
             selectedCurrentGameID = null
         }
-
-        Log.d("IndividualHunt", "onCreate() completed")
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        Log.d("IndividualHunt", "onConfigurationChanged() started")
         super.onConfigurationChanged(newConfig)
 
         // update the layout
@@ -950,8 +904,6 @@ class IndividualHunt : ComponentActivity() {
         // apply the updated layout managers
         pokemonRecyclerView.layoutManager = pokemonGridLayoutManager
         gameRecyclerView.layoutManager = gameGridLayoutManager
-
-        Log.d("IndividualHunt", "onConfigurationChanged() completed")
     }
 
     // Helper function to prepare the layout based on device orientation
@@ -1012,8 +964,6 @@ class IndividualHunt : ComponentActivity() {
 
     // Helper function for detecting unsaved changes
     private fun detectUnsavedChanges(): Boolean {
-        Log.d("IndividualHunt", "detectUnsavedChanges() started")
-
         // extract all of the entered/selected fields
         val formID = selectedFormID
         val startDate = selectedStartDate.text
@@ -1055,8 +1005,6 @@ class IndividualHunt : ComponentActivity() {
 
     // Function to display a confirmation dialog if the user has unsaved changes while trying to navigate back to the MainActivity window
     private fun handleBackNavigation() {
-        Log.d("IndividualHunt", "Back navigation triggered")
-
         // check that a sub menu isn't currently open (so the user can't accidentally close the page by hitting the back button
         if (!subMenuOpened) {
             subMenuOpened = true

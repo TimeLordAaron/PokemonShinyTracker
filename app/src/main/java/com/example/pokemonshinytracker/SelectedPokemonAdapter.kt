@@ -1,6 +1,5 @@
 package com.example.pokemonshinytracker
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,16 +30,12 @@ class SelectedPokemonAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectedPokemonHolder {
-        Log.d("SelectedPokemonAdapter", "onCreateViewHolder() started")
-
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.selected_pokemon_item, parent, false)
         return SelectedPokemonHolder(view)
     }
 
     override fun onBindViewHolder(holder: SelectedPokemonHolder, position: Int) {
-        Log.d("SelectedPokemonAdapter", "onBindViewHolder() started")
-
         val pokemon = selectedPokemon[position]
 
         // set up pokemon name
@@ -64,9 +59,6 @@ class SelectedPokemonAdapter(
         holder.pokemonFormRecyclerView.adapter = PokemonFormAdapter(
             forms,
             selectedPokemonForms,
-            { selectedForm ->
-                Log.d("SelectedPokemonAdapter", "Clicked form: ${selectedForm.formName}")
-            },
             onSelectedFormsChanged =  {
                 toggleSelectAll(holder, position)
                 updateSelectedFormCount(holder, pokemon)
@@ -138,15 +130,11 @@ class SelectedPokemonAdapter(
 
     // Helper function to toggle the select all checkbox of a selected Pokemon
     fun toggleSelectAll(holder: SelectedPokemonHolder, position: Int) {
-        Log.d("SelectedPokemonAdapter", "toggleSelectAll() started")
-
         // check the select all checkbox if all of a selected Pokemon's forms are currently selected
         holder.selectAll.isChecked = selectedPokemon[position].forms
             .all { selectedPokemonForms.contains(it.formID) }
 
         onSelectionChanged()
-
-        Log.d("SelectedPokemonAdapter", "toggleSelectAll() completed")
     }
 
 }

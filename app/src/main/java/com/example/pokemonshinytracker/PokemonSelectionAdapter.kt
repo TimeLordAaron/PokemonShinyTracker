@@ -1,7 +1,6 @@
 package com.example.pokemonshinytracker
 
 import android.graphics.drawable.TransitionDrawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -115,15 +114,11 @@ class PokemonSelectionAdapter(
 
     // Create new Pokemon/Header views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        Log.d("PokemonSelectionAdapter", "onCreateViewHolder() started")
-
         return if (viewType == VIEW_TYPE_HEADER) {
-            Log.d("PokemonSelectionAdapter", "View Type: Header")
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.pokemon_header_item, parent, false)
             HeaderViewHolder(view)
         } else {
-            Log.d("PokemonSelectionAdapter", "View Type: Pokemon")
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.pokemon_item, parent, false)
             PokemonViewHolder(view)
@@ -132,8 +127,6 @@ class PokemonSelectionAdapter(
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Log.d("PokemonSelectionAdapter", "onBindViewHolder() started")
-
         when (val item = pokemonListItems[position]) {
             is PokemonListItem.HeaderItem -> (holder as HeaderViewHolder).bind(item.generation)
             is PokemonListItem.PokemonItem -> (holder as PokemonViewHolder).bind(item.pokemon, position)

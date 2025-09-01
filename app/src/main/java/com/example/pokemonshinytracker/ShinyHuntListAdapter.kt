@@ -1,8 +1,6 @@
 package com.example.pokemonshinytracker
 
 import android.content.Context
-import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,24 +62,18 @@ class ShinyHuntListAdapter(
 
     // Create new shiny hunt views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        Log.d("ShinyHuntListAdapter", "onCreateViewHolder() started")
-
         // create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.shiny_hunt_item, parent, false)
 
-        Log.d("ShinyHuntListAdapter", "onCreateViewHolder() completed. Returning the view holder")
         return ViewHolder(view)
     }
 
     // Replace the contents of a shiny hunt view (invoked by the layout manager)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Log.d("ShinyHuntListAdapter", "onBindViewHolder() started")
-
         // extract the shiny hunt from the huntSet
         val hunt = getItem(position)
 
-        Log.d("ShinyHuntListAdapter", "Binding View Holder for shiny hunt: $hunt")
         holder.shinyHuntItemLayout.setBackgroundResource(
             if (hunt.isComplete) R.drawable.ui_shiny_hunt_item_container_complete
             else R.drawable.ui_shiny_hunt_item_container_incomplete
@@ -141,8 +133,6 @@ class ShinyHuntListAdapter(
 
         // on click listener for the increment counter button
         holder.counterIncrementBtn.setOnClickListener {
-            Log.d("ShinyHuntListAdapter", "Increment counter button clicked for shiny hunt: $hunt")
-
             // increment the counter using the global counter multiplier
             hunt.counter = (hunt.counter + MyApplication.counterMultiplier).coerceAtMost(MyApplication.COUNTER_MAX)
             holder.counterValue.text = hunt.counter.toString()
@@ -156,8 +146,6 @@ class ShinyHuntListAdapter(
 
         // on click listener for the decrement counter button
         holder.counterDecrementBtn.setOnClickListener {
-            Log.d("ShinyHuntListAdapter", "Decrement counter button clicked for shiny hunt: $hunt")
-
             hunt.counter = (hunt.counter - MyApplication.counterMultiplier).coerceAtLeast(0)
             holder.counterValue.text = hunt.counter.toString()
 
@@ -170,8 +158,6 @@ class ShinyHuntListAdapter(
 
         // on long click listener for the view
         holder.shinyHuntItemLayout.setOnLongClickListener {
-            Log.d("ShinyHuntListAdapter", "View long clicked for shiny hunt: $hunt")
-
             if (expandedItems.contains(hunt.huntID)) {
                 expandedItems.remove(hunt.huntID)
                 holder.longClickMenu.visibility = View.GONE
@@ -190,8 +176,6 @@ class ShinyHuntListAdapter(
 
         // on click listener for the move up button
         holder.moveUpButton.setOnClickListener {
-            Log.d("ShinyHuntListAdapter", "Move up button clicked for shiny hunt: $hunt")
-
             val currentPosition = holder.bindingAdapterPosition
             if (currentPosition > 0) {
                 swapItems(currentPosition, currentPosition - 1)
@@ -200,8 +184,6 @@ class ShinyHuntListAdapter(
 
         // on click listener for the move down button
         holder.moveDownButton.setOnClickListener {
-            Log.d("ShinyHuntListAdapter", "Move down button clicked for shiny hunt: $hunt")
-
             val currentPosition = holder.bindingAdapterPosition
             if (currentPosition < itemCount - 1) {
                 swapItems(currentPosition, currentPosition + 1)
@@ -210,21 +192,15 @@ class ShinyHuntListAdapter(
 
         // on click listener for the edit button
         holder.editButton.setOnClickListener {
-            Log.d("ShinyHuntListAdapter", "Edit button clicked for shiny hunt: $hunt")
-
             // invoke the onEditHuntRequested callback
             onEditHuntRequested?.invoke(hunt)
         }
 
         // on click listener for the delete button
         holder.deleteButton.setOnClickListener {
-            Log.d("ShinyHuntListAdapter", "Delete button clicked for shiny hunt: $hunt")
-
             // invoke the onDeleteHuntRequested callback
             onDeleteHuntRequested?.invoke(hunt)
         }
-
-        Log.d("ShinyHuntListAdapter", "onBindViewHolder() completed")
     }
 
     // Function to update the current sort method
@@ -236,8 +212,6 @@ class ShinyHuntListAdapter(
 
     // Function to swap the position of shiny hunts
     private fun swapItems(fromPosition: Int, toPosition: Int) {
-        Log.d("ShinyHuntListAdapter", "swapItems() started")
-
         if (fromPosition in currentList.indices && toPosition in currentList.indices) {
             val mutableHuntSet = currentList.toMutableList()
 
@@ -263,10 +237,7 @@ class ShinyHuntListAdapter(
                 notifyItemChanged(toPosition)
                 onScrollToPosition?.invoke(toPosition)
             }
-
         }
-
-        Log.d("ShinyHuntListAdapter", "swapItems() completed")
     }
 
     // Function for expanding all of the shiny hunts' long click menus
