@@ -10,7 +10,6 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.compose.ui.res.integerResource
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -116,8 +115,8 @@ class ShinyHuntListAdapter(
             transformations(
                 ShadowTransformation(
                     shadowRadius = MyApplication.SHADOW_RADIUS,
-                    dx = 6f,
-                    dy = 6f,
+                    dx = MyApplication.SHADOW_OFFSET,
+                    dy = MyApplication.SHADOW_OFFSET,
                 )
             )
         }

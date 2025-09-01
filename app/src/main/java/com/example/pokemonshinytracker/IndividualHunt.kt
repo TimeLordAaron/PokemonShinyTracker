@@ -506,8 +506,8 @@ class IndividualHunt : ComponentActivity() {
                             transformations(
                                 ShadowTransformation(
                                     shadowRadius = MyApplication.SHADOW_RADIUS,
-                                    dx = 6f,
-                                    dy = 6f,
+                                    dx = MyApplication.SHADOW_OFFSET,
+                                    dy = MyApplication.SHADOW_OFFSET,
                                 )
                             )
                         }

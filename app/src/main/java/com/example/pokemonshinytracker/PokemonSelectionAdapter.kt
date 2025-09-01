@@ -53,6 +53,13 @@ class PokemonSelectionAdapter(
                 placeholder(R.drawable.etc_default)
                 crossfade(true)
                 size(pokemonImage.width.takeIf { it > 0 } ?: 128)   // approximate size if not measured yet
+                transformations(
+                    ShadowTransformation(
+                        shadowRadius = MyApplication.SHADOW_RADIUS,
+                        dx = MyApplication.SHADOW_OFFSET,
+                        dy = MyApplication.SHADOW_OFFSET,
+                    )
+                )
             }
 
             // determine the initial selection state
