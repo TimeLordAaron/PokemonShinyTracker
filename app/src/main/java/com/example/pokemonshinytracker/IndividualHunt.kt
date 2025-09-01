@@ -19,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 
 class IndividualHunt : ComponentActivity() {
 
@@ -72,6 +73,8 @@ class IndividualHunt : ComponentActivity() {
     private var selectedOriginGameID: Int? = null
     private var selectedCurrentGameID: Int? = null
     private var selectedDefaultPosition: Int? = null
+
+    private var formImage: Int? = null
 
     // variable to track if a sub menu is currently open
     private var subMenuOpened = false
@@ -179,7 +182,7 @@ class IndividualHunt : ComponentActivity() {
                 Log.d("IndividualHunt", "Form ID: $selectedFormID")
                 val pokemon = pokemonList.find { p -> p.forms.any { it.formID == selectedFormID } }!!
                 val formName = pokemon.forms.find { it.formID == selectedHunt!!.formID }!!.formName
-                val formImage = pokemon.forms.find { it.formID == selectedHunt!!.formID }!!.formImage
+                formImage = pokemon.forms.find { it.formID == selectedHunt!!.formID }!!.formImage
                 Log.d("IndividualHunt", "Received Pokemon: $pokemon")
                 if (selectedFormID != null) {
                     selectedPokemonID = pokemon.pokemonID
@@ -207,7 +210,16 @@ class IndividualHunt : ComponentActivity() {
                     } else {
                         selectedPokemonForm.text = ""
                     }
-                    pokemonImage.setImageResource(formImage)
+                    pokemonImage.load(formImage) {
+                        crossfade(true)
+                        transformations(
+                            ShadowTransformation(
+                                shadowRadius = MyApplication.SHADOW_RADIUS,
+                                dx = 6f,
+                                dy = 6f,
+                            )
+                        )
+                    }
                 }
 
                 // set the start date text and unselect button (if not empty)
@@ -381,14 +393,23 @@ class IndividualHunt : ComponentActivity() {
                 sortedForms.last().formID
             }
             val formName = pokemon.forms.find { it.formID == selectedFormID }!!.formName
-            val formImage = pokemon.forms.find { it.formID == selectedFormID }!!.formImage
+            formImage = pokemon.forms.find { it.formID == selectedFormID }!!.formImage
             selectedPokemonName.text = pokemon.pokemonName
             if (formName != null) {
                 selectedPokemonForm.text = "($formName)"
             } else {
                 selectedPokemonForm.text = ""
             }
-            pokemonImage.setImageResource(formImage)
+            pokemonImage.load(formImage) {
+                crossfade(true)
+                transformations(
+                    ShadowTransformation(
+                        shadowRadius = MyApplication.SHADOW_RADIUS,
+                        dx = 6f,
+                        dy = 6f,
+                    )
+                )
+            }
         }
 
         // on click listener for the next form button '▶'
@@ -402,14 +423,23 @@ class IndividualHunt : ComponentActivity() {
                 selectedFormID = sortedForms.first().formID
             }
             val formName = pokemon.forms.find { it.formID == selectedFormID }!!.formName
-            val formImage = pokemon.forms.find { it.formID == selectedFormID }!!.formImage
+            formImage = pokemon.forms.find { it.formID == selectedFormID }!!.formImage
             selectedPokemonName.text = pokemon.pokemonName
             if (formName != null) {
                 selectedPokemonForm.text = "($formName)"
             } else {
                 selectedPokemonForm.text = ""
             }
-            pokemonImage.setImageResource(formImage)
+            pokemonImage.load(formImage) {
+                crossfade(true)
+                transformations(
+                    ShadowTransformation(
+                        shadowRadius = MyApplication.SHADOW_RADIUS,
+                        dx = 6f,
+                        dy = 6f,
+                    )
+                )
+            }
         }
 
         // on click listener for the pokemon selection button
@@ -464,14 +494,23 @@ class IndividualHunt : ComponentActivity() {
                 val adapter =
                     PokemonSelectionAdapter(PokemonSelectionMode.SINGLE_SELECT, groupedPokemonList, selectedList) { selectedPokemon ->
                         val formName = selectedPokemon.forms.find { it.isDefaultForm }?.formName
-                        val formImage = selectedPokemon.forms.find { it.isDefaultForm }!!.formImage
+                        formImage = selectedPokemon.forms.find { it.isDefaultForm }!!.formImage
                         selectedPokemonName.text = selectedPokemon.pokemonName
                         if (formName != null) {
                             selectedPokemonForm.text = "($formName)"
                         } else {
                             selectedPokemonForm.text = ""
                         }
-                        pokemonImage.setImageResource(formImage)
+                        pokemonImage.load(formImage) {
+                            crossfade(true)
+                            transformations(
+                                ShadowTransformation(
+                                    shadowRadius = MyApplication.SHADOW_RADIUS,
+                                    dx = 6f,
+                                    dy = 6f,
+                                )
+                            )
+                        }
                         selectedPokemonID = selectedPokemon.pokemonID
                         selectedFormID = selectedPokemon.forms.find { it.isDefaultForm }!!.formID
                         previousFormBtn.visibility =

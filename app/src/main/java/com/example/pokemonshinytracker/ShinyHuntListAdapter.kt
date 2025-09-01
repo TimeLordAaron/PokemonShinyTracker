@@ -1,6 +1,7 @@
 package com.example.pokemonshinytracker
 
 import android.content.Context
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +10,13 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.compose.ui.res.integerResource
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Collections
+import coil.load
 
 // DiffUtil class to efficiently convert the old list into the new list
 class ShinyHuntDiffCallback : DiffUtil.ItemCallback<ShinyHunt>() {
@@ -102,10 +105,22 @@ class ShinyHuntListAdapter(
             holder.currentGameIconBorder.visibility = View.GONE
         }
 
-        holder.pokemonImage.setImageResource(
-            if (hunt.formID == null) R.drawable.etc_default
-            else pokemon!!.forms.find { it.formID == hunt.formID }!!.formImage
-        )
+        val formImageRes = if (hunt.formID == null) {
+            R.drawable.etc_default
+        } else {
+            pokemon!!.forms.find { it.formID == hunt.formID }!!.formImage
+        }
+
+        holder.pokemonImage.load(formImageRes) {
+            crossfade(true)
+            transformations(
+                ShadowTransformation(
+                    shadowRadius = MyApplication.SHADOW_RADIUS,
+                    dx = 6f,
+                    dy = 6f,
+                )
+            )
+        }
 
         holder.counterValue.text = hunt.counter.toString()
 
