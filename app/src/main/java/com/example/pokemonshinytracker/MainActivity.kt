@@ -971,6 +971,12 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                     true
                 }
 
+                // apply filters to the entered counter and phase
+                counterLo.filters = arrayOf(InputFilterMax(MyApplication.COUNTER_MAX))
+                counterHi.filters = arrayOf(InputFilterMax(MyApplication.COUNTER_MAX))
+                phaseLo.filters = arrayOf(InputFilterMax(MyApplication.PHASE_MAX))
+                phaseHi.filters = arrayOf(InputFilterMax(MyApplication.PHASE_MAX))
+
                 // text change listeners for the counter and phase ranges
                 counterLo.doAfterTextChanged { enteredCounterLo = counterLo.text.toString() }
                 counterHi.doAfterTextChanged { enteredCounterHi = counterHi.text.toString() }

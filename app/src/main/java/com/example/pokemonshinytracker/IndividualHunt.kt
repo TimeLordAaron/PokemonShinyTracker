@@ -34,11 +34,13 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var pokemonRecyclerView: RecyclerView  // pokemon recycler view
     private lateinit var selectedPokemonLabel: TextView     // selected pokemon label (will be hidden for the Individual Hunt page)
     private lateinit var selectPokemonDialogLayout: View    // pokemon selection dialog
+    private lateinit var enteredNickname: EditText          // nickname text field
     private lateinit var pickStartDateBtn: ImageButton      // start date button
     private lateinit var selectedStartDate: TextView        // start date text
     private lateinit var unselectStartDateBtn: ImageButton  // unselect start date button
     private lateinit var selectOriginGameBtn: ImageButton   // origin game button
     private lateinit var unselectOriginGameBtn: ImageButton // unselect origin game button
+    private lateinit var enteredLocation: EditText          // location text field
     private lateinit var enteredMethod: EditText            // method text field
     private lateinit var gameRecyclerView: RecyclerView     // game recycler view (used for origin game and current game)
     private lateinit var selectGameDialog: View             // game dialog (used for origin game and current game)
@@ -129,6 +131,7 @@ class IndividualHunt : ComponentActivity() {
         val selectedPokemonForm = findViewById<TextView>(R.id.selected_pokemon_form)        // selected pokemon form
         val pokemonImage = findViewById<ImageView>(R.id.pokemon_image)                      // pokemon image
         selectPokemonBtn = findViewById(R.id.pokemon_selection_button)                      // pokemon select button
+        enteredNickname = findViewById(R.id.nickname)                                       // nickname edit text
         selectedStartDate = findViewById(R.id.start_date)                                   // start date text view
         pickStartDateBtn = findViewById(R.id.start_date_button)                             // start date button
         unselectStartDateBtn = findViewById(R.id.unselect_start_date_button)                // unselect start date button
@@ -136,6 +139,7 @@ class IndividualHunt : ComponentActivity() {
         val originGameIconBorder = findViewById<FrameLayout>(R.id.origin_game_icon_border)  // origin game icon border
         val originGameIcon = findViewById<ImageView>(R.id.origin_game_icon)                 // origin game icon
         unselectOriginGameBtn = findViewById(R.id.unselect_origin_game_button)              // unselect origin game button
+        enteredLocation = findViewById(R.id.location)                                       // location edit text
         enteredMethod = findViewById(R.id.method)                                           // method edit text
         enteredCounter = findViewById(R.id.counter)                                         // counter edit text
         decrementCounterBtn = findViewById(R.id.decrement_counter_button)                   // counter decrement button
@@ -211,6 +215,9 @@ class IndividualHunt : ComponentActivity() {
                     }
                 }
 
+                // set the nickname text
+                enteredNickname.setText(selectedHunt!!.nickname)
+
                 // set the start date text and unselect button (if not empty)
                 if (selectedHunt!!.startDate!!.isNotEmpty()) {
                     selectedStartDate.text = selectedHunt!!.startDate
@@ -224,6 +231,9 @@ class IndividualHunt : ComponentActivity() {
                     originGameIconBorder.visibility = View.VISIBLE
                     unselectOriginGameBtn.visibility = View.VISIBLE
                 }
+
+                // set the location text
+                enteredLocation.setText(selectedHunt!!.location)
 
                 // update the method text
                 enteredMethod.setText(selectedHunt!!.method)
@@ -308,7 +318,9 @@ class IndividualHunt : ComponentActivity() {
                 db.updateHunt(
                     selectedHuntID,
                     selectedFormID,
+                    enteredNickname.text.toString(),
                     selectedOriginGameID,
+                    enteredLocation.text.toString(),
                     enteredMethod.text.toString(),
                     selectedStartDate.text.toString(),
                     enteredCounter.text.toString().toInt(),

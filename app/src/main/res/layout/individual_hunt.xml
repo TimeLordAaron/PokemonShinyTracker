@@ -255,16 +255,44 @@
                     app:layout_constraintGuide_percent="0.7"
                     android:orientation="vertical" />
 
+                <!--Nickname Label-->
+                <TextView
+                    android:id="@+id/nickname_label"
+                    android:labelFor="@id/nickname"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/nickname_label"
+                    android:textSize="@dimen/text_size_large"
+                    android:textColor="@color/black"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/guideline_label" />
+
+                <!--Nickname Textbox-->
+                <EditText
+                    android:id="@+id/nickname"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_large"
+                    android:inputType="text"
+                    android:importantForAutofill="no"
+                    android:importantForAccessibility="no"
+                    app:layout_constraintTop_toTopOf="@id/nickname_label"
+                    app:layout_constraintBottom_toBottomOf="@id/nickname_label"
+                    app:layout_constraintStart_toStartOf="@id/guideline_label"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
                 <!--Start Date Label-->
                 <TextView
                     android:id="@+id/start_date_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="50dp"
                     android:text="@string/start_date_label"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/nickname_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
 
@@ -387,16 +415,45 @@
                     app:layout_constraintBottom_toBottomOf="@id/origin_game_label"
                     app:layout_constraintStart_toEndOf="@id/origin_game_icon_border" />
 
+                <!--Location Label-->
+                <TextView
+                    android:id="@+id/location_label"
+                    android:labelFor="@id/location"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:text="@string/location_label"
+                    android:textSize="@dimen/text_size_large"
+                    android:textColor="@color/black"
+                    app:layout_constraintTop_toBottomOf="@id/origin_game_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/guideline_label" />
+
+                <!--Location Textbox-->
+                <EditText
+                    android:id="@+id/location"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_large"
+                    android:hint="@string/location_hint"
+                    android:inputType="text"
+                    android:importantForAutofill="no"
+                    app:layout_constraintTop_toTopOf="@id/location_label"
+                    app:layout_constraintBottom_toBottomOf="@id/location_label"
+                    app:layout_constraintStart_toStartOf="@id/guideline_label"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
                 <!--Method Label-->
                 <TextView
                     android:id="@+id/method_label"
+                    android:labelFor="@id/method"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="50dp"
                     android:text="@string/method_label"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
-                    app:layout_constraintTop_toBottomOf="@id/origin_game_label"
+                    app:layout_constraintTop_toBottomOf="@id/location_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
 
@@ -417,6 +474,7 @@
                 <!--Counter Label-->
                 <TextView
                     android:id="@+id/counter_label"
+                    android:labelFor="@id/counter"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="50dp"
@@ -491,6 +549,7 @@
                 <!--Phase Label-->
                 <TextView
                     android:id="@+id/phase_label"
+                    android:labelFor="@id/phase"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"

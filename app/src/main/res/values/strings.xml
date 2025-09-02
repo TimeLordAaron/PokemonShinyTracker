@@ -86,4 +86,7 @@
     <string name="game_select_button_description">Button to select a game</string>
     <string name="pokemon_select_button_description">Button to select a Pokemon</string>
     <string name="date_unselect_description">Button to unselect a date</string>
+    <string name="location_label">Location:</string>
+    <string name="location_hint">i.e. Route 1</string>
+    <string name="nickname_label">Nickname:</string>
 </resources>

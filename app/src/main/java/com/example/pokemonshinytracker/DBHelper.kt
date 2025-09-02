@@ -70,7 +70,9 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 CREATE TABLE $SHINY_HUNT_TABLE (
                     $HUNT_ID_COL INTEGER PRIMARY KEY AUTOINCREMENT,
                     $FORM_ID_COL INTEGER,
+                    $NICKNAME_COL TEXT,
                     $ORIGIN_GAME_ID_COL INTEGER,
+                    $LOCATION_COL TEXT,
                     $METHOD_COL TEXT,
                     $START_DATE_COL TEXT,
                     $COUNTER_COL INTEGER,
@@ -214,11 +216,13 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
 
     // Function to add new shiny hunts to the database
-    private fun addHunt(db: SQLiteDatabase, formID: Int?, originGameID: Int?, method: String, startDate: String?,
+    private fun addHunt(db: SQLiteDatabase, formID: Int?, nickname: String, originGameID: Int?, location: String, method: String, startDate: String?,
                 counter: Int, phase: Int, notes: String, isComplete: Boolean, finishDate: String?, currentGameID: Int?, defaultPosition: Int?) {
         val values = ContentValues().apply {
             put(FORM_ID_COL, formID)
+            put(NICKNAME_COL, nickname)
             put(ORIGIN_GAME_ID_COL, originGameID)
+            put(LOCATION_COL, location)
             put(METHOD_COL, method)
             put(START_DATE_COL, startDate)
             put(COUNTER_COL, counter)
@@ -290,7 +294,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     }
 
     // Function to update a hunt in the database
-    fun updateHunt(huntID: Int, formID: Int?, originGameID: Int?, method: String, startDate: String?,
+    fun updateHunt(huntID: Int, formID: Int?, nickname: String, originGameID: Int?, location: String, method: String, startDate: String?,
                    counter: Int, phase: Int, notes: String, isComplete: Boolean, finishDate: String?, currentGameID: Int?, defaultPosition: Int?) {
         var db: SQLiteDatabase? = null
 
@@ -310,7 +314,9 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 addHunt(
                     db,
                     formID,
+                    nickname,
                     originGameID,
+                    location,
                     method,
                     startDate,
                     counter,
@@ -328,7 +334,9 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 val values = ContentValues().apply {
                     put(HUNT_ID_COL, huntID)
                     put(FORM_ID_COL, formID)
+                    put(NICKNAME_COL, nickname)
                     put(ORIGIN_GAME_ID_COL, originGameID)
+                    put(LOCATION_COL, location)
                     put(METHOD_COL, method)
                     put(START_DATE_COL, startDate)
                     put(COUNTER_COL, counter)
@@ -495,17 +503,19 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                         val hunt = ShinyHunt(
                             huntID = cursor.getInt(0),
                             formID = if (cursor.isNull(1)) null else cursor.getInt(1),
-                            originGameID = if (cursor.isNull(2)) null else cursor.getInt(2),
-                            method = cursor.getString(3),
-                            startDate = cursor.getString(4),
-                            counter = cursor.getInt(5),
-                            phase = cursor.getInt(6),
-                            notes = cursor.getString(7),
-                            isComplete = cursor.getInt(8) == 1, // Convert 0/1 to Boolean
-                            finishDate = cursor.getString(9),
-                            currentGameID = if (cursor.isNull(10)) null else cursor.getInt(10),
-                            defaultPosition = cursor.getInt(11),
-                            pokemonName = cursor.getString(12)
+                            nickname = cursor.getString(2),
+                            originGameID = if (cursor.isNull(3)) null else cursor.getInt(3),
+                            location = cursor.getString(4),
+                            method = cursor.getString(5),
+                            startDate = cursor.getString(6),
+                            counter = cursor.getInt(7),
+                            phase = cursor.getInt(8),
+                            notes = cursor.getString(9),
+                            isComplete = cursor.getInt(10) == 1, // Convert 0/1 to Boolean
+                            finishDate = cursor.getString(11),
+                            currentGameID = if (cursor.isNull(12)) null else cursor.getInt(12),
+                            defaultPosition = cursor.getInt(13),
+                            pokemonName = cursor.getString(14)
                         )
                         huntList.add(hunt)
                     } while (cursor.moveToNext())
@@ -706,7 +716,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
         // Database name and version
         const val DATABASE_NAME = "SHINY_TRACKER_DB"
-        const val DATABASE_VERSION = 5
+        const val DATABASE_VERSION = 6
 
         // Pokemon Table
         const val POKEMON_TABLE = "Pokemon"
@@ -732,7 +742,9 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         const val SHINY_HUNT_TABLE = "ShinyHunt"
         const val HUNT_ID_COL = "huntID"                    // primary key of ShinyHunt Table
         // const val FORM_ID_COL = "pokemonID"              // foreign key to PokemonForm Table
+        const val NICKNAME_COL = "nickname"
         const val ORIGIN_GAME_ID_COL = "originGameID"       // foreign key to Game Table
+        const val LOCATION_COL = "location"
         const val METHOD_COL = "method"
         const val START_DATE_COL = "startDate"
         const val COUNTER_COL = "counter"
