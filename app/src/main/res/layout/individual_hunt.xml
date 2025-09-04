@@ -7,6 +7,15 @@
     android:layout_height="match_parent"
     android:background="@drawable/ui_background_individual_hunt_incomplete">
 
+    <com.example.pokemonshinytracker.FallingCirclesView
+        android:id="@+id/falling_circles_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:clickable="false"
+        android:focusable="false"
+        android:importantForAccessibility="no"/>
+
     <!--Top Bar Container-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top_bar_container"

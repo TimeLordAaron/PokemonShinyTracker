@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
 import android.graphics.drawable.TransitionDrawable
 import android.text.Editable
 import android.text.TextWatcher
@@ -26,6 +27,7 @@ import coil.load
 class IndividualHunt : ComponentActivity() {
 
     // lateinit UI var declarations
+    private lateinit var fallingCirclesView: FallingCirclesView // falling circles view
     private lateinit var backBtn: Button                    // back button
     private lateinit var saveBtn: Button                    // save button
     private lateinit var deleteBtn: Button                  // delete button
@@ -123,6 +125,7 @@ class IndividualHunt : ComponentActivity() {
 
         // find all the UI views
         val mainLayout = findViewById<ConstraintLayout>(R.id.individual_hunt_layout)        // layout of the entire window
+        fallingCirclesView = findViewById(R.id.falling_circles_view)                        // falling circles view
         backBtn = findViewById(R.id.back_button)                                            // back button
         saveBtn = findViewById(R.id.save_button)                                            // save button
         deleteBtn = findViewById(R.id.delete_button)                                        // delete button
@@ -168,6 +171,16 @@ class IndividualHunt : ComponentActivity() {
         // apply filters to the entered counter and phase
         enteredCounter.filters = arrayOf(InputFilterMax(MyApplication.COUNTER_MAX))
         enteredPhase.filters = arrayOf(InputFilterMax(MyApplication.PHASE_MAX))
+
+        // set the colors and count of the falling circles
+        fallingCirclesView.setColors(listOf(
+            Color.parseColor("#66F0EC7C"),  // light gold
+            Color.parseColor("#66E3C332"),  // dark gold
+            Color.parseColor("#66FFFD55"),  // yellow
+            Color.parseColor("#66FFFFFF"),  // white
+            Color.parseColor("#66D9D9D9")   // light gray
+        ))
+        fallingCirclesView.setCircleCount(32)
 
         // apply transition drawable to the background
         val transitionDrawable = ContextCompat.getDrawable(
@@ -262,6 +275,7 @@ class IndividualHunt : ComponentActivity() {
                 // update the background gradient
                 if (selectedHunt!!.isComplete) {
                     transitionDrawable.startTransition(0)   // show complete state immediately
+                    fallingCirclesView.visibility = View.VISIBLE
                     finishDateLabel.visibility = View.VISIBLE
                     pickFinishDateBtn.visibility = View.VISIBLE
                     if (selectedHunt!!.finishDate!!.isNotEmpty()) {
@@ -280,6 +294,7 @@ class IndividualHunt : ComponentActivity() {
                     }
                 } else {
                     transitionDrawable.resetTransition()    // show incomplete state
+                    fallingCirclesView.visibility = View.GONE
                     finishDateLabel.visibility = View.GONE
                     pickFinishDateBtn.visibility = View.GONE
                     selectedFinishDate.visibility = View.GONE
@@ -757,6 +772,7 @@ class IndividualHunt : ComponentActivity() {
             // if checkboxState is false, change background to gray gradient, and make layouts invisible
             if (!checkboxState) {
                 transitionDrawable.reverseTransition(MyApplication.TRANSITION_DURATION)
+                fallingCirclesView.visibility = View.GONE
                 finishDateLabel.visibility = View.GONE
                 selectedFinishDate.visibility = View.GONE
                 pickFinishDateBtn.visibility = View.GONE
@@ -769,6 +785,7 @@ class IndividualHunt : ComponentActivity() {
             // if checkboxState is true, change background to gold gradient, and make layouts visible
             else {
                 transitionDrawable.startTransition(MyApplication.TRANSITION_DURATION)
+                fallingCirclesView.visibility = View.VISIBLE
                 finishDateLabel.visibility = View.VISIBLE
                 pickFinishDateBtn.visibility = View.VISIBLE
                 if (selectedFinishDate.text.isNotBlank()) {
