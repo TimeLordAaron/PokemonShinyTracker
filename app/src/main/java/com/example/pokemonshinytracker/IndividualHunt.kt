@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.drawable.TransitionDrawable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -14,6 +15,7 @@ import android.widget.*
 import androidx.activity.addCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -167,6 +169,13 @@ class IndividualHunt : ComponentActivity() {
         enteredCounter.filters = arrayOf(InputFilterMax(MyApplication.COUNTER_MAX))
         enteredPhase.filters = arrayOf(InputFilterMax(MyApplication.PHASE_MAX))
 
+        // apply transition drawable to the background
+        val transitionDrawable = ContextCompat.getDrawable(
+            this,
+            R.drawable.ui_background_individual_hunt_transition
+        ) as TransitionDrawable
+        mainLayout.background = transitionDrawable
+
         // retrieve data from the main window
         intent?.let { it ->
             selectedHuntID = it.getIntExtra("hunt_id", 0)           // hunt ID of the retrieved hunt (or 0 if new hunt)
@@ -252,7 +261,7 @@ class IndividualHunt : ComponentActivity() {
 
                 // update the background gradient
                 if (selectedHunt!!.isComplete) {
-                    mainLayout.setBackgroundResource(R.drawable.ui_background_individual_hunt_complete)
+                    transitionDrawable.startTransition(0)   // show complete state immediately
                     finishDateLabel.visibility = View.VISIBLE
                     pickFinishDateBtn.visibility = View.VISIBLE
                     if (selectedHunt!!.finishDate!!.isNotEmpty()) {
@@ -270,7 +279,7 @@ class IndividualHunt : ComponentActivity() {
                         // do nothing; current game section is GONE by default
                     }
                 } else {
-                    mainLayout.setBackgroundResource(R.drawable.ui_background_individual_hunt_incomplete)
+                    transitionDrawable.resetTransition()    // show incomplete state
                     finishDateLabel.visibility = View.GONE
                     pickFinishDateBtn.visibility = View.GONE
                     selectedFinishDate.visibility = View.GONE
@@ -747,7 +756,7 @@ class IndividualHunt : ComponentActivity() {
             val checkboxState = completionCheckbox.isChecked
             // if checkboxState is false, change background to gray gradient, and make layouts invisible
             if (!checkboxState) {
-                mainLayout.setBackgroundResource(R.drawable.ui_background_individual_hunt_incomplete)
+                transitionDrawable.reverseTransition(MyApplication.TRANSITION_DURATION)
                 finishDateLabel.visibility = View.GONE
                 selectedFinishDate.visibility = View.GONE
                 pickFinishDateBtn.visibility = View.GONE
@@ -757,9 +766,9 @@ class IndividualHunt : ComponentActivity() {
                 currentGameIconBorder.visibility = View.GONE
                 unselectCurrentGameBtn.visibility = View.GONE
             }
-            // if checkboxState is true, change background to green gradient, and make layouts visible
+            // if checkboxState is true, change background to gold gradient, and make layouts visible
             else {
-                mainLayout.setBackgroundResource(R.drawable.ui_background_individual_hunt_complete)
+                transitionDrawable.startTransition(MyApplication.TRANSITION_DURATION)
                 finishDateLabel.visibility = View.VISIBLE
                 pickFinishDateBtn.visibility = View.VISIBLE
                 if (selectedFinishDate.text.isNotBlank()) {
