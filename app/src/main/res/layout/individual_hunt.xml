@@ -14,7 +14,7 @@
         android:visibility="gone"
         android:clickable="false"
         android:focusable="false"
-        android:importantForAccessibility="no"/>
+        android:importantForAccessibility="no" />
 
     <!--Top Bar Container-->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -248,20 +248,12 @@
                     app:layout_constraintGuide_percent="0.3"
                     android:orientation="vertical" />
 
-                <!--Guidleine for Middle-->
+                <!--Guideline for Middle-->
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline_middle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintGuide_percent="0.5"
-                    android:orientation="vertical" />
-
-                <!--Guideline for Field Column-->
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_field"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintGuide_percent="0.7"
                     android:orientation="vertical" />
 
                 <!--Nickname Label-->
@@ -282,7 +274,9 @@
                 <EditText
                     android:id="@+id/nickname"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/min_button_size"
+                    android:padding="@dimen/textbox_padding"
+                    android:background="@drawable/ui_textbox"
                     android:textSize="@dimen/text_size_large"
                     android:inputType="text"
                     android:importantForAutofill="no"
@@ -290,14 +284,14 @@
                     app:layout_constraintTop_toTopOf="@id/nickname_label"
                     app:layout_constraintBottom_toBottomOf="@id/nickname_label"
                     app:layout_constraintStart_toStartOf="@id/guideline_label"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="@id/counter_multiplier_button" />
 
                 <!--Start Date Label-->
                 <TextView
                     android:id="@+id/start_date_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/start_date_label"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
@@ -342,6 +336,7 @@
                     android:id="@+id/unselect_start_date_button"
                     android:layout_width="@dimen/min_button_size"
                     android:layout_height="@dimen/min_button_size"
+                    android:layout_marginStart="@dimen/button_margin"
                     android:padding="10dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
@@ -358,7 +353,7 @@
                     android:id="@+id/origin_game_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/origin_game_label"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
@@ -413,6 +408,7 @@
                     android:id="@+id/unselect_origin_game_button"
                     android:layout_width="@dimen/min_button_size"
                     android:layout_height="@dimen/min_button_size"
+                    android:layout_marginStart="@dimen/button_margin"
                     android:padding="10dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
@@ -430,7 +426,7 @@
                     android:labelFor="@id/location"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/location_label"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
@@ -442,7 +438,9 @@
                 <EditText
                     android:id="@+id/location"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/min_button_size"
+                    android:padding="@dimen/textbox_padding"
+                    android:background="@drawable/ui_textbox"
                     android:textSize="@dimen/text_size_large"
                     android:hint="@string/location_hint"
                     android:inputType="text"
@@ -450,7 +448,7 @@
                     app:layout_constraintTop_toTopOf="@id/location_label"
                     app:layout_constraintBottom_toBottomOf="@id/location_label"
                     app:layout_constraintStart_toStartOf="@id/guideline_label"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="@id/counter_multiplier_button" />
 
                 <!--Method Label-->
                 <TextView
@@ -458,7 +456,7 @@
                     android:labelFor="@id/method"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/method_label"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
@@ -470,7 +468,9 @@
                 <EditText
                     android:id="@+id/method"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/min_button_size"
+                    android:padding="@dimen/textbox_padding"
+                    android:background="@drawable/ui_textbox"
                     android:textSize="@dimen/text_size_large"
                     android:hint="@string/method_hint"
                     android:inputType="text"
@@ -478,7 +478,7 @@
                     app:layout_constraintTop_toTopOf="@id/method_label"
                     app:layout_constraintBottom_toBottomOf="@id/method_label"
                     app:layout_constraintStart_toStartOf="@id/guideline_label"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="@id/counter_multiplier_button" />
 
                 <!--Counter Label-->
                 <TextView
@@ -486,7 +486,7 @@
                     android:labelFor="@id/counter"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/counter_label"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
@@ -498,7 +498,9 @@
                 <EditText
                     android:id="@+id/counter"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/min_button_size"
+                    android:padding="@dimen/textbox_padding"
+                    android:background="@drawable/ui_textbox"
                     android:text="@string/zero"
                     android:textSize="@dimen/text_size_large"
                     android:textAlignment="center"
@@ -512,27 +514,25 @@
                 <!--Decrement Counter Button-->
                 <ImageButton
                     android:id="@+id/decrement_counter_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="@dimen/min_button_size"
-                    android:minHeight="@dimen/min_button_size"
-                    android:layout_margin="10dp"
+                    android:layout_width="@dimen/min_button_size"
+                    android:layout_height="@dimen/min_button_size"
+                    android:layout_marginStart="@dimen/button_margin"
+                    android:elevation="@dimen/button_elevation"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_minus"
                     android:contentDescription="@string/counter_decrement_description"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintTop_toTopOf="@id/counter_label"
                     app:layout_constraintBottom_toBottomOf="@id/counter_label"
-                    app:layout_constraintStart_toEndOf="@id/counter" />
+                    app:layout_constraintStart_toStartOf="@id/guideline_middle" />
 
                 <!--Increment Counter Button-->
                 <ImageButton
                     android:id="@+id/increment_counter_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="@dimen/min_button_size"
-                    android:minHeight="@dimen/min_button_size"
-                    android:layout_margin="10dp"
+                    android:layout_width="@dimen/min_button_size"
+                    android:layout_height="@dimen/min_button_size"
+                    android:layout_marginStart="@dimen/button_margin"
+                    android:elevation="@dimen/button_elevation"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_plus"
                     android:contentDescription="@string/counter_increment_description"
@@ -544,16 +544,18 @@
                 <!--Counter Multiplier Button-->
                 <Button
                     android:id="@+id/counter_multiplier_button"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/min_button_size"
                     android:layout_height="@dimen/min_button_size"
-                    android:minWidth="@dimen/min_button_size"
+                    android:layout_marginStart="@dimen/button_margin"
+                    android:elevation="@dimen/button_elevation"
                     android:text="@string/counter_multiplier_placeholder"
                     android:textAllCaps="false"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_medium"
                     android:textStyle="bold"
-                    app:layout_constraintTop_toBottomOf="@id/counter_label"
-                    app:layout_constraintStart_toStartOf="@id/counter_label" />
+                    app:layout_constraintTop_toTopOf="@id/counter_label"
+                    app:layout_constraintBottom_toBottomOf="@id/counter_label"
+                    app:layout_constraintStart_toEndOf="@id/increment_counter_button" />
 
                 <!--Phase Label-->
                 <TextView
@@ -561,7 +563,7 @@
                     android:labelFor="@id/phase"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/phase_label"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
@@ -573,7 +575,9 @@
                 <EditText
                     android:id="@+id/phase"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/min_button_size"
+                    android:padding="@dimen/textbox_padding"
+                    android:background="@drawable/ui_textbox"
                     android:text="@string/zero"
                     android:textSize="@dimen/text_size_large"
                     android:textAlignment="center"
@@ -587,27 +591,25 @@
                 <!--Decrement Phase Button-->
                 <ImageButton
                     android:id="@+id/decrement_phase_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="@dimen/min_button_size"
-                    android:minHeight="@dimen/min_button_size"
-                    android:layout_margin="10dp"
+                    android:layout_width="@dimen/min_button_size"
+                    android:layout_height="@dimen/min_button_size"
+                    android:layout_marginStart="@dimen/button_margin"
+                    android:elevation="@dimen/button_elevation"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_minus"
                     android:contentDescription="@string/phase_decrement_description"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintTop_toTopOf="@id/phase_label"
                     app:layout_constraintBottom_toBottomOf="@id/phase_label"
-                    app:layout_constraintStart_toEndOf="@id/phase" />
+                    app:layout_constraintStart_toStartOf="@id/guideline_middle" />
 
                 <!--Increment Phase Button-->
                 <ImageButton
                     android:id="@+id/increment_phase_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="@dimen/min_button_size"
-                    android:minHeight="@dimen/min_button_size"
-                    android:layout_margin="10dp"
+                    android:layout_width="@dimen/min_button_size"
+                    android:layout_height="@dimen/min_button_size"
+                    android:layout_marginStart="@dimen/button_margin"
+                    android:elevation="@dimen/button_elevation"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_plus"
                     android:contentDescription="@string/phase_increment_description"
@@ -621,7 +623,7 @@
                     android:id="@+id/notes_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/notes_label"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
@@ -636,8 +638,8 @@
                     android:layout_height="@dimen/notes_height"
                     android:layout_marginTop="10dp"
                     android:gravity="top|start"
-                    android:padding="8dp"
-                    android:background="@drawable/ui_transparent_container"
+                    android:padding="@dimen/textbox_padding"
+                    android:background="@drawable/ui_textbox"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
                     android:hint="@string/notes_hint"
@@ -652,7 +654,7 @@
                     android:id="@+id/hunt_complete_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/hunt_complete_label"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
@@ -677,14 +679,14 @@
                     android:id="@+id/finish_date_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="@dimen/label_top_margin"
                     android:visibility="gone"
                     android:text="@string/finish_date_label"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/hunt_complete_label"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/guideline_label" />
+                    app:layout_constraintEnd_toStartOf="@id/guideline_label" />
 
                 <!--Finish Date Selection Button-->
                 <ImageButton
@@ -724,6 +726,7 @@
                     android:id="@+id/unselect_finish_date_button"
                     android:layout_width="@dimen/min_button_size"
                     android:layout_height="@dimen/min_button_size"
+                    android:layout_marginStart="@dimen/button_margin"
                     android:padding="10dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
@@ -740,7 +743,7 @@
                     android:id="@+id/current_game_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="@dimen/label_top_margin"
                     android:layout_marginBottom="16dp"
                     android:visibility="gone"
                     android:text="@string/current_game_label"
@@ -798,6 +801,7 @@
                     android:id="@+id/unselect_current_game_button"
                     android:layout_width="@dimen/min_button_size"
                     android:layout_height="@dimen/min_button_size"
+                    android:layout_marginStart="@dimen/button_margin"
                     android:padding="10dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
