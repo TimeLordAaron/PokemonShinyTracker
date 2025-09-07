@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
+import androidx.compose.ui.res.integerResource
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -180,7 +181,8 @@ class IndividualHunt : ComponentActivity() {
             Color.parseColor("#66FFFFFF"),  // white
             Color.parseColor("#66D9D9D9")   // light gray
         ))
-        fallingCirclesView.setCircleCount(32)
+        val circleCount = resources.getInteger(R.integer.circle_count)
+        fallingCirclesView.setCircleCount(circleCount)
 
         // apply transition drawable to the background
         val transitionDrawable = ContextCompat.getDrawable(

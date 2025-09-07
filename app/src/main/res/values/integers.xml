@@ -6,4 +6,5 @@
     <integer name="game_span_portrait">3</integer>
     <integer name="shiny_hunt_span_portrait">1</integer>
     <integer name="shiny_hunt_span_landscape">2</integer>
+    <integer name="circle_count">32</integer>
 </resources>
