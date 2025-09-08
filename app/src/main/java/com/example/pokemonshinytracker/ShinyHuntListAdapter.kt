@@ -80,7 +80,7 @@ class ShinyHuntListAdapter(
         )
 
         val pokemon = pokemonSet.find { p -> p.forms.any { it.formID == hunt.formID } }
-        holder.pokemonName.text = pokemon?.pokemonName ?: "N/A"
+        holder.pokemonName.text = hunt.nickname.ifEmpty { pokemon?.pokemonName ?: "N/A" }
 
         hunt.originGameID?.let {
             holder.originGameIcon.setImageResource(gameSet[it].gameImage)

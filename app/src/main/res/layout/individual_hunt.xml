@@ -278,6 +278,7 @@
                     android:padding="@dimen/textbox_padding"
                     android:background="@drawable/ui_textbox"
                     android:textSize="@dimen/text_size_large"
+                    android:maxLength="12"
                     android:inputType="text"
                     android:importantForAutofill="no"
                     android:importantForAccessibility="no"
