@@ -1016,19 +1016,27 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                             // get the new shiny hunt data set
                             val filteredHunts = getFilteredAndSortedHunts()
 
-                            // disable the move buttons
-                            shinyHuntListAdapter.setMoveButtonsEnabled(false)
-
-                            // update the recycler view
-                            shinyHuntListAdapter.submitList(filteredHunts) {
-                                shinyHuntRecyclerView.scrollToPosition(0)
+                            // display error dialog if no hunts were returned
+                            if (filteredHunts.isEmpty()) {
+                                dh.createErrorDialog(this, "No Hunts Found", "No saved hunts match the selected filters.") {
+                                    subMenuOpened = false   // on close, unset subMenuOpened
+                                }
                             }
+                            else {
+                                // disable the move buttons
+                                shinyHuntListAdapter.setMoveButtonsEnabled(false)
 
-                            subMenuOpened = false
+                                // update the recycler view
+                                shinyHuntListAdapter.submitList(filteredHunts) {
+                                    shinyHuntRecyclerView.scrollToPosition(0)
+                                }
 
-                            // close the filter dialog
-                            filterDialog.dismiss()
-                            filterMenuOpened = false
+                                subMenuOpened = false
+
+                                // close the filter dialog
+                                filterDialog.dismiss()
+                                filterMenuOpened = false
+                            }
                         }
                     }
                 }
