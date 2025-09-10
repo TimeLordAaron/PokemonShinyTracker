@@ -534,7 +534,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 setPhaseHi()
 
                 // create the filter menu dialog
-                val filterDialog = dh.createLayoutDialog(this, "Filters", filterDialogLayout) {
+                val filterDialog = dh.createLayoutDialog(this, "Filter", filterDialogLayout) {
                     filterMenuOpened = false    // on close, unset filterMenuOpened
                 }
 
@@ -775,7 +775,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         (selectGamesDialogLayout.parent as? ViewGroup)?.removeView(selectGamesDialogLayout)
 
                         // create the origin games dialog
-                        dh.createLayoutDialog(this, "Select the Origin Games", selectGamesDialogLayout) {
+                        dh.createLayoutDialog(this, "Select Origin Games", selectGamesDialogLayout) {
                             subMenuOpened = false   // on close, unset subMenuOpened
                         }
 
@@ -848,7 +848,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         (selectGamesDialogLayout.parent as? ViewGroup)?.removeView(selectGamesDialogLayout)
 
                         // create the current games dialog
-                        dh.createLayoutDialog(this, "Select the Current Games", selectGamesDialogLayout) {
+                        dh.createLayoutDialog(this, "Select Current Games", selectGamesDialogLayout) {
                             subMenuOpened = false   // on close, unset subMenuOpened
                         }
 
@@ -992,7 +992,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                         // check if a completion status was selected
                         if (selectedCompletionStatus == null) {
                             // create the error dialog
-                            dh.createErrorDialog(this, "Empty Field Detected", "Please select a completion status!") {
+                            dh.createErrorDialog(this, "Required Field Empty", "Please select a completion status!") {
                                 subMenuOpened = false   // on close, unset subMenuOpened
                             }
                         }
@@ -1018,7 +1018,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
                             // display error dialog if no hunts were returned
                             if (filteredHunts.isEmpty()) {
-                                dh.createErrorDialog(this, "No Hunts Found", "No saved hunts match the selected filters.") {
+                                dh.createErrorDialog(this, "No Hunts Found", "No applicable hunts found with the selected filters.") {
                                     subMenuOpened = false   // on close, unset subMenuOpened
                                 }
                             }
@@ -1060,7 +1060,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
                 counterMultiplierText.text = String.format("x%s", MyApplication.counterMultiplier)
 
                 // create a dialog for editing the counter multiplier
-                dh.createLayoutDialog(this, "Set the Counter Multiplier", counterMultiplierLayout) {
+                dh.createLayoutDialog(this, "Counter Multiplier", counterMultiplierLayout) {
                     subMenuOpened = false   // on close, unset subMenuOpened
                 }
 

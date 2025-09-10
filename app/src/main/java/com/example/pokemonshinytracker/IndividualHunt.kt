@@ -333,7 +333,7 @@ class IndividualHunt : ComponentActivity() {
                     subMenuOpened = true
 
                     // create the error dialog
-                    dh.createErrorDialog(this, "Pokémon Not Selected", "Please select a Pokémon before saving!") {
+                    dh.createErrorDialog(this, "Required Field Empty", "Please select a Pokémon before saving!") {
                         subMenuOpened = false   // on close, unset subMenuOpened
                     }
 
@@ -490,7 +490,7 @@ class IndividualHunt : ComponentActivity() {
                 (selectPokemonDialogLayout.parent as? ViewGroup)?.removeView(selectPokemonDialogLayout)
 
                 // create the Pokemon selection dialog
-                val selectPokemonDialog = dh.createLayoutDialog(this, "Select a Pokémon", selectPokemonDialogLayout) {
+                val selectPokemonDialog = dh.createLayoutDialog(this, "Select Pokémon", selectPokemonDialogLayout) {
                     subMenuOpened = false   // on close, unset subMenuOpened
                 }
 
@@ -653,7 +653,7 @@ class IndividualHunt : ComponentActivity() {
                     }
 
                 // create the origin game selection dialog
-                val selectOriginGameDialog = dh.createLayoutDialog(this, "Select the Origin Game", selectGameDialogLayout) {
+                val selectOriginGameDialog = dh.createLayoutDialog(this, "Select Origin Game", selectGameDialogLayout) {
                     subMenuOpened = false   // on close, unset subMenuOpened
                 }
 
@@ -723,7 +723,7 @@ class IndividualHunt : ComponentActivity() {
                 counterMultiplierText.text = String.format("x%s", MyApplication.counterMultiplier)
 
                 // create a dialog for editing the counter multiplier
-                dh.createLayoutDialog(this, "Set the Counter Multiplier", counterMultiplierLayout) {
+                dh.createLayoutDialog(this, "Counter Multiplier", counterMultiplierLayout) {
                     subMenuOpened = false   // on close, unset subMenuOpened
                 }
 
@@ -862,7 +862,7 @@ class IndividualHunt : ComponentActivity() {
                     }
 
                 // create the current game selection dialog
-                val selectCurrentGameDialog = dh.createLayoutDialog(this, "Select the Current Game", selectGameDialogLayout) {
+                val selectCurrentGameDialog = dh.createLayoutDialog(this, "Select Current Game", selectGameDialogLayout) {
                     subMenuOpened = false   // on close, unset subMenuOpened
                 }
 

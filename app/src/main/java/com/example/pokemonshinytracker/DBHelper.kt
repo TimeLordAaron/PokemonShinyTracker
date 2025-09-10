@@ -97,7 +97,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 PokemonData.insertPokemonData(db)
                 PokemonFormData.insertPokemonFormData(db)
                 GameData.insertGameData(db)
-                ShinyHuntData.insertShinyHuntData(db)   // mock data. for release, this line should be commented out
+                //ShinyHuntData.insertShinyHuntData(db)   // mock data. for release, this line should be commented out
                 db.setTransactionSuccessful()   // mark the database transaction as successful
             } catch (e: Exception) {
                 Log.e("DBHelper", "Error inserting initial data: ${e.message}")
