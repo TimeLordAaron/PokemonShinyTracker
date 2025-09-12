@@ -7,6 +7,18 @@
 - No internet connection is required (everything is stored locally with an SQLite database).
 
 \*Some views utilize the 'clipToOutline' property, which requires Android 12 (API level 31) or higher. The app will still run on any device with Android 7.0 or higher, but versions below Android 12 will simply ignore the 'clipToOutline' property, having minor unwanted effects on the UI.
+\*Due to how resource-heavy the Pokémon selection dialog (in the Filter menu and the Create/Edit Hunt page) is, its loading time can vary drastically depending on the device. For example, my current phone (a Google Pixel 8a with Android 16) can load the dialog in 1-2 seconds, but my old phone (an LG Stylo 6 with Android 10 and likely pretty worn-out hardware) takes almost 30 seconds to load it. I've had great difficulty tackling how to reduce the delay. I've decided to leave it as is for release, but I will definitely look further into how to better optimize the dialog (or rework it entirely) in the future.
+
+### Installation Guide
+I would've liked to publish the app on the Play Store to simplify installation, but their developer policy requires all publishers to have legal ownership (or permission from the owner) of all intellectual property featured in their apps. Since my app uses official Pokémon assets (e.g., the images used for the shiny Pokémon and the game icons), I cannot publish it on the Play Store. So, I've instead decided to make the APK file for the app available directly in this GitHub repository. Here's a step-by-step guide on how to install the Pokémon Shiny Tracker app on your Android device (an installation guide video will also be provided in the near future):
+1. Have this GitHub repository open in your Android device's browser.
+2. Navigate to the `app` directory and then the `release` directory.
+3. Click the `app-release.apk` file.
+4. In the Code/Blame section, click the button on the right with the three dots `...`, then click 'Download'.
+5. Your device might say "File might be harmful" or something similar. Click 'Download anyway'.
+6. Once `app-release.apk` is downloaded, open it (if your browser doesn't give you the option to open it directly, you may have to navigate to your device's Downloads folder to find the file).
+7. Upon opening the file, your device should attempt to install the app, but you may get a message saying "For your security, your phone is not allowed to install unknown apps from this source." Don't be startled by this message. Click 'Settings' and then toggle 'Allow from this source'. Then, navigate back.
+8. Your device should now ask if you want to install the app. Click 'Install'. Your device may also offer to scan the app for any viruses. This isn't required, but feel free to let it do so if you wish. You should now have successfully installed the app on your device!
 
 ### What is "Shiny Hunting"?
 In Pokémon games, "shiny" Pokémon are Pokémon with a color palette different from their usual one. For example, a standard Pikachu is yellow, but a shiny Pikachu is orange. Although the probability of encountering a shiny Pokémon varies based on many in-game factors, the odds of encountering a shiny Pokémon are typically very low. Because of their rarity, many Pokémon players dedicate themselves to building a collection of shiny Pokémon by "shiny hunting". "Shiny hunting" refers to the act of intentionally encountering Pokémon repeatedly until a shiny variant is found.
@@ -53,4 +65,4 @@ Additionally, the following fields can be edited and tracked in the Create/Edit 
 - **Notes**: The "Notes" EditText field is used for noting any additional details that aren't offered by the app.
 - **Completion Status**: The checkbox next to the "Hunt Completed?" label can be toggled to specify whether the shiny hunt is in progress or completed. Toggling the checkbox will automatically update the background gradient with a cross-fade animation. When the checkbox is checked (i.e., the hunt is completed), extra fields will be displayed for the finish date and the current game.
 - **Finish Date**: The "Finished" field functions the same as the "Started" field, but it's for selecting the completion date of the shiny hunt.
-- **Current Game**: The "Currently In" field functions the same as the "Hunting In" field, but it's for selecting the game the shiny is currently located. The icon of the selected current game will have a gold border instead of black.
+- **Current Game**: The "Currently In" field functions the same as the "Hunting In" field, but it's for selecting the game the shiny is currently located in. The icon of the selected current game will have a gold border instead of black.
