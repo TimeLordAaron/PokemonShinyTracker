@@ -66,3 +66,38 @@ Additionally, the following fields can be edited and tracked in the Create/Edit 
 - **Completion Status**: The checkbox next to the "Hunt Completed?" label can be toggled to specify whether the shiny hunt is in progress or completed. Toggling the checkbox will automatically update the background gradient with a cross-fade animation. When the checkbox is checked (i.e., the hunt is completed), extra fields will be displayed for the finish date and the current game.
 - **Finish Date**: The "Finished" field functions the same as the "Started" field, but it's for selecting the completion date of the shiny hunt.
 - **Current Game**: The "Currently In" field functions the same as the "Hunting In" field, but it's for selecting the game the shiny is currently located in. The icon of the selected current game will have a gold border instead of black.
+
+# Credits
+### Pokémon Images
+Generation 1-8 Pokémon Images from "theSlayer" on ProjectPokemon:
+
+- https://projectpokemon.org/home/docs/spriteindex_148/home-sprites-gen-1-r128/
+- https://projectpokemon.org/home/docs/spriteindex_148/home-sprites-gen-2-r129/
+- https://projectpokemon.org/home/docs/spriteindex_148/home-sprites-gen-3-r130/
+- https://projectpokemon.org/home/docs/spriteindex_148/home-sprites-gen-4-r131/
+- https://projectpokemon.org/home/docs/spriteindex_148/home-sprites-gen-5-r132/
+- https://projectpokemon.org/home/docs/spriteindex_148/home-sprites-gen-6-r133/
+- https://projectpokemon.org/home/docs/spriteindex_148/home-sprites-gen-7-r134/
+- https://projectpokemon.org/home/docs/spriteindex_148/home-sprites-gen-8-r135/
+
+Generation 9 Pokémon Images from Pokémon Database:
+
+- https://pokemondb.net/sprites#gen9
+
+### Game Images
+Generation 1-5 Box Art Icons (Excluding Green, HeartGold, and SoulSilver) from "Lunecho" on SteamGridDB:
+
+- https://www.steamgriddb.com/profile/76561198089053518/icons
+
+Green Box Art Icon from "scottboy7565" on SteamGridDB:
+
+- https://www.steamgriddb.com/icon/15427
+
+HeartGold and SoulSilver Box Art Icons from Bulbapedia (cropped):
+
+- https://archives.bulbagarden.net/wiki/File:HeartGold_EN_boxart.jpg
+- https://archives.bulbagarden.net/wiki/File:SoulSilver_EN_boxart.jpg
+
+Generation 6-9 Pokémon Home Icons from Bulbapedia:
+
+- https://archives.bulbagarden.net/wiki/Category:Pok%C3%A9mon_HOME_game_icons#
