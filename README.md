@@ -67,6 +67,9 @@ Additionally, the following fields can be edited and tracked in the Create/Edit 
 - **Finish Date**: The "Finished" field functions the same as the "Started" field, but it's for selecting the completion date of the shiny hunt.
 - **Current Game**: The "Currently In" field functions the same as the "Hunting In" field, but it's for selecting the game the shiny is currently located in. The icon of the selected current game will have a gold border instead of black.
 
+# Future Plans
+My next major plan with this app is to implement a shiny living dex progress checker that supports the national dex and all regional dexes. This will require significant modifications to the SQLite database, as it needs to have a way to know which Pokémon (more specifically, which forms of each Pokémon) are available in each game. I will also likely need to create a new Home page with options to View All Hunts and View Shiny Living Dex. Finally, I do plan to fix any bugs or inefficiencies discovered in the app (such as the loading time of the Pokémon selection dialog). If you find anything that you would like to fix or change, feel free to create an issue/pull request, or reach out to me at aaronjcaldwell314@gmail.com. Happy shiny hunting!
+
 # Credits
 ### Pokémon Images
 Generation 1-8 Pokémon Images from "theSlayer" on ProjectPokemon:
