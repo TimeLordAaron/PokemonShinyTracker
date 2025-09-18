@@ -20,6 +20,9 @@ I would've liked to publish the app on the Play Store to simplify installation, 
 7. Upon opening the file, your device should attempt to install the app, but you may get a message saying "For your security, your phone is not allowed to install unknown apps from this source." Don't be startled by this message. Click 'Settings' and then toggle 'Allow from this source'. Then, navigate back.
 8. Your device should now ask if you want to install the app. Click 'Install'. Your device may also offer to scan the app for any viruses. This isn't required, but feel free to let it do so if you wish. You should now have successfully installed the app on your device!
 
+### Demonstration Video
+Here is a demonstration video for the app, which I've uploaded to YouTube: https://www.youtube.com/watch?v=7dMxzZ62l6w
+
 ### What is "Shiny Hunting"?
 In Pokémon games, "shiny" Pokémon are Pokémon with a color palette different from their usual one. For example, a standard Pikachu is yellow, but a shiny Pikachu is orange. Although the probability of encountering a shiny Pokémon varies based on many in-game factors, the odds of encountering a shiny Pokémon are typically very low. Because of their rarity, many Pokémon players dedicate themselves to building a collection of shiny Pokémon by "shiny hunting". "Shiny hunting" refers to the act of intentionally encountering Pokémon repeatedly until a shiny variant is found.
 
