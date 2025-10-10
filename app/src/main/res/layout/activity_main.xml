@@ -1,135 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--Main Page Layout-->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--Drawer Layout-->
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_main_view"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/ui_background_homepage">
+    android:layout_height="match_parent">
 
-    <!--Top Bar Container-->
+    <!--Activity Layout-->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/top_bar_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/ui_transparent_container"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:id="@+id/activity_main_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/ui_background_homepage">
 
-        <!--Top Bar Flow-->
-        <androidx.constraintlayout.helper.widget.Flow
-            android:id="@+id/top_bar_flow"
+        <!--Top Bar Container-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/top_bar_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:flow_wrapMode="chain"
-            app:flow_horizontalGap="5dp"
-            app:constraint_referenced_ids="counter_multiplier_button,expand_all_text,expand_all_checkbox,new_hunt_button,sort_button,filter_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/ui_transparent_container"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <!--Counter Multiplier-->
-        <Button
-            android:id="@+id/counter_multiplier_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="@dimen/min_button_size"
-            android:minHeight="@dimen/min_button_size"
-            android:background="@null"
-            android:text="@string/counter_multiplier_placeholder"
-            android:textAllCaps="false"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_medium"
-            android:textStyle="bold" />
+            <!--Top Bar Flow-->
+            <androidx.constraintlayout.helper.widget.Flow
+                android:id="@+id/top_bar_flow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:flow_wrapMode="chain"
+                app:flow_horizontalGap="5dp"
+                app:constraint_referenced_ids="counter_multiplier_button,expand_all_text,expand_all_checkbox,new_hunt_button,sort_button,filter_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-        <!--Expand All Text-->
+            <!--Counter Multiplier-->
+            <Button
+                android:id="@+id/counter_multiplier_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/min_button_size"
+                android:minHeight="@dimen/min_button_size"
+                android:background="@null"
+                android:text="@string/counter_multiplier_placeholder"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold" />
+
+            <!--Expand All Text-->
+            <TextView
+                android:id="@+id/expand_all_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/expand_all_label"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_medium" />
+
+            <!--Expand All Checkbox-->
+            <CheckBox
+                android:id="@+id/expand_all_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/min_button_size"
+                android:minHeight="@dimen/min_button_size"
+                android:button="@null"
+                android:background="?android:attr/listChoiceIndicatorMultiple" />
+
+            <!--New Hunt Button-->
+            <ImageButton
+                android:id="@+id/new_hunt_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/min_button_size"
+                android:minHeight="@dimen/min_button_size"
+                android:background="@null"
+                android:contentDescription="@string/new_description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_new" />
+
+            <!--Sort Button-->
+            <ImageButton
+                android:id="@+id/sort_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/min_button_size"
+                android:minHeight="@dimen/min_button_size"
+                android:background="@null"
+                android:contentDescription="@string/sort_description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_sort" />
+
+            <!--Filter Button-->
+            <ImageButton
+                android:id="@+id/filter_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/min_button_size"
+                android:minHeight="@dimen/min_button_size"
+                android:background="@null"
+                android:contentDescription="@string/filter_description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_filter" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--No Hunts Message-->
         <TextView
-            android:id="@+id/expand_all_text"
+            android:id="@+id/no_hunts_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/expand_all_label"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_medium" />
+            android:text="@string/no_hunts_message"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <!--Expand All Checkbox-->
-        <CheckBox
-            android:id="@+id/expand_all_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="@dimen/min_button_size"
-            android:minHeight="@dimen/min_button_size"
-            android:button="@null"
-            android:background="?android:attr/listChoiceIndicatorMultiple" />
-
-        <!--New Hunt Button-->
-        <ImageButton
-            android:id="@+id/new_hunt_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="@dimen/min_button_size"
-            android:minHeight="@dimen/min_button_size"
-            android:background="@null"
-            android:contentDescription="@string/new_description"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_new" />
-
-        <!--Sort Button-->
-        <ImageButton
-            android:id="@+id/sort_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="@dimen/min_button_size"
-            android:minHeight="@dimen/min_button_size"
-            android:background="@null"
-            android:contentDescription="@string/sort_description"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_sort" />
-
-        <!--Filter Button-->
-        <ImageButton
-            android:id="@+id/filter_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="@dimen/min_button_size"
-            android:minHeight="@dimen/min_button_size"
-            android:background="@null"
-            android:contentDescription="@string/filter_description"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_filter" />
+        <!--Shiny Hunt Recycler View-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/shiny_hunts_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="10dp"
+            android:clipToPadding="false"
+            android:fitsSystemWindows="true"
+            app:layout_constraintTop_toBottomOf="@+id/top_bar_container"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!--No Hunts Message-->
-    <TextView
-        android:id="@+id/no_hunts_message"
+    <!--Navigation Layout-->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/no_hunts_message"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_drawer_menu"
+        android:fitsSystemWindows="true" />
 
-    <!--Shiny Hunt Recycler View-->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/shiny_hunts_recycler_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="10dp"
-        android:clipToPadding="false"
-        android:fitsSystemWindows="true"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar_container"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

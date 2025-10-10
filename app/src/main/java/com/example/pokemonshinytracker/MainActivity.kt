@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -20,21 +21,29 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.text.isDigitsOnly
+import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.widget.doAfterTextChanged
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.navigation.NavigationView
 
 class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
     // lateinit UI declarations: main UI
+    private lateinit var drawerLayout: DrawerLayout                     // drawer layout
+    private lateinit var navView: NavigationView                        // navigation view
     private lateinit var newHuntBtn: ImageButton                // new hunt button
     private lateinit var sortBtn: ImageButton                   // sort button
     private lateinit var filterBtn: ImageButton                 // filter button
@@ -167,12 +176,25 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
         // access the main UI elements
         val noHuntsMessage = findViewById<TextView>(R.id.no_hunts_message)                      // message for when user has no saved hunts
+        drawerLayout = findViewById(R.id.drawer_layout)                                         // drawer layout
+        navView = findViewById(R.id.nav_view)                                                   // navigation view
         shinyHuntRecyclerView = findViewById(R.id.shiny_hunts_recycler_view)                    // recycler view that displays the user's saved hunts
         newHuntBtn = findViewById(R.id.new_hunt_button)                                         // new hunt button
         filterBtn = findViewById(R.id.filter_button)                                            // filter button
         counterMultiplierBtn = findViewById(R.id.counter_multiplier_button)                     // counter multiplier button
         expandAllCheckbox = findViewById(R.id.expand_all_checkbox)                              // expand all checkbox
         sortBtn = findViewById(R.id.sort_button)                                                // floating sort button
+
+        navView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.item1 -> {}    // do nothing, as this is the Saved Hunts screen
+                R.id.item2 -> dh.createErrorDialog(this, "Shiny Living Dex", "This feature is still in development. Thank you for your patience!")
+                R.id.item3 -> dh.createErrorDialog(this, "Export Hunts", "This feature is still in development. Thank you for your patience!")
+                R.id.item4 -> dh.createErrorDialog(this, "Import Hunts", "This feature is still in development. Thank you for your patience!")
+            }
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
 
         // set the text of the counter multiplier button
         counterMultiplierBtn.text = String.format("x%s", MyApplication.counterMultiplier)

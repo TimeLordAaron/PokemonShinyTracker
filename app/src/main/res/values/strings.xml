@@ -89,4 +89,11 @@
     <string name="location_label">Location:</string>
     <string name="location_hint">i.e. Route 1</string>
     <string name="nickname_label">Nickname:</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="saved_hunts">Saved Hunts</string>
+    <string name="shiny_living_dex">Shiny Living Dex</string>
+    <string name="export_hunts">Export Hunts</string>
+    <string name="import_hunts">Import Hunts</string>
+
 </resources>
