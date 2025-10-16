@@ -13,4 +13,6 @@
     <dimen name="notes_height">300dp</dimen>
     <dimen name="pokemon_form_size">40dp</dimen>
     <dimen name="textbox_padding">10dp</dimen>
+    <dimen name="nav_header_height">100dp</dimen>
+    <dimen name="nav_header_margin">10dp</dimen>
 </resources>

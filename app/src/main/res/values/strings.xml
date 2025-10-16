@@ -95,5 +95,7 @@
     <string name="shiny_living_dex">Shiny Living Dex</string>
     <string name="export_hunts">Export Hunts</string>
     <string name="import_hunts">Import Hunts</string>
+    <string name="app_logo">App Logo</string>
+    <string name="nav_header_app_name">Pokémon\nShiny\nTracker</string>
 
 </resources>
