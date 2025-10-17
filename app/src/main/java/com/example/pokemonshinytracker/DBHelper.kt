@@ -64,9 +64,23 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 Log.e("DBHelper", "Error creating $GAME_TABLE table: ${e.message}")
             }
 
-            // STEP 4: Create ShinyHunt Table
+            // STEP 4: Create Pokeball Table
             try {
                 val query4 = ("""
+                CREATE TABLE $POKEBALL_TABLE (
+                    $POKEBALL_ID_COL INTEGER PRIMARY KEY AUTOINCREMENT,
+                    $POKEBALL_NAME_COL TEXT,
+                    $POKEBALL_IMAGE_COL INTEGER
+                )
+                """).trimIndent()
+                db.execSQL(query4)
+            } catch (e: SQLException) {
+                Log.e("DBHelper", "Error creating $POKEBALL_TABLE table: ${e.message}")
+            }
+
+            // STEP 5: Create ShinyHunt Table
+            try {
+                val query5 = ("""
                 CREATE TABLE $SHINY_HUNT_TABLE (
                     $HUNT_ID_COL INTEGER PRIMARY KEY AUTOINCREMENT,
                     $FORM_ID_COL INTEGER,
@@ -80,23 +94,26 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     $NOTES_COL TEXT,
                     $IS_COMPLETE_COL INTEGER,
                     $FINISH_DATE_COL TEXT,
+                    $POKEBALL_ID_COL INTEGER,
                     $CURRENT_GAME_ID_COL INTEGER,
                     $DEFAULT_POSITION_COL INTEGER,
                     FOREIGN KEY ($FORM_ID_COL) REFERENCES $POKEMON_FORM_TABLE($FORM_ID_COL),
                     FOREIGN KEY ($ORIGIN_GAME_ID_COL) REFERENCES $GAME_TABLE($GAME_ID_COL),
+                    FOREIGN KEY ($POKEBALL_ID_COL) REFERENCES $POKEBALL_TABLE($POKEBALL_ID_COL),
                     FOREIGN KEY ($CURRENT_GAME_ID_COL) REFERENCES $GAME_TABLE($GAME_ID_COL)	
                 )
                 """).trimIndent()
-                db.execSQL(query4)
+                db.execSQL(query5)
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error creating $SHINY_HUNT_TABLE table: ${e.message}")
             }
 
-            // STEP 5: Insert initial data into the database
+            // STEP 6: Insert initial data into the database
             try {
                 PokemonData.insertPokemonData(db)
                 PokemonFormData.insertPokemonFormData(db)
                 GameData.insertGameData(db)
+                PokeballData.insertPokeballData(db)
                 ShinyHuntData.insertShinyHuntData(db)   // mock data. for release, this line should be commented out
                 db.setTransactionSuccessful()   // mark the database transaction as successful
             } catch (e: Exception) {
@@ -110,6 +127,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     }
 
     // Function to upgrade the database when the version changes
+    // TODO: add upgrade logic here
     override fun onUpgrade(db: SQLiteDatabase, p1: Int, p2: Int) {
         try {
             db.beginTransaction()   // start the database transaction
@@ -199,7 +217,14 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 Log.e("DBHelper", "Error dropping $GAME_TABLE table: ${e.message}")
             }
 
-            // STEP 5: Recreate the database
+            // STEP 5: Drop the Pokeball Table
+            try {
+                db.execSQL("DROP TABLE IF EXISTS $POKEBALL_TABLE")
+            } catch (e: SQLException) {
+                Log.e("DBHelper", "Error dropping $POKEBALL_TABLE table: ${e.message}")
+            }
+
+            // STEP 6: Recreate the database
             try {
                 onCreate(db)
                 db.setTransactionSuccessful()   // mark the database transaction as successful
@@ -217,7 +242,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     // Function to add new shiny hunts to the database
     private fun addHunt(db: SQLiteDatabase, formID: Int?, nickname: String, originGameID: Int?, location: String, method: String, startDate: String?,
-                counter: Int, phase: Int, notes: String, isComplete: Boolean, finishDate: String?, currentGameID: Int?, defaultPosition: Int?) {
+                counter: Int, phase: Int, notes: String, isComplete: Boolean, finishDate: String?, pokeballID: Int?, currentGameID: Int?, defaultPosition: Int?) {
         val values = ContentValues().apply {
             put(FORM_ID_COL, formID)
             put(NICKNAME_COL, nickname)
@@ -230,6 +255,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             put(NOTES_COL, notes)
             put(IS_COMPLETE_COL, if (isComplete) 1 else 0)  // store as integer since SQLite doesn't support Boolean type
             put(FINISH_DATE_COL, finishDate)
+            put(POKEBALL_ID_COL, pokeballID)
             put(CURRENT_GAME_ID_COL, currentGameID)
         }
 
@@ -295,7 +321,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     // Function to update a hunt in the database
     fun updateHunt(huntID: Int, formID: Int?, nickname: String, originGameID: Int?, location: String, method: String, startDate: String?,
-                   counter: Int, phase: Int, notes: String, isComplete: Boolean, finishDate: String?, currentGameID: Int?, defaultPosition: Int?) {
+                   counter: Int, phase: Int, notes: String, isComplete: Boolean, finishDate: String?, pokeballID: Int?, currentGameID: Int?, defaultPosition: Int?) {
         var db: SQLiteDatabase? = null
 
         try {
@@ -324,6 +350,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     notes,
                     isComplete,
                     finishDate,
+                    pokeballID,
                     currentGameID,
                     defaultPosition
                 )
@@ -344,6 +371,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     put(NOTES_COL, notes)
                     put(IS_COMPLETE_COL, if (isComplete) 1 else 0)      // store as integer since SQLite doesn't support Boolean type
                     put(FINISH_DATE_COL, finishDate)
+                    put(POKEBALL_ID_COL, pokeballID)
                     put(CURRENT_GAME_ID_COL, currentGameID)
                     put(DEFAULT_POSITION_COL, defaultPosition)
                 }
@@ -369,7 +397,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     // Function to retrieve all shiny hunts from the database (supports various filters and sorting methods)
     fun getHunts(huntID: Int? = null, sortMethod: SortMethod = SortMethod.DEFAULT, sortOrder: SortOrder = SortOrder.DESC,
                  formIDs: List<Int> = emptyList(), originGameIDs: List<Int> = emptyList(), currentGameIDs: List<Int> = emptyList(),
-                 method: String? = null, startedFrom: String? = null, startedTo: String? = null, finishedFrom: String? = null,
+                 method: String? = null, pokeballIDs: List<Int> = emptyList(), startedFrom: String? = null, startedTo: String? = null, finishedFrom: String? = null,
                  finishedTo: String? = null, counterLo: Int? = null, counterHi: Int? = null, phaseLo: Int? = null, phaseHi: Int? = null,
                  completionStatus: CompletionStatus = CompletionStatus.BOTH): List<ShinyHunt> {
         val huntList = mutableListOf<ShinyHunt>()
@@ -429,6 +457,15 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 if (!method.isNullOrBlank()) {
                     // add the method string directly to the query
                     query += "\n" + addWhereOrAndClause() + "s.$METHOD_COL = \"$method\""
+                }
+
+                // pokeballIDs: include if not empty
+                if (pokeballIDs.isNotEmpty()) {
+                    // create a placeholder for each pokeballID
+                    val placeholders = pokeballIDs.joinToString(",") { "?" }
+                    query += "\n" + addWhereOrAndClause() + "s.$POKEBALL_ID_COL IN ($placeholders)"
+                    // add the pokeballIDs to the args list
+                    argsList.addAll(pokeballIDs.map { it.toString() })
                 }
 
                 // startedFrom: include if in the correct date format (YYYY-MM-DD)
@@ -513,9 +550,10 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                             notes = cursor.getString(9),
                             isComplete = cursor.getInt(10) == 1, // Convert 0/1 to Boolean
                             finishDate = cursor.getString(11),
-                            currentGameID = if (cursor.isNull(12)) null else cursor.getInt(12),
-                            defaultPosition = cursor.getInt(13),
-                            pokemonName = cursor.getString(14)
+                            pokeballID = if (cursor.isNull(12)) null else cursor.getInt(12),
+                            currentGameID = if (cursor.isNull(13)) null else cursor.getInt(13),
+                            defaultPosition = cursor.getInt(14),
+                            pokemonName = cursor.getString(15)
                         )
                         huntList.add(hunt)
                     } while (cursor.moveToNext())
@@ -711,6 +749,51 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         return gameList
     }
 
+    // Function to retrieve pokeballs from the database (by ID or all pokeballs if no ID is provided)
+    fun getPokeballs(pokeballID: Int? = null): List<Pokeball> {
+        val pokeballList = mutableListOf<Pokeball>()
+        var db: SQLiteDatabase? = null
+
+        try {
+            // attempt to get a readable instance of the database
+            db = this.readableDatabase
+
+            val query: String
+            val args: Array<String>?
+
+            // check if a pokeballID was provided
+            if (pokeballID != null) {
+                query = "SELECT * FROM $POKEBALL_TABLE WHERE pokeballID = ?"
+                args = arrayOf(pokeballID.toString())
+            } else {
+                query = "SELECT * FROM $POKEBALL_TABLE"
+                args = null
+            }
+
+            db.rawQuery(query, args).use { cursor ->
+                if (cursor.moveToFirst()) {
+                    do {
+                        val pokeball = Pokeball(
+                            pokeballID = cursor.getInt(0),
+                            pokeballName = cursor.getString(1),
+                            pokeballImage = cursor.getInt(2)
+                        )
+                        pokeballList.add(pokeball)
+                    } while (cursor.moveToNext())
+                }
+            }
+
+        } catch (e: SQLiteException) {
+            Log.e("DBHelper", "Error opening readable database: ${e.message}")
+        } catch (e: Exception) {
+            Log.e("DBHelper", "Unexpected error retrieving pokeballs: ${e.message}")
+        } finally {
+            db?.close()  // close the database
+        }
+
+        return pokeballList
+    }
+
     // Database variables
     companion object{
 
@@ -738,6 +821,12 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         const val GAME_IMAGE_COL = "gameImage"
         const val GENERATION_COL = "generation"
 
+        // Pokeball Table
+        const val POKEBALL_TABLE = "Pokeball"
+        const val POKEBALL_ID_COL = "pokeballID"            // primary key of Pokeball Table
+        const val POKEBALL_NAME_COL = "pokeballName"
+        const val POKEBALL_IMAGE_COL = "pokeballImage"
+
         // ShinyHunt Table
         const val SHINY_HUNT_TABLE = "ShinyHunt"
         const val HUNT_ID_COL = "huntID"                    // primary key of ShinyHunt Table
@@ -752,6 +841,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         const val NOTES_COL = "notes"
         const val IS_COMPLETE_COL = "isComplete"
         const val FINISH_DATE_COL = "finishDate"
+        // const val POKEBALL_ID_COL = "pokeballID"         // foreign key to Pokeball Table
         const val CURRENT_GAME_ID_COL = "currentGameID"     // foreign key to Game Table
         const val DEFAULT_POSITION_COL = "defaultPosition"  // handles the default order of the shiny hunts
     }

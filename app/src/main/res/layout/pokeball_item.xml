@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Pokeball Item Layout-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/pokeball_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp">
+
+    <!--Pokeball Item Container-->
+    <FrameLayout
+        android:id="@+id/pokeball_item_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="@drawable/ui_pokeball_unselected_item_border">
+
+        <!--Pokeball Image-->
+        <ImageView
+            android:id="@+id/pokeball_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:src="@drawable/pokeball_001_poke_ball"
+            android:contentDescription="@string/pokeball_item_image_description"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:clipToOutline="true" />
+
+    </FrameLayout>
+
+    <!--Pokeball Name-->
+    <TextView
+        android:id="@+id/pokeball_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/pokeball_name_placeholder"
+        android:textSize="@dimen/text_size_small"
+        android:textColor="@color/black"
+        android:textAlignment="center" />
+
+</LinearLayout>

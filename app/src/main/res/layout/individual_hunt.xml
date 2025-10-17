@@ -415,7 +415,7 @@
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
                     android:src="@drawable/ic_x"
-                    android:contentDescription="@string/date_unselect_description"
+                    android:contentDescription="@string/unselect_game_button_description"
                     android:visibility="gone"
                     app:layout_constraintTop_toTopOf="@id/origin_game_label"
                     app:layout_constraintBottom_toBottomOf="@id/origin_game_label"
@@ -739,6 +739,67 @@
                     app:layout_constraintBottom_toBottomOf="@id/finish_date_label"
                     app:layout_constraintStart_toEndOf="@id/finish_date" />
 
+                <!--Pokeball Label-->
+                <TextView
+                    android:id="@+id/pokeball_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/label_top_margin"
+                    android:visibility="gone"
+                    android:text="@string/pokeball_label"
+                    android:textSize="@dimen/text_size_large"
+                    android:textColor="@color/black"
+                    app:layout_constraintTop_toBottomOf="@id/finish_date_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/guideline_label" />
+
+                <!--Pokeball Selection Button-->
+                <ImageButton
+                    android:id="@+id/pokeball_button"
+                    android:layout_width="@dimen/min_button_size"
+                    android:layout_height="@dimen/min_button_size"
+                    android:layout_marginStart="@dimen/button_margin"
+                    android:background="@null"
+                    android:visibility="gone"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/ic_pokeball"
+                    android:contentDescription="@string/game_select_button_description"
+                    app:layout_constraintTop_toTopOf="@id/pokeball_label"
+                    app:layout_constraintBottom_toBottomOf="@id/pokeball_label"
+                    app:layout_constraintStart_toStartOf="@id/guideline_label" />
+
+                <!--Pokeball Image-->
+                <ImageView
+                    android:id="@+id/pokeball_image"
+                    android:layout_width="@dimen/min_game_icon_size"
+                    android:layout_height="@dimen/min_game_icon_size"
+                    android:layout_marginStart="@dimen/button_margin"
+                    android:visibility="gone"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/pokeball_001_poke_ball"
+                    app:layout_constraintTop_toTopOf="@id/pokeball_label"
+                    app:layout_constraintBottom_toBottomOf="@id/pokeball_label"
+                    app:layout_constraintStart_toEndOf="@id/pokeball_button" />
+
+                <!--Unselect Current Game Button-->
+                <ImageButton
+                    android:id="@+id/unselect_pokeball_button"
+                    android:layout_width="@dimen/min_button_size"
+                    android:layout_height="@dimen/min_button_size"
+                    android:layout_marginStart="@dimen/button_margin"
+                    android:padding="10dp"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/ic_x"
+                    android:contentDescription="@string/unselect_pokeball_description"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toTopOf="@id/pokeball_label"
+                    app:layout_constraintBottom_toBottomOf="@id/pokeball_label"
+                    app:layout_constraintStart_toEndOf="@id/pokeball_image" />
+
                 <!--Current Game Label-->
                 <TextView
                     android:id="@+id/current_game_label"
@@ -750,7 +811,7 @@
                     android:text="@string/current_game_label"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/black"
-                    app:layout_constraintTop_toBottomOf="@id/finish_date_label"
+                    app:layout_constraintTop_toBottomOf="@id/pokeball_label"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
@@ -808,7 +869,7 @@
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
                     android:src="@drawable/ic_x"
-                    android:contentDescription="@string/date_unselect_description"
+                    android:contentDescription="@string/unselect_game_button_description"
                     android:visibility="gone"
                     app:layout_constraintTop_toTopOf="@id/current_game_label"
                     app:layout_constraintBottom_toBottomOf="@id/current_game_label"

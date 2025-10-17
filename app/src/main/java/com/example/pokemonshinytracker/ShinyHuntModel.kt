@@ -6,7 +6,7 @@ import android.util.Log
 import kotlin.random.Random
 
 data class ShinyHunt(val huntID: Int, var formID: Int?, var nickname: String, var originGameID: Int?, var location: String, var method: String, var startDate: String?, var counter: Int,
-                     var phase: Int, var notes: String, var isComplete: Boolean, var finishDate: String?, var currentGameID: Int?, var defaultPosition: Int?, var pokemonName: String)
+                     var phase: Int, var notes: String, var isComplete: Boolean, var finishDate: String?, var pokeballID: Int?, var currentGameID: Int?, var defaultPosition: Int?, var pokemonName: String)
 
 object ShinyHuntData {
 
@@ -41,6 +41,7 @@ object ShinyHuntData {
                         "",
                         1,
                         String.format("%04d-%02d-%02d", finishYear, finishMonth, finishDay),
+                        null,
                         currentGame
                     )
                 )
@@ -58,6 +59,7 @@ object ShinyHuntData {
                         "",
                         0,
                         null,
+                        null,
                         null
                     )
                 )
@@ -67,57 +69,52 @@ object ShinyHuntData {
 
 
         // Mock Data Set #2: Some of my personal shiny hunts
-        shinyHunts.add(listOf(740, "", 33, "", "Soft Resets", "2024-09-20", 3111, 0, "", 1, "2025-01-06", 37))  // Darkrai
-        shinyHunts.add(listOf(341, "", 37, "", "Masuda Method", "", 319, 0, "", 1, "2025-01-17", 37))           // Gligar
-        shinyHunts.add(listOf(734, "", 28, "", "Soft Resets", "", 1768, 0, "", 1, "", 39))                      // Regigigas
-        shinyHunts.add(listOf(733, "", 27, "", "Soft Resets", "", 1381, 0, "", 1, "", 39))                      // Heatran
-        shinyHunts.add(listOf(233, "", 28, "", "Soft Resets", "", 559, 0, "", 1, "", 39))                       // Zapdos
-        shinyHunts.add(listOf(738, "", 37, "", "Masuda Method", "", 296, 0, "", 1, "", 37))                     // Phione
-        shinyHunts.add(listOf(932, "", 27, "", "Soft Resets", "", 952, 0, "", 1, "", 39))                       // Tornadus
-        shinyHunts.add(listOf(235, "", 28, "", "Soft Resets", "", 493, 0, "", 1, "", 39))                       // Moltres
-        shinyHunts.add(listOf(934, "", 28, "", "Soft Resets", "", 4, 0, "", 1, "", 39))                         // Thundurus
-        shinyHunts.add(listOf(231, "", 27, "", "Soft Resets", "", 1704, 0, "", 1, "", 39))                      // Articuno
-        shinyHunts.add(listOf(938, "", 28, "", "Soft Resets", "", 2058, 0, "", 1, "", 39))                      // Landorus (Ultra Moon)
-        shinyHunts.add(listOf(938, "", 27, "", "Soft Resets", "", 563, 0, "", 1, "", 39))                       // Landorus (Ultra Sun)
-        shinyHunts.add(listOf(737, "", 28, "", "Soft Resets", "", 835, 0, "", 1, "", 28))                       // Cresselia
-        shinyHunts.add(listOf(937, "", 28, "", "Soft Resets", "", 1414, 0, "", 1, "", 28))                      // Zekrom
-        shinyHunts.add(listOf(1180, "", 28, "", "Soft Resets", "2025-05-12", 122, 0, "", 1, "2025-05-13", 28))  // Pheromosa (Ultra Moon)
-        shinyHunts.add(listOf(729, "", 27, "", "Soft Resets", "", 3026, 0, "", 1, "2025-05-15", 27))            // Dialga
-        shinyHunts.add(listOf(953, "", 22, "Aquacorde Town", "Soft Resets", "2025-05-14", 3600, 0,
+        shinyHunts.add(listOf(740, "", 33, "", "Soft Resets", "2024-09-20", 3111, 0, "", 1, "2025-01-06", null, 37))                // Darkrai
+        shinyHunts.add(listOf(341, "", 37, "", "Masuda Method", "", 319, 0, "", 1, "2025-01-17", null, 37))                         // Gligar
+        shinyHunts.add(listOf(734, "", 28, "", "Soft Resets", "", 1768, 0, "", 1, "", null, 39))                                    // Regigigas
+        shinyHunts.add(listOf(733, "", 27, "", "Soft Resets", "", 1381, 0, "", 1, "", null, 39))                                    // Heatran
+        shinyHunts.add(listOf(233, "", 28, "", "Soft Resets", "", 559, 0, "", 1, "", null, 39))                                     // Zapdos
+        shinyHunts.add(listOf(738, "", 37, "", "Masuda Method", "", 296, 0, "", 1, "", null, 37))                                   // Phione
+        shinyHunts.add(listOf(932, "", 27, "", "Soft Resets", "", 952, 0, "", 1, "", null, 39))                                     // Tornadus
+        shinyHunts.add(listOf(235, "", 28, "", "Soft Resets", "", 493, 0, "", 1, "", null, 39))                                     // Moltres
+        shinyHunts.add(listOf(934, "", 28, "", "Soft Resets", "", 4, 0, "", 1, "", null, 39))                                       // Thundurus
+        shinyHunts.add(listOf(231, "", 27, "", "Soft Resets", "", 1704, 0, "", 1, "", null, 39))                                    // Articuno
+        shinyHunts.add(listOf(938, "", 28, "", "Soft Resets", "", 2058, 0, "", 1, "", null, 39))                                    // Landorus (Ultra Moon)
+        shinyHunts.add(listOf(938, "", 27, "", "Soft Resets", "", 563, 0, "", 1, "", null, 39))                                     // Landorus (Ultra Sun)
+        shinyHunts.add(listOf(737, "", 28, "", "Soft Resets", "", 835, 0, "", 1, "", null, 28))                                     // Cresselia
+        shinyHunts.add(listOf(937, "", 28, "", "Soft Resets", "", 1414, 0, "", 1, "", null, 28))                                    // Zekrom
+        shinyHunts.add(listOf(1180, "", 28, "", "Soft Resets", "2025-05-12", 122, 0, "", 1, "2025-05-13", null, 28))                // Pheromosa (Ultra Moon)
+        shinyHunts.add(listOf(729, "", 27, "", "Soft Resets", "", 3026, 0, "", 1, "2025-05-15", null, 27))                          // Dialga
+        shinyHunts.add(listOf(953, "", 22, "", "Soft Resets", "2025-05-14", 3600, 0,
             "Pokemon X Shiny-Only Run\n" +
-            "\n" +
-            "- Dual hunted in X and Y.\n" +
-            "- Alternated the starter every 10 encounters.", 1, "2025-07-22", 21))                              // Quilladin (Y -> traded to X)
-        shinyHunts.add(listOf(963, "", 21, "Route 3", "Encounters", "2025-07-25", 4548, 0,
+                    "\n" +
+                    "- Dual hunted in X and Y.\n" +
+                    "- Alternated the starter every 10 encounters.", 1, "2025-07-22", null, 21))                                    // Quilladin (Y -> traded to X)
+        shinyHunts.add(listOf(963, "", 21, "", "Encounters", "2025-07-25", 4548, 0,
             "Pokemon X Shiny-Only Run\n" +
-            "\n" +
-            "- Dual hunted in X and Y.", 1, "2025-08-16", 21))                                                  // Diggersby (X)
-        shinyHunts.add(listOf(256, "", 21, "Route 6", "Encounters", "2025-08-20", 1054, 0,
+                    "\n" +
+                    "- Dual hunted in X and Y.\n" +
+                    "- Random Encounters on Route 3.", 1, "2025-08-16", null, 21))                                                  // Diggersby (X)
+        shinyHunts.add(listOf(256, "", 21, "", "Encounters", "2025-08-20", 1054, 0,
             "Pokemon X Shiny-Only Run\n" +
-            "\n" +
-            "- Dual hunted in X and Y.", 1, "2025-08-26", 21))                                                  // Furret (X)
-        shinyHunts.add(listOf(443, "", 22, "Route 8", "Encounters", "2025-08-30", 180, 0,
+                    "\n" +
+                    "- Dual hunted in X and Y.\n" +
+                    "- Random Encounters on Route 6.", 1, "2025-08-26", null, 21))                                                  // Furret (X)
+        shinyHunts.add(listOf(443, "", 22, "", "Encounters", "2025-08-30", 180, 0,
             "Pokemon X Shiny-Only Run\n" +
-            "\n" +
-            "- Dual hunted in X and Y.", 1, "2025-08-30", 21))                                                  // Pelliper (Y -> traded to X)
-        shinyHunts.add(listOf(393, "Blueberry", 22, "Route 12", "Horde Encounters", "2025-09-05", 10, 0,
+                    "\n" +
+                    "- Dual hunted in X and Y.\n" +
+                    "- Horde Encounters on Route 8.", 1, "2025-08-30", null, 21))                                                   // Pelliper (Y -> traded to X)
+        shinyHunts.add(listOf(936, "Rengoku", 27, "", "Soft Resets", "2025-05-16", 2352, 0, "", 1, "2025-09-21", null, 27))         // Reshiram (Ultra Sun)
+        shinyHunts.add(listOf(940, "", 27, "", "Soft Resets", "2025-09-21", 457, 0, "", 1, "2025-09-25", null, 27))                 // Kyurem (Ultra Sun)
+        shinyHunts.add(listOf(120, "", 30, "Mt. Moon", "Catch Combo", "2025-09-27", 202, 0, "", 1, "2025-09-27", null, 30))         // Geodude (Let's Go Eevee)
+        shinyHunts.add(listOf(940, "", 28, "", "Soft Resets", "2025-09-21", 0, 0,
+            "Data somehow got deleted during an Android update, so I don't remember the counter value.", 1, "2025-10-01", null, 28))// Kyurem (Ultra Moon)                                                                          // Kyurem (Ultra Moon)
+        shinyHunts.add(listOf(569, "", 27, "", "Soft Resets", "2025-09-25", 1372, 0, "", 1, "2025-10-09", null, 27))                // Regice (Ultra Sun)
+        shinyHunts.add(listOf(1042, "", 21, "Ambrette Town", "Fossils", "2025-10-01", 1500, 0,
             "Pokemon X Shiny-Only Run\n" +
-            "\n" +
-            "- Dual hunted in X and Y.", 1, "2025-09-05", 21))                                                  // Miltank (Y -> traded to X, nicknamed Blueberry)
-        shinyHunts.add(listOf(442, "", 21, "Route 12", "Horde Encounters", "2025-09-05", 5485, 0,
-            "Pokemon X Shiny-Only Run\n" +
-            "\n" +
-            "- Dual hunted in X and Y.\n" +
-            "- Duplicate.", 1, "2025-09-10", 21))                                                               // Wingull (X, duplicate)
-        shinyHunts.add(listOf(276, "Cotton Candy", 21, "Route 12", "Horde Encounters", "2025-09-10", 900, 0,
-            "Pokemon X Shiny-Only Run\n" +
-            "\n" +
-            "- Dual hunted in X and Y.", 1, "2025-09-11", 21))                                                  // Flaaffy (X, nicknamed Cotton Candy)
-        shinyHunts.add(listOf(936, "Rengoku", 27, "", "Soft Resets", "2025-05-16", 2352, 0, "", 1,
-            "2025-09-21", 27))                                                                                  // Reshiram (Ultra Sun)
-        shinyHunts.add(listOf(940, "", 27, "", "Soft Resets", "2025-09-21", 457, 0, "", 1,
-            "2025-09-25", 27))                                                                                  // Kyurem (Ultra Sun)
-        shinyHunts.add(listOf(940, "", 28, "", "Soft Resets", "2025-09-21", 503, 0, "", 0, "", null))           // Kyurem (Ultra Moon)
+                    "\n" +
+                    "- Dual hunted in X and Y.", 0, "", null, null))                                                                // Tyrunt (in progress)
 
         // insert each shiny hunt into the database
         for (hunt in shinyHunts) {
@@ -133,7 +130,8 @@ object ShinyHuntData {
                 put(DBHelper.NOTES_COL, hunt[8] as String)
                 put(DBHelper.IS_COMPLETE_COL, hunt[9] as Int)
                 put(DBHelper.FINISH_DATE_COL, hunt[10] as String?)
-                put(DBHelper.CURRENT_GAME_ID_COL, hunt[11] as Int?)
+                put(DBHelper.POKEBALL_ID_COL, hunt[11] as Int?)
+                put(DBHelper.CURRENT_GAME_ID_COL, hunt[12] as Int?)
             }
             val newHuntID = db.insert(DBHelper.SHINY_HUNT_TABLE, null, values)
             if (newHuntID == -1L) {

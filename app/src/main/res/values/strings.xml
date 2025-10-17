@@ -97,5 +97,10 @@
     <string name="import_hunts">Import Hunts</string>
     <string name="app_logo">App Logo</string>
     <string name="nav_header_app_name">Pokémon\nShiny\nTracker</string>
+    <string name="pokeball_label">Pokéball:</string>
+    <string name="unselect_game_button_description">Button to unselect a game</string>
+    <string name="unselect_pokeball_description">Button to unselect a pokeball</string>
+    <string name="pokeball_name_placeholder">Poké Ball</string>
+    <string name="pokeball_item_image_description">Pokeball Item Image Placeholder</string>
 
 </resources>

@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
-import androidx.compose.ui.res.integerResource
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -24,10 +23,12 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import kotlin.random.Random
 
 class IndividualHunt : ComponentActivity() {
 
     // lateinit UI var declarations
+    private lateinit var mainLayout: ConstraintLayout       // layout of the entire window
     private lateinit var fallingCirclesView: FallingCirclesView // falling circles view
     private lateinit var backBtn: Button                    // back button
     private lateinit var saveBtn: Button                    // save button
@@ -35,6 +36,9 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var detailLayout: ConstraintLayout     // detail layout
     private lateinit var previousFormBtn: ImageButton       // previous form button
     private lateinit var nextFormBtn: ImageButton           // next form button
+    private lateinit var selectedPokemonName: TextView      // selected pokemon name
+    private lateinit var selectedPokemonForm: TextView      // selected pokemon form
+    private lateinit var pokemonImage: ImageView            // pokemon image
     private lateinit var selectPokemonBtn: ImageButton      // pokemon selection button
     private lateinit var pokemonRecyclerView: RecyclerView  // pokemon recycler view
     private lateinit var selectedPokemonLabel: TextView     // selected pokemon label (will be hidden for the Individual Hunt page)
@@ -44,6 +48,8 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var selectedStartDate: TextView        // start date text
     private lateinit var unselectStartDateBtn: ImageButton  // unselect start date button
     private lateinit var selectOriginGameBtn: ImageButton   // origin game button
+    private lateinit var originGameIconBorder: FrameLayout  // origin game icon border
+    private lateinit var originGameIcon: ImageView          // origin game icon
     private lateinit var unselectOriginGameBtn: ImageButton // unselect origin game button
     private lateinit var enteredLocation: EditText          // location text field
     private lateinit var enteredMethod: EditText            // method text field
@@ -62,9 +68,17 @@ class IndividualHunt : ComponentActivity() {
     private lateinit var pickFinishDateBtn: ImageButton     // finish date button
     private lateinit var selectedFinishDate: TextView       // finish date text
     private lateinit var unselectFinishDateBtn: ImageButton // unselect finish date button
+    private lateinit var pokeballRecyclerView: RecyclerView // pokeball recycler view
+    private lateinit var selectPokeballDialog: View         // pokeball dialog
+    private lateinit var pokeballLabel: TextView            // pokeball label
+    private lateinit var selectPokeballBtn: ImageButton     // pokeball select button
+    private lateinit var pokeballImage: ImageView           // pokeball image
+    private lateinit var unselectPokeballBtn: ImageButton   // unselect pokeball button
     private lateinit var currentGameLabel: TextView         // current game label
     private lateinit var selectCurrentGameBtn: ImageButton  // current game button
-    private lateinit var unselectCurrentGameBtn: ImageButton    // unselect current game button
+    private lateinit var currentGameIconBorder: FrameLayout // current game icon border
+    private lateinit var currentGameIcon: ImageView         // current game icon
+    private lateinit var unselectCurrentGameBtn: ImageButton// unselect current game button
 
     // lateinit UI declarations: counter multiplier UI
     private lateinit var counterMultiplierText: TextView            // counter multiplier text
@@ -79,6 +93,7 @@ class IndividualHunt : ComponentActivity() {
     private var selectedFormID: Int? = null
     private var selectedOriginGameID: Int? = null
     private var selectedCurrentGameID: Int? = null
+    private var selectedPokeballID: Int? = null
     private var selectedDefaultPosition: Int? = null
 
     private var formImage: Int? = null
@@ -123,9 +138,13 @@ class IndividualHunt : ComponentActivity() {
         if (gameList.isEmpty()) {
             Log.e("IndividualHunt", "Failed to retrieve games from database")
         }
+        val pokeballList = db.getPokeballs()    // list of all pokeballs
+        if (pokeballList.isEmpty()) {
+            Log.e("IndividualHunt", "Failed to retrieve pokeballs from database")
+        }
 
         // find all the UI views
-        val mainLayout = findViewById<ConstraintLayout>(R.id.individual_hunt_layout)        // layout of the entire window
+        mainLayout = findViewById(R.id.individual_hunt_layout)                              // layout of the entire window
         fallingCirclesView = findViewById(R.id.falling_circles_view)                        // falling circles view
         backBtn = findViewById(R.id.back_button)                                            // back button
         saveBtn = findViewById(R.id.save_button)                                            // save button
@@ -133,17 +152,17 @@ class IndividualHunt : ComponentActivity() {
         detailLayout = findViewById(R.id.individual_hunt_details)                           // detail layout
         previousFormBtn = findViewById(R.id.previous_form_button)                           // previous form button
         nextFormBtn = findViewById(R.id.next_form_button)                                   // next form button
-        val selectedPokemonName = findViewById<TextView>(R.id.selected_pokemon_name)        // selected pokemon name
-        val selectedPokemonForm = findViewById<TextView>(R.id.selected_pokemon_form)        // selected pokemon form
-        val pokemonImage = findViewById<ImageView>(R.id.pokemon_image)                      // pokemon image
+        selectedPokemonName = findViewById(R.id.selected_pokemon_name)                      // selected pokemon name
+        selectedPokemonForm = findViewById(R.id.selected_pokemon_form)                      // selected pokemon form
+        pokemonImage = findViewById(R.id.pokemon_image)                                     // pokemon image
         selectPokemonBtn = findViewById(R.id.pokemon_selection_button)                      // pokemon select button
         enteredNickname = findViewById(R.id.nickname)                                       // nickname edit text
         selectedStartDate = findViewById(R.id.start_date)                                   // start date text view
         pickStartDateBtn = findViewById(R.id.start_date_button)                             // start date button
         unselectStartDateBtn = findViewById(R.id.unselect_start_date_button)                // unselect start date button
         selectOriginGameBtn = findViewById(R.id.origin_game_button)                         // origin game select button
-        val originGameIconBorder = findViewById<FrameLayout>(R.id.origin_game_icon_border)  // origin game icon border
-        val originGameIcon = findViewById<ImageView>(R.id.origin_game_icon)                 // origin game icon
+        originGameIconBorder = findViewById(R.id.origin_game_icon_border)                   // origin game icon border
+        originGameIcon = findViewById(R.id.origin_game_icon)                                // origin game icon
         unselectOriginGameBtn = findViewById(R.id.unselect_origin_game_button)              // unselect origin game button
         enteredLocation = findViewById(R.id.location)                                       // location edit text
         enteredMethod = findViewById(R.id.method)                                           // method edit text
@@ -160,10 +179,14 @@ class IndividualHunt : ComponentActivity() {
         pickFinishDateBtn = findViewById(R.id.finish_date_button)                           // finish date button
         selectedFinishDate = findViewById(R.id.finish_date)                                 // finish date text view
         unselectFinishDateBtn = findViewById(R.id.unselect_finish_date_button)              // unselect finish date button
+        pokeballLabel = findViewById(R.id.pokeball_label)                                   // pokeball label
+        selectPokeballBtn = findViewById(R.id.pokeball_button)                              // pokeball select button
+        pokeballImage = findViewById(R.id.pokeball_image)                                   // pokeball image
+        unselectPokeballBtn = findViewById(R.id.unselect_pokeball_button)                   // unselect pokeball button
         currentGameLabel = findViewById(R.id.current_game_label)                            // current game label
         selectCurrentGameBtn = findViewById(R.id.current_game_button)                       // current game select button
-        val currentGameIconBorder = findViewById<FrameLayout>(R.id.current_game_icon_border)// current game icon border
-        val currentGameIcon = findViewById<ImageView>(R.id.current_game_icon)               // current game icon
+        currentGameIconBorder = findViewById(R.id.current_game_icon_border)                 // current game icon border
+        currentGameIcon = findViewById(R.id.current_game_icon)                              // current game icon
         unselectCurrentGameBtn = findViewById(R.id.unselect_current_game_button)            // unselect current game button
 
         // set the text of the counter multiplier button
@@ -285,6 +308,15 @@ class IndividualHunt : ComponentActivity() {
                         selectedFinishDate.visibility = View.VISIBLE
                         unselectFinishDateBtn.visibility = View.VISIBLE
                     }
+                    pokeballLabel.visibility =  View.VISIBLE
+                    selectPokeballBtn.visibility = View.VISIBLE
+                    if (selectedHunt!!.pokeballID != null) {
+                        val pokeball = pokeballList.find { it.pokeballID == selectedHunt!!.pokeballID }!!
+                        selectedPokeballID = pokeball.pokeballID
+                        pokeballImage.setImageResource(pokeball.pokeballImage)
+                        pokeballImage.visibility = View.VISIBLE
+                        unselectPokeballBtn.visibility = View.VISIBLE
+                    }
                     currentGameLabel.visibility = View.VISIBLE
                     selectCurrentGameBtn.visibility = View.VISIBLE
                     if (selectedCurrentGameID != null) {
@@ -301,6 +333,10 @@ class IndividualHunt : ComponentActivity() {
                     pickFinishDateBtn.visibility = View.GONE
                     selectedFinishDate.visibility = View.GONE
                     unselectFinishDateBtn.visibility = View.GONE
+                    pokeballLabel.visibility = View.GONE
+                    selectPokeballBtn.visibility = View.GONE
+                    pokeballImage.visibility = View.GONE
+                    unselectPokeballBtn.visibility = View.GONE
                     currentGameLabel.visibility = View.GONE
                     selectCurrentGameBtn.visibility = View.GONE
                     currentGameIconBorder.visibility = View.GONE
@@ -314,6 +350,8 @@ class IndividualHunt : ComponentActivity() {
         pokemonRecyclerView = selectPokemonDialogLayout.findViewById(R.id.pokemon_recycler_view)
         selectGameDialog = layoutInflater.inflate(R.layout.game_selection, null)
         gameRecyclerView = selectGameDialog.findViewById(R.id.game_recycler_view)
+        selectPokeballDialog = layoutInflater.inflate(R.layout.pokeball_selection, null)
+        pokeballRecyclerView = selectPokeballDialog.findViewById(R.id.pokeball_recycler_view)
 
         // set up a recycled view pool for the pokemon recycler view so it doesn't have to reinflate all the views each time the dialog is opened
         val pokemonViewPool = RecyclerView.RecycledViewPool()
@@ -354,6 +392,7 @@ class IndividualHunt : ComponentActivity() {
                     enteredNotes.text.toString(),
                     completionCheckbox.isChecked,
                     if (completionCheckbox.isChecked) selectedFinishDate.text.toString() else "",
+                    if (completionCheckbox.isChecked) selectedPokeballID else null,
                     if (completionCheckbox.isChecked) selectedCurrentGameID else null,
                     selectedDefaultPosition
                 )
@@ -776,9 +815,13 @@ class IndividualHunt : ComponentActivity() {
                 transitionDrawable.reverseTransition(MyApplication.TRANSITION_DURATION)
                 fallingCirclesView.visibility = View.GONE
                 finishDateLabel.visibility = View.GONE
-                selectedFinishDate.visibility = View.GONE
                 pickFinishDateBtn.visibility = View.GONE
+                selectedFinishDate.visibility = View.GONE
                 unselectFinishDateBtn.visibility = View.GONE
+                pokeballLabel.visibility = View.GONE
+                selectPokeballBtn.visibility = View.GONE
+                pokeballImage.visibility = View.GONE
+                unselectPokeballBtn.visibility = View.GONE
                 currentGameLabel.visibility = View.GONE
                 selectCurrentGameBtn.visibility = View.GONE
                 currentGameIconBorder.visibility = View.GONE
@@ -786,6 +829,7 @@ class IndividualHunt : ComponentActivity() {
             }
             // if checkboxState is true, change background to gold gradient, and make layouts visible
             else {
+                Log.d("IndividualHunt", "$pokeballList")
                 transitionDrawable.startTransition(MyApplication.TRANSITION_DURATION)
                 fallingCirclesView.visibility = View.VISIBLE
                 finishDateLabel.visibility = View.VISIBLE
@@ -793,6 +837,14 @@ class IndividualHunt : ComponentActivity() {
                 if (selectedFinishDate.text.isNotBlank()) {
                     selectedFinishDate.visibility = View.VISIBLE
                     unselectFinishDateBtn.visibility = View.VISIBLE
+                }
+                pokeballLabel.visibility =  View.VISIBLE
+                selectPokeballBtn.visibility = View.VISIBLE
+                if (selectedPokeballID != null) {
+                    pokeballList.find { it.pokeballID == selectedPokeballID }
+                        ?.let { it1 -> pokeballImage.setImageResource(it1.pokeballImage) }
+                    pokeballImage.visibility = View.VISIBLE
+                    unselectPokeballBtn.visibility = View.VISIBLE
                 }
                 currentGameLabel.visibility = View.VISIBLE
                 selectCurrentGameBtn.visibility = View.VISIBLE
@@ -828,6 +880,58 @@ class IndividualHunt : ComponentActivity() {
             unselectFinishDateBtn.visibility = View.GONE
             selectedFinishDate.text = ""
             selectedFinishDate.visibility = View.GONE
+        }
+
+        // on click listener for the pokeball selection button
+        selectPokeballBtn.setOnClickListener {
+            // check that a sub menu isn't open yet (to prevent user from spamming buttons to open multiple menus at once)
+            if (!subMenuOpened) {
+                subMenuOpened = true
+
+                val selectPokeballDialogLayout = layoutInflater.inflate(R.layout.pokeball_selection, null)
+                pokeballRecyclerView = selectPokeballDialogLayout.findViewById(R.id.pokeball_recycler_view)
+
+                val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    resources.getInteger(R.integer.pokeball_span_landscape)
+                } else {
+                    resources.getInteger(R.integer.pokeball_span_portrait)
+                }
+                pokeballRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
+
+                // create the pokeball selection dialog
+                val selectPokeballDialog = dh.createLayoutDialog(this, "Select Pokéball", selectPokeballDialogLayout) {
+                    subMenuOpened = false   // on close, unset subMenuOpened
+                }
+
+                pokeballRecyclerView.adapter =
+                    PokeballSelectionAdapter(PokeballSelectionMode.SINGLE_SELECT, pokeballList, listOf(selectedPokeballID)) { selectedPokeball ->
+                        pokeballImage.setImageResource(selectedPokeball.pokeballImage)
+                        selectedPokeballID = selectedPokeball.pokeballID
+                        pokeballImage.visibility = View.VISIBLE
+                        unselectPokeballBtn.visibility = View.VISIBLE
+                        selectPokeballDialog.dismiss()
+                        subMenuOpened = false
+                    }
+
+                selectedPokeballID?.let { preselectedId ->
+                    val targetIndex = pokeballList.indexOfFirst { item ->
+                        item.pokeballID == preselectedId
+                    }
+                    if (targetIndex != -1) {
+                        pokeballRecyclerView.post {
+                            // smooth scroll looks nicer
+                            pokeballRecyclerView.smoothScrollToPosition(targetIndex)
+                        }
+                    }
+                }
+            }
+        }
+
+        // on click listener for the unselect pokeball button
+        unselectPokeballBtn.setOnClickListener {
+            pokeballImage.visibility = View.GONE
+            unselectPokeballBtn.visibility = View.GONE
+            selectedPokeballID = null
         }
 
         // on click listener for the current game selection button
@@ -905,20 +1009,24 @@ class IndividualHunt : ComponentActivity() {
         prepareLayout()
 
         // determine the number of columns based on orientation
-        val pokemonSpanCount = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            resources.getInteger(R.integer.pokemon_span_landscape)
+        val pokemonSpanCount: Int
+        val gameSpanCount: Int
+        val pokeballSpanCount: Int
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            pokemonSpanCount = resources.getInteger(R.integer.pokemon_span_landscape)
+            gameSpanCount = resources.getInteger(R.integer.game_span_landscape)
+            pokeballSpanCount = resources.getInteger(R.integer.pokeball_span_landscape)
         } else {
-            resources.getInteger(R.integer.pokemon_span_portrait)
-        }
-        val gameSpanCount = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            resources.getInteger(R.integer.game_span_landscape)
-        } else {
-            resources.getInteger(R.integer.game_span_portrait)
+            pokemonSpanCount = resources.getInteger(R.integer.pokemon_span_portrait)
+            gameSpanCount = resources.getInteger(R.integer.pokemon_span_portrait)
+            pokeballSpanCount = resources.getInteger(R.integer.pokeball_span_portrait)
         }
 
         // reinitialize GridLayoutManagers with updated span counts
         val pokemonGridLayoutManager = GridLayoutManager(this, pokemonSpanCount)
         val gameGridLayoutManager = GridLayoutManager(this, gameSpanCount)
+        val pokeballGridLayoutManager = GridLayoutManager(this, pokeballSpanCount)
 
         // reset spanSizeLookup to ensure headers take up the full row
         pokemonGridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -944,6 +1052,7 @@ class IndividualHunt : ComponentActivity() {
         // apply the updated layout managers
         pokemonRecyclerView.layoutManager = pokemonGridLayoutManager
         gameRecyclerView.layoutManager = gameGridLayoutManager
+        pokeballRecyclerView.layoutManager = pokeballGridLayoutManager
     }
 
     // Helper function to prepare the layout based on device orientation
