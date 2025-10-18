@@ -172,6 +172,10 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         if (gameList.isEmpty()) {
             Log.e("MainActivity", "Failed to retrieve games from database")
         }
+        val pokeballList = db.getPokeballs()    // list of all pokeballs
+        if (pokeballList.isEmpty()) {
+            Log.e("MainActivity", "Failed to retrieve pokeballs from database")
+        }
         val hunts = db.getHunts()           // retrieve all saved shiny hunts from the database
 
         // access the main UI elements
@@ -200,7 +204,7 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         counterMultiplierBtn.text = String.format("x%s", MyApplication.counterMultiplier)
 
         // instantiate an adapter for the shiny hunt recycler view
-        val shinyHuntListAdapter = ShinyHuntListAdapter(this, pokemonList, gameList).apply {
+        val shinyHuntListAdapter = ShinyHuntListAdapter(this, pokemonList, gameList, pokeballList).apply {
             onScrollToPosition = { position ->
                 // when swapping shiny hunts, scroll to the position of the shiny hunt that initiated the swap
                 shinyHuntRecyclerView.scrollToPosition(position)

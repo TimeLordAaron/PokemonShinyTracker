@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.compose.ui.semantics.text
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -29,7 +30,8 @@ class ShinyHuntDiffCallback : DiffUtil.ItemCallback<ShinyHunt>() {
 class ShinyHuntListAdapter(
     private val context: Context,
     private val pokemonSet: List<Pokemon>,
-    private val gameSet: List<Game>
+    private val gameSet: List<Game>,
+    private val pokeballSet: List<Pokeball>
 ) : ListAdapter<ShinyHunt, ShinyHuntListAdapter.ViewHolder>(ShinyHuntDiffCallback()) {
 
     private val expandedItems = mutableSetOf<Int>()                     // stores the huntIDs of all currently expanded shiny hunts
@@ -45,6 +47,8 @@ class ShinyHuntListAdapter(
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val shinyHuntItemLayout: ConstraintLayout = view.findViewById(R.id.shiny_hunt_item)
         val pokemonName: TextView = view.findViewById(R.id.pokemon_name)
+        val formName: TextView = view.findViewById(R.id.form_name)
+        val pokeballImage: ImageView = view.findViewById(R.id.pokeball_image)
         val originGameIconBorder: FrameLayout = view.findViewById(R.id.origin_game_icon_border)
         val originGameIcon: ImageView = view.findViewById(R.id.origin_game_icon)
         val currentGameIconBorder: FrameLayout = view.findViewById(R.id.current_game_icon_border)
@@ -81,6 +85,16 @@ class ShinyHuntListAdapter(
 
         val pokemon = pokemonSet.find { p -> p.forms.any { it.formID == hunt.formID } }
         holder.pokemonName.text = hunt.nickname.ifEmpty { pokemon?.pokemonName ?: "N/A" }
+
+        holder.formName.text = pokemon?.forms?.find { it.formID == hunt.formID }?.formName
+            ?.let { "Form: $it" } ?: "Form: [No Name]"
+
+        hunt.pokeballID?.let {
+            holder.pokeballImage.setImageResource(pokeballSet[it - 1].pokeballImage)
+            holder.pokeballImage.visibility = View.VISIBLE
+        } ?: run {
+            holder.pokeballImage.visibility = View.GONE
+        }
 
         hunt.originGameID?.let {
             holder.originGameIcon.setImageResource(gameSet[it].gameImage)

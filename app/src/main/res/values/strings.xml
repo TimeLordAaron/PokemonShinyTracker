@@ -102,5 +102,6 @@
     <string name="unselect_pokeball_description">Button to unselect a pokeball</string>
     <string name="pokeball_name_placeholder">Poké Ball</string>
     <string name="pokeball_item_image_description">Pokeball Item Image Placeholder</string>
+    <string name="form_name_placeholder">Form Name</string>
 
 </resources>
