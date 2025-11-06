@@ -1,3 +1,10 @@
+/* DATABASE VERSION HISTORY
+
+- Versions 1-6: Iterations of the database schema during initial development. Version 6 was the official version of the database upon release.
+- Version 7: Added a new Pokeball table to the database, as well as a pokeballID field in the ShinyHunt table with a foreign key to the Pokeball table.
+
+*/
+
 package com.example.pokemonshinytracker
 
 import android.content.ContentValues
@@ -19,22 +26,25 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         try {
             db.beginTransaction()   // start the database transaction
 
+            Log.i("DBHelper", "Creating database version $DATABASE_VERSION")
+
             // STEP 1: Create Pokemon Table
             try {
-                val query1 = ("""
+                val createPokemonTableQuery = ("""
                 CREATE TABLE $POKEMON_TABLE (
                     $POKEMON_ID_COL INTEGER PRIMARY KEY AUTOINCREMENT,
                     $POKEMON_NAME_COL TEXT
                 )
                 """).trimIndent()
-                db.execSQL(query1)
+                db.execSQL(createPokemonTableQuery)
+                Log.i("DBHelper", "$POKEMON_TABLE table created successfully")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error creating $POKEMON_TABLE table: ${e.message}")
             }
 
             // STEP 2: Create PokemonForm Table
             try {
-                val query2 = ("""
+                val createPokemonFormTableQuery = ("""
                 CREATE TABLE $POKEMON_FORM_TABLE (
                     $FORM_ID_COL INTEGER PRIMARY KEY AUTOINCREMENT,
                     $POKEMON_ID_COL INTEGER,
@@ -44,14 +54,15 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     FOREIGN KEY ($POKEMON_ID_COL) REFERENCES $POKEMON_TABLE($POKEMON_ID_COL)
                 )
                 """).trimIndent()
-                db.execSQL(query2)
+                db.execSQL(createPokemonFormTableQuery)
+                Log.i("DBHelper", "$POKEMON_FORM_TABLE table created successfully")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error creating $POKEMON_FORM_TABLE table: ${e.message}")
             }
 
             // STEP 3: Create Game Table
             try {
-                val query3 = ("""
+                val createGameTableQuery = ("""
                 CREATE TABLE $GAME_TABLE (
                     $GAME_ID_COL INTEGER PRIMARY KEY AUTOINCREMENT,
                     $GAME_NAME_COL TEXT,
@@ -59,28 +70,30 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     $GENERATION_COL INTEGER
                 )
                 """).trimIndent()
-                db.execSQL(query3)
+                db.execSQL(createGameTableQuery)
+                Log.i("DBHelper", "$GAME_TABLE table created successfully")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error creating $GAME_TABLE table: ${e.message}")
             }
 
             // STEP 4: Create Pokeball Table
             try {
-                val query4 = ("""
+                val createPokeballTableQuery = ("""
                 CREATE TABLE $POKEBALL_TABLE (
                     $POKEBALL_ID_COL INTEGER PRIMARY KEY AUTOINCREMENT,
                     $POKEBALL_NAME_COL TEXT,
                     $POKEBALL_IMAGE_COL INTEGER
                 )
                 """).trimIndent()
-                db.execSQL(query4)
+                db.execSQL(createPokeballTableQuery)
+                Log.i("DBHelper", "$POKEBALL_TABLE table created successfully")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error creating $POKEBALL_TABLE table: ${e.message}")
             }
 
             // STEP 5: Create ShinyHunt Table
             try {
-                val query5 = ("""
+                val createShinyHuntTableQuery = ("""
                 CREATE TABLE $SHINY_HUNT_TABLE (
                     $HUNT_ID_COL INTEGER PRIMARY KEY AUTOINCREMENT,
                     $FORM_ID_COL INTEGER,
@@ -103,7 +116,8 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     FOREIGN KEY ($CURRENT_GAME_ID_COL) REFERENCES $GAME_TABLE($GAME_ID_COL)	
                 )
                 """).trimIndent()
-                db.execSQL(query5)
+                db.execSQL(createShinyHuntTableQuery)
+                Log.i("DBHelper", "$SHINY_HUNT_TABLE table created successfully")
             } catch (e: SQLException) {
                 Log.e("DBHelper", "Error creating $SHINY_HUNT_TABLE table: ${e.message}")
             }
@@ -127,49 +141,155 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     }
 
     // Function to upgrade the database when the version changes
-    // TODO: add upgrade logic here
-    override fun onUpgrade(db: SQLiteDatabase, p1: Int, p2: Int) {
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         try {
             db.beginTransaction()   // start the database transaction
+            db.execSQL("PRAGMA foreign_keys=OFF;")  // disable temporarily for schema changes
 
-            // STEP 1: Drop the ShinyHunt Table (to remove foreign keys to the other tables)
-            try {
-                db.execSQL("DROP TABLE IF EXISTS $SHINY_HUNT_TABLE")
-            } catch (e: SQLException) {
-                Log.e("DBHelper", "Error dropping $SHINY_HUNT_TABLE table: ${e.message}")
-            }
+            Log.i("DBHelper", "Upgrading database from version $oldVersion to $newVersion")
 
-            // STEP 2: Drop the PokemonForm Table (to remove foreign keys to the Pokemon table)
-            try {
-                db.execSQL("DROP TABLE IF EXISTS $POKEMON_FORM_TABLE")
-            } catch (e: SQLException) {
-                Log.e("DBHelper", "Error dropping $POKEMON_FORM_TABLE table: ${e.message}")
-            }
+            if (oldVersion < 7) {   // Version 7: Added the Pokeball table and a pokeballID foreign key to the ShinyHunt table
 
-            // STEP 3: Drop the Pokemon Table
-            try {
-                db.execSQL("DROP TABLE IF EXISTS $POKEMON_TABLE")
-            } catch (e: SQLException) {
-                Log.e("DBHelper", "Error dropping $POKEMON_TABLE table: ${e.message}")
-            }
+                // STEP 1: Create Pokeball Table
+                try {
+                    val createPokeballTableQuery = ("""
+                    CREATE TABLE IF NOT EXISTS $POKEBALL_TABLE (
+                        $POKEBALL_ID_COL INTEGER PRIMARY KEY AUTOINCREMENT,
+                        $POKEBALL_NAME_COL TEXT,
+                        $POKEBALL_IMAGE_COL INTEGER
+                    )
+                    """).trimIndent()
+                    db.execSQL(createPokeballTableQuery)
+                    Log.i("DBHelper", "$POKEBALL_TABLE table created successfully")
 
-            // STEP 4: Drop the Game Table
-            try {
-                db.execSQL("DROP TABLE IF EXISTS $GAME_TABLE")
-            } catch (e: SQLException) {
-                Log.e("DBHelper", "Error dropping $GAME_TABLE table: ${e.message}")
-            }
+                    // insert initial data into the Pokeball table
+                    PokeballData.insertPokeballData(db)
 
-            // STEP 5: Recreate the database
-            try {
-                onCreate(db)
-                db.setTransactionSuccessful()   // mark the database transaction as successful
-            } catch (e: Exception) {
-                Log.e("DBHelper", "Error recreating database: ${e.message}")
+                } catch (e: SQLException) {
+                    Log.e("DBHelper", "Error creating or populating $POKEBALL_TABLE table: ${e.message}")
+                }
+
+                // STEP 2: Recreate ShinyHunt Table (with new pokeballID field)
+                try {
+                    // rename old table
+                    db.execSQL("ALTER TABLE $SHINY_HUNT_TABLE RENAME TO ${SHINY_HUNT_TABLE}_old;")
+
+                    // create new ShinyHunt table (with foreign key to Pokeball table)
+                    val createShinyHuntTableQuery = ("""
+                    CREATE TABLE $SHINY_HUNT_TABLE (
+                        $HUNT_ID_COL INTEGER PRIMARY KEY AUTOINCREMENT,
+                        $FORM_ID_COL INTEGER,
+                        $NICKNAME_COL TEXT,
+                        $ORIGIN_GAME_ID_COL INTEGER,
+                        $LOCATION_COL TEXT,
+                        $METHOD_COL TEXT,
+                        $START_DATE_COL TEXT,
+                        $COUNTER_COL INTEGER,
+                        $PHASE_COL INTEGER,
+                        $NOTES_COL TEXT,
+                        $IS_COMPLETE_COL INTEGER,
+                        $FINISH_DATE_COL TEXT,
+                        $POKEBALL_ID_COL INTEGER,
+                        $CURRENT_GAME_ID_COL INTEGER,
+                        $DEFAULT_POSITION_COL INTEGER,
+                        FOREIGN KEY ($FORM_ID_COL) REFERENCES $POKEMON_FORM_TABLE($FORM_ID_COL),
+                        FOREIGN KEY ($ORIGIN_GAME_ID_COL) REFERENCES $GAME_TABLE($GAME_ID_COL),
+                        FOREIGN KEY ($POKEBALL_ID_COL) REFERENCES $POKEBALL_TABLE($POKEBALL_ID_COL),
+                        FOREIGN KEY ($CURRENT_GAME_ID_COL) REFERENCES $GAME_TABLE($GAME_ID_COL)	
+                    )
+                    """).trimIndent()
+                    db.execSQL(createShinyHuntTableQuery)
+                    Log.i("DBHelper", "New $SHINY_HUNT_TABLE table created")
+
+                    // STEP 3: Copy data from old to new table
+                    val copyShinyHuntDataQuery = ("""
+                    INSERT INTO $SHINY_HUNT_TABLE (
+                        $HUNT_ID_COL,
+                        $FORM_ID_COL,
+                        $NICKNAME_COL,
+                        $ORIGIN_GAME_ID_COL,
+                        $LOCATION_COL,
+                        $METHOD_COL,
+                        $START_DATE_COL,
+                        $COUNTER_COL,
+                        $PHASE_COL,
+                        $NOTES_COL,
+                        $IS_COMPLETE_COL,
+                        $FINISH_DATE_COL,
+                        $CURRENT_GAME_ID_COL,
+                        $DEFAULT_POSITION_COL,
+                        $POKEBALL_ID_COL
+                    )
+                    SELECT 
+                        $HUNT_ID_COL,
+                        $FORM_ID_COL,
+                        $NICKNAME_COL,
+                        $ORIGIN_GAME_ID_COL,
+                        $LOCATION_COL,
+                        $METHOD_COL,
+                        $START_DATE_COL,
+                        $COUNTER_COL,
+                        $PHASE_COL,
+                        $NOTES_COL,
+                        $IS_COMPLETE_COL,
+                        $FINISH_DATE_COL,
+                        $CURRENT_GAME_ID_COL,
+                        $DEFAULT_POSITION_COL,
+                        NULL AS $POKEBALL_ID_COL
+                    FROM ${SHINY_HUNT_TABLE}_old;
+                    """).trimIndent()
+                    db.execSQL(copyShinyHuntDataQuery)
+                    Log.i("DBHelper", "Copied existing hunts to new table")
+
+                    // STEP 4: Drop old table
+                    db.execSQL("DROP TABLE ${SHINY_HUNT_TABLE}_old;")
+                    Log.i("DBHelper", "Old $SHINY_HUNT_TABLE table dropped")
+
+                    // Step 5: Recreate the PokemonForm and Game tables (to update the resource IDs for the images)
+                    try {
+                        db.execSQL("DROP TABLE IF EXISTS $POKEMON_FORM_TABLE;")
+                        db.execSQL("DROP TABLE IF EXISTS $GAME_TABLE;")
+
+                        val createPokemonFormTableQuery = ("""
+                        CREATE TABLE $POKEMON_FORM_TABLE (
+                            $FORM_ID_COL INTEGER PRIMARY KEY AUTOINCREMENT,
+                            $POKEMON_ID_COL INTEGER,
+                            $FORM_NAME_COL TEXT,
+                            $FORM_IMAGE_COL INTEGER,
+                            $IS_DEFAULT_FORM_COL INTEGER,
+                            FOREIGN KEY ($POKEMON_ID_COL) REFERENCES $POKEMON_TABLE($POKEMON_ID_COL)
+                        )
+                        """).trimIndent()
+                        db.execSQL(createPokemonFormTableQuery)
+
+                        val createGameTableQuery = ("""
+                        CREATE TABLE $GAME_TABLE (
+                            $GAME_ID_COL INTEGER PRIMARY KEY AUTOINCREMENT,
+                            $GAME_NAME_COL TEXT,
+                            $GAME_IMAGE_COL INTEGER,
+                            $GENERATION_COL INTEGER
+                        )
+                        """).trimIndent()
+                        db.execSQL(createGameTableQuery)
+
+                        // reinsert all data with updated resource IDs
+                        PokemonFormData.insertPokemonFormData(db)
+                        GameData.insertGameData(db)
+
+                        Log.i("DBHelper", "PokemonForm and Game tables recreated and reinitialized")
+                    } catch (e: SQLException) {
+                        Log.e("DBHelper", "Error recreating tables: ${e.message}")
+                    }
+
+                    db.setTransactionSuccessful()   // mark the database transaction as successful
+                } catch (e: SQLException) {
+                    Log.e("DBHelper", "Error rebuilding $SHINY_HUNT_TABLE table: ${e.message}")
+                }
             }
         } catch (e: Exception) {
             Log.e("DBHelper", "Database upgrade failed: ${e.message}")
         } finally {
+            db.execSQL("PRAGMA foreign_keys=ON;")   // re-enable
             db.endTransaction()     // end the database transaction; rollback if not set as successful
         }
     }
@@ -238,7 +358,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             db?.close()     // close the database
         }
     }
-
 
     // Function to add new shiny hunts to the database
     private fun addHunt(db: SQLiteDatabase, formID: Int?, nickname: String, originGameID: Int?, location: String, method: String, startDate: String?,
@@ -649,7 +768,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             db = this.readableDatabase
 
             // construct query dynamically based on the parameters
-            val query = StringBuilder(
+            val getPokemonQuery = StringBuilder(
                 """
                 SELECT p.$POKEMON_ID_COL, p.$POKEMON_NAME_COL, 
                        f.$FORM_ID_COL, f.$FORM_NAME_COL, f.$FORM_IMAGE_COL, f.$IS_DEFAULT_FORM_COL
@@ -660,14 +779,14 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
             // apply filtering conditions
             if (pokemonID != null) {
-                query.append(" WHERE p.$POKEMON_ID_COL = ?")
+                getPokemonQuery.append(" WHERE p.$POKEMON_ID_COL = ?")
                 args.add(pokemonID.toString())
             } else if (formID != null) {
-                query.append(" WHERE f.$FORM_ID_COL = ?")
+                getPokemonQuery.append(" WHERE f.$FORM_ID_COL = ?")
                 args.add(formID.toString())
             }
 
-            db.rawQuery(query.toString(), args.toTypedArray()).use { cursor ->
+            db.rawQuery(getPokemonQuery.toString(), args.toTypedArray()).use { cursor ->
                 if (cursor.moveToFirst()) {
                     do {
                         val pID = cursor.getInt(0)
@@ -712,19 +831,19 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             // attempt to get a readable instance of the database
             db = this.readableDatabase
 
-            val query: String
+            val getGamesQuery: String
             val args: Array<String>?
 
             // check if a gameID was provided
             if (gameID != null) {
-                query = "SELECT * FROM $GAME_TABLE WHERE gameID = ?"
+                getGamesQuery = "SELECT * FROM $GAME_TABLE WHERE gameID = ?"
                 args = arrayOf(gameID.toString())
             } else {
-                query = "SELECT * FROM $GAME_TABLE"
+                getGamesQuery = "SELECT * FROM $GAME_TABLE"
                 args = null
             }
 
-            db.rawQuery(query, args).use { cursor ->
+            db.rawQuery(getGamesQuery, args).use { cursor ->
                 if (cursor.moveToFirst()) {
                     do {
                         val game = Game(
@@ -758,19 +877,19 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             // attempt to get a readable instance of the database
             db = this.readableDatabase
 
-            val query: String
+            val getPokeballsQuery: String
             val args: Array<String>?
 
             // check if a pokeballID was provided
             if (pokeballID != null) {
-                query = "SELECT * FROM $POKEBALL_TABLE WHERE pokeballID = ?"
+                getPokeballsQuery = "SELECT * FROM $POKEBALL_TABLE WHERE pokeballID = ?"
                 args = arrayOf(pokeballID.toString())
             } else {
-                query = "SELECT * FROM $POKEBALL_TABLE"
+                getPokeballsQuery = "SELECT * FROM $POKEBALL_TABLE"
                 args = null
             }
 
-            db.rawQuery(query, args).use { cursor ->
+            db.rawQuery(getPokeballsQuery, args).use { cursor ->
                 if (cursor.moveToFirst()) {
                     do {
                         val pokeball = Pokeball(
@@ -799,7 +918,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
         // Database name and version
         const val DATABASE_NAME = "SHINY_TRACKER_DB"
-        const val DATABASE_VERSION = 6
+        const val DATABASE_VERSION = 7
 
         // Pokemon Table
         const val POKEMON_TABLE = "Pokemon"
