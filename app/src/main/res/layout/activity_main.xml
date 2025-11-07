@@ -47,7 +47,6 @@
                 android:background="@null"
                 android:text="@string/counter_multiplier_placeholder"
                 android:textAllCaps="false"
-                android:textColor="@color/black"
                 android:textSize="@dimen/text_size_medium"
                 android:textStyle="bold" />
 
@@ -57,7 +56,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/expand_all_label"
-                android:textColor="@color/black"
                 android:textSize="@dimen/text_size_medium" />
 
             <!--Expand All Checkbox-->

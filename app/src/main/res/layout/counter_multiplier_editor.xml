@@ -12,8 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="20dp"
-        android:textSize="@dimen/text_size_x_large"
-        android:textColor="@color/black" />
+        android:textSize="@dimen/text_size_x_large" />
 
     <!--Counter Multiplier Buttons-->
     <LinearLayout

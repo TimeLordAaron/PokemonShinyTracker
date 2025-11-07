@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--Default colors-->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -7,4 +8,23 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!--Light theme colors-->
+    <color name="text">#1A1A1A</color>
+    <color name="textbox">#66FFFFFF</color>
+    <color name="textbox_border">#33000000</color>
+    <color name="icon_button">#000000</color>
+    <color name="homepage_start">#D9F3FF</color>
+    <color name="homepage_end">#C7EAFF</color>
+    <color name="transparent">#55FFFFFF</color>
+    <color name="complete_hunt_start">#F0E38E</color>
+    <color name="complete_hunt_end">#BAA029</color>
+    <color name="complete_hunt_border">#8C7723</color>
+    <color name="incomplete_hunt_start">#949494</color>
+    <color name="incomplete_hunt_end">#737373</color>
+    <color name="incomplete_hunt_border">#3B3B3B</color>
+    <color name="selected_item">#884EFF77</color>
+    <color name="back_button_text">#1A1A1A</color>
+    <color name="save_button_text">#008800</color>
+    <color name="delete_button_text">#CC0000</color>
 </resources>

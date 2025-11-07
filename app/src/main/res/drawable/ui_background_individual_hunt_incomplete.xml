@@ -3,6 +3,6 @@
     <gradient
         android:type="linear"
         android:angle="0"
-        android:startColor="#949494"
-        android:endColor="#737373" />
+        android:startColor="@color/incomplete_hunt_start"
+        android:endColor="@color/incomplete_hunt_end" />
 </shape>

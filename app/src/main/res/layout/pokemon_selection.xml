@@ -29,7 +29,6 @@
                             android:layout_gravity="center"
                             android:text="@string/selected_pokemon_label"
                             android:textSize="@dimen/text_size_medium"
-                            android:textColor="@color/black"
                             android:textStyle="bold"/>
 
                         <!--Selected Pokemon Recycler View-->
@@ -50,7 +49,6 @@
                     android:padding="8dp"
                     android:background="@android:drawable/edit_text"
                     android:textSize="@dimen/text_size_medium"
-                    android:textColor="@android:color/black"
                     android:textColorHint="@android:color/darker_gray"
                     android:hint="@string/search_pokemon"
                     android:drawableStart="@android:drawable/ic_menu_search"

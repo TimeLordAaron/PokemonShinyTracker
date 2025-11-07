@@ -3,8 +3,8 @@
     <gradient
         android:type="linear"
         android:angle="0"
-        android:startColor="#949494"
-        android:endColor="#737373" />
-    <stroke android:width="3dp" android:color="#3B3B3B" />
+        android:startColor="@color/incomplete_hunt_start"
+        android:endColor="@color/incomplete_hunt_end" />
+    <stroke android:width="3dp" android:color="@color/incomplete_hunt_border" />
     <corners android:radius="10dp" />
 </shape>

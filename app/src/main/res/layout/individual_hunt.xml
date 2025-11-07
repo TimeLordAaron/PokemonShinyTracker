@@ -50,8 +50,8 @@
             android:minWidth="@dimen/min_button_size"
             android:minHeight="@dimen/min_button_size"
             android:text="@string/back_button_text"
+            android:textColor="@color/back_button_text"
             android:textSize="@dimen/text_size_small"
-            android:textColor="@color/black"
             android:textAllCaps="false" />
 
         <!--Save Button-->
@@ -64,7 +64,7 @@
             android:minHeight="@dimen/min_button_size"
             android:text="@string/save_button_text"
             android:textSize="@dimen/text_size_small"
-            android:textColor="#008800"
+            android:textColor="@color/save_button_text"
             android:textAllCaps="false" />
 
         <!--Delete Button-->
@@ -78,7 +78,7 @@
             android:visibility="gone"
             android:text="@string/delete_button_text"
             android:textSize="@dimen/text_size_small"
-            android:textColor="#CC0000"
+            android:textColor="@color/delete_button_text"
             android:textAllCaps="false" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -114,7 +114,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/select_a_pokemon"
                 android:textSize="@dimen/text_size_large"
-                android:textColor="@color/black"
                 android:textAlignment="center"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/selected_pokemon_form"
@@ -127,7 +126,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_large"
-                android:textColor="@color/black"
                 android:textAlignment="center"
                 app:layout_constraintTop_toBottomOf="@id/selected_pokemon_name"
                 app:layout_constraintBottom_toTopOf="@id/pokemon_image_container"
@@ -265,7 +263,6 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/nickname_label"
                     android:textSize="@dimen/text_size_large"
-                    android:textColor="@color/black"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
@@ -295,7 +292,6 @@
                     android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/start_date_label"
                     android:textSize="@dimen/text_size_large"
-                    android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/nickname_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
@@ -326,7 +322,6 @@
                     android:visibility="gone"
                     android:text=""
                     android:textSize="@dimen/text_size_medium"
-                    android:textColor="@color/black"
                     android:textAlignment="textStart"
                     app:layout_constraintTop_toTopOf="@id/start_date_label"
                     app:layout_constraintBottom_toBottomOf="@id/start_date_label"
@@ -357,7 +352,6 @@
                     android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/origin_game_label"
                     android:textSize="@dimen/text_size_large"
-                    android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/start_date_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
@@ -430,7 +424,6 @@
                     android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/location_label"
                     android:textSize="@dimen/text_size_large"
-                    android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/origin_game_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
@@ -460,7 +453,6 @@
                     android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/method_label"
                     android:textSize="@dimen/text_size_large"
-                    android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/location_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
@@ -490,7 +482,6 @@
                     android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/counter_label"
                     android:textSize="@dimen/text_size_large"
-                    android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/method_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
@@ -551,7 +542,6 @@
                     android:elevation="@dimen/button_elevation"
                     android:text="@string/counter_multiplier_placeholder"
                     android:textAllCaps="false"
-                    android:textColor="@color/black"
                     android:textSize="@dimen/text_size_medium"
                     android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="@id/counter_label"
@@ -567,7 +557,6 @@
                     android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/phase_label"
                     android:textSize="@dimen/text_size_large"
-                    android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/counter_multiplier_button"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
@@ -627,7 +616,6 @@
                     android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/notes_label"
                     android:textSize="@dimen/text_size_large"
-                    android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/phase_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
@@ -642,7 +630,6 @@
                     android:padding="@dimen/textbox_padding"
                     android:background="@drawable/ui_textbox"
                     android:textSize="@dimen/text_size_large"
-                    android:textColor="@color/black"
                     android:hint="@string/notes_hint"
                     android:autofillHints="false"
                     android:inputType="textMultiLine"
@@ -658,7 +645,6 @@
                     android:layout_marginTop="@dimen/label_top_margin"
                     android:text="@string/hunt_complete_label"
                     android:textSize="@dimen/text_size_large"
-                    android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/notes_text"
                     app:layout_constraintStart_toStartOf="parent" />
 
@@ -684,7 +670,6 @@
                     android:visibility="gone"
                     android:text="@string/finish_date_label"
                     android:textSize="@dimen/text_size_large"
-                    android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/hunt_complete_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
@@ -716,7 +701,6 @@
                     android:visibility="gone"
                     android:text=""
                     android:textSize="@dimen/text_size_medium"
-                    android:textColor="@color/black"
                     android:textAlignment="textStart"
                     app:layout_constraintTop_toTopOf="@id/finish_date_label"
                     app:layout_constraintBottom_toBottomOf="@id/finish_date_label"
@@ -748,7 +732,6 @@
                     android:visibility="gone"
                     android:text="@string/pokeball_label"
                     android:textSize="@dimen/text_size_large"
-                    android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/finish_date_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline_label" />
@@ -810,7 +793,6 @@
                     android:visibility="gone"
                     android:text="@string/current_game_label"
                     android:textSize="@dimen/text_size_large"
-                    android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/pokeball_label"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

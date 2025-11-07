@@ -8,5 +8,4 @@
     android:background="@drawable/ui_transparent_container"
     android:textSize="@dimen/text_size_medium"
     android:textStyle="bold"
-    android:textColor="@android:color/black"
     android:textAlignment="center" />

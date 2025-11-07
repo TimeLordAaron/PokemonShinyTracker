@@ -5,5 +5,4 @@
     android:layout_height="wrap_content"
     android:padding="5dp"
     android:gravity="start"
-    android:textSize="@dimen/text_size_small"
-    android:textColor="@color/black" />
+    android:textSize="@dimen/text_size_small" />

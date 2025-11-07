@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Default colors-->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!--Dark theme colors-->
+    <color name="text">#E0E0E0</color>
+    <color name="textbox">#66000000</color>
+    <color name="textbox_border">#33FFFFFF</color>
+    <color name="icon_button">#FFFFFF</color>
+    <color name="homepage_start">#373F5E</color>
+    <color name="homepage_end">#1F2436</color>
+    <color name="transparent">#55000000</color>
+    <color name="complete_hunt_start">#6B663F</color>
+    <color name="complete_hunt_end">#4F4411</color>
+    <color name="complete_hunt_border">#8F8855</color>
+    <color name="incomplete_hunt_start">#474747</color>
+    <color name="incomplete_hunt_end">#303030</color>
+    <color name="incomplete_hunt_border">#787878</color>
+    <color name="selected_item">#8828823D</color>
+    <color name="back_button_text">#E0E0E0</color>
+    <color name="save_button_text">#62BD68</color>
+    <color name="delete_button_text">#D67676</color>
+</resources>

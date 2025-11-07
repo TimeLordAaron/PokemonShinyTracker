@@ -23,7 +23,6 @@
         android:layout_margin="@dimen/nav_header_margin"
         android:text="@string/nav_header_app_name"
         android:textSize="@dimen/text_size_large"
-        android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/app_logo" />

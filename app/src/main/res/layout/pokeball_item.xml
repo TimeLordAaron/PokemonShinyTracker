@@ -37,7 +37,6 @@
         android:layout_gravity="center"
         android:text="@string/pokeball_name_placeholder"
         android:textSize="@dimen/text_size_small"
-        android:textColor="@color/black"
         android:textAlignment="center" />
 
 </LinearLayout>
