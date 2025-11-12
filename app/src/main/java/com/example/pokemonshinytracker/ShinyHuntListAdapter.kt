@@ -8,7 +8,6 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.compose.ui.semantics.text
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -86,8 +85,7 @@ class ShinyHuntListAdapter(
         val pokemon = pokemonSet.find { p -> p.forms.any { it.formID == hunt.formID } }
         holder.pokemonName.text = hunt.nickname.ifEmpty { pokemon?.pokemonName ?: "N/A" }
 
-        holder.formName.text = pokemon?.forms?.find { it.formID == hunt.formID }?.formName
-            ?.let { "Form: $it" } ?: "Form: [No Name]"
+        holder.formName.text = pokemon?.forms?.find { it.formID == hunt.formID }?.formName ?: "[No Name]"
 
         hunt.pokeballID?.let {
             holder.pokeballImage.setImageResource(pokeballSet[it - 1].pokeballImage)
@@ -128,6 +126,14 @@ class ShinyHuntListAdapter(
         }
 
         holder.counterValue.text = hunt.counter.toString()
+
+        if (hunt.isComplete) {
+            holder.counterDecrementBtn.setAlpha(0.25f)
+            holder.counterIncrementBtn.setAlpha(0.25f)
+        } else {
+            holder.counterDecrementBtn.setAlpha(1f)
+            holder.counterIncrementBtn.setAlpha(1f)
+        }
 
         // ensure the longClickMenu visibility is correctly set based on the item's state
         holder.longClickMenu.visibility = if (expandedItems.contains(hunt.huntID)) View.VISIBLE else View.GONE
