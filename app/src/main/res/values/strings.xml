@@ -103,5 +103,10 @@
     <string name="pokeball_name_placeholder">Poké Ball</string>
     <string name="pokeball_item_image_description">Pokeball Item Image Placeholder</string>
     <string name="form_name_placeholder">Form Name</string>
+    <string name="data_transfer">Data Transfer</string>
+    <string name="export_hunts_label">Exporting Hunts:</string>
+    <string name="export_hunts_description">Clicking the \"Export Hunts\" button below will generate a CSV file containing all of your currently saved shiny hunt logs. This CSV file will be downloaded to your device\'s local storage. You can keep it as a back up of your data, or, if you want to migrate your data to another device, you can transfer it using your preferred file transfer method (for example, emailing it to yourself and downloading it on the new device).</string>
+    <string name="import_hunts_label">Importing Hunts:</string>
+    <string name="import_hunts_description">Clicking the \"Import Hunts\" button below will allow you to upload a CSV file that was previously exported from the app and import that data into the app. This is handy if you are trying to transfer your shiny hunt logs from one device to another. Before using this feature, make sure you don\'t have any saved shiny hunt logs on this device that you don\'t want to delete, as importing shiny hunt logs will automatically overwrite all pre-existing data.</string>
 
 </resources>

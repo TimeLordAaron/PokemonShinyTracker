@@ -42,8 +42,8 @@ import com.google.android.material.navigation.NavigationView
 class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
 
     // lateinit UI declarations: main UI
-    private lateinit var drawerLayout: DrawerLayout                     // drawer layout
-    private lateinit var navView: NavigationView                        // navigation view
+    private lateinit var drawerLayout: DrawerLayout             // drawer layout
+    private lateinit var navView: NavigationView                // navigation view
     private lateinit var newHuntBtn: ImageButton                // new hunt button
     private lateinit var sortBtn: ImageButton                   // sort button
     private lateinit var filterBtn: ImageButton                 // filter button
@@ -193,8 +193,13 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
             when (it.itemId) {
                 R.id.item1 -> {}    // do nothing, as this is the Saved Hunts screen
                 R.id.item2 -> dh.createErrorDialog(this, "Shiny Living Dex", "This feature is still in development. Thank you for your patience!")
-                R.id.item3 -> dh.createErrorDialog(this, "Export Hunts", "This feature is still in development. Thank you for your patience!")
-                R.id.item4 -> dh.createErrorDialog(this, "Import Hunts", "This feature is still in development. Thank you for your patience!")
+                R.id.item3 -> {
+                    val intent = Intent(this, DataTransferActivity::class.java)
+                    intent.flags =
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
+                    finish() // close MainActivity activity
+                }
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true
